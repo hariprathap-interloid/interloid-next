@@ -46,7 +46,10 @@ export default function Hero() {
             data-reveal
             className="mb-7 inline-flex items-center gap-2.5 rounded-full border border-border bg-card px-4 py-2 shadow-sm"
           >
-            <span className="size-2 rounded-full bg-accent" aria-hidden="true" />
+            <span
+              className="size-2 rounded-full bg-accent"
+              aria-hidden="true"
+            />
             <span className="text-sm font-medium text-muted-foreground">
               For founders &amp; business leaders
             </span>

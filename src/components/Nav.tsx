@@ -55,6 +55,7 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const dark = useSyncExternalStore(subscribeTheme, getTheme, getServerTheme);
+  const [current, setCurrent] = useState<string | null>(null);
 
   const menuRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -79,6 +80,32 @@ export default function Nav() {
     try {
       localStorage.setItem("interloid-theme", next ? "dark" : "light");
     } catch {}
+  }, []);
+
+  /* ---- scrollspy ----------------------------------------------------------
+     Marks the nav link whose section is in the reading band. rootMargin
+     "-45% 0px -50%" leaves a thin strip across the middle of the viewport, so
+     a section counts as current only while it is actually being read.
+
+     threshold 0, never a fraction — HANDOFF §5.6: a tall element cannot reach
+     a fractional threshold of a shrunken root at 400% zoom, and every section
+     here is taller than the strip. */
+  useEffect(() => {
+    const targets = LINKS.map((l) =>
+      l.href.startsWith("#") ? document.querySelector(l.href) : null,
+    ).filter(Boolean) as Element[];
+    if (!targets.length) return;
+
+    const spy = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setCurrent(`#${e.target.id}`);
+        });
+      },
+      { threshold: 0, rootMargin: "-45% 0px -50% 0px" },
+    );
+    targets.forEach((t) => spy.observe(t));
+    return () => spy.disconnect();
   }, []);
 
   /* ---- mobile menu: outside click, Escape, and breakpoint ---------------- */
@@ -121,8 +148,12 @@ export default function Nav() {
     };
   }, [open]);
 
-  const linkClass =
-    "nav-link rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-card hover:text-primary";
+  const linkClass = (href: string) =>
+    `nav-link rounded-full px-4 py-2 text-sm transition-all hover:bg-card hover:text-primary ${
+      current === href
+        ? "bg-card text-primary font-semibold shadow-sm"
+        : "font-medium text-muted-foreground"
+    }`;
 
   return (
     <>
@@ -172,7 +203,8 @@ export default function Nav() {
               <a
                 key={l.href}
                 href={l.href}
-                className={linkClass}
+                className={linkClass(l.href)}
+                aria-current={current === l.href ? "true" : undefined}
                 {...("placeholder" in l
                   ? { "data-placeholder": l.placeholder }
                   : {})}
@@ -227,7 +259,7 @@ export default function Nav() {
               href="#contact"
               className="hidden rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-brand-light hover:shadow-primary/40 active:scale-95 xl:inline-flex"
             >
-              Let&rsquo;s talk
+              Let&apos;s talk
             </a>
 
             <button
@@ -249,11 +281,12 @@ export default function Nav() {
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
-                strokeLinejoin="round"
                 className={`size-6 ${open ? "hidden" : ""}`}
                 aria-hidden="true"
               >
-                <path d="M4 6h16M4 12h16M4 18h16" />
+                <path d="M4 6h16" />
+                <path d="M4 12h16" />
+                <path d="M4 18h16" />
               </svg>
               <svg
                 data-icon="close"
@@ -262,11 +295,11 @@ export default function Nav() {
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
-                strokeLinejoin="round"
                 className={`size-6 ${open ? "" : "hidden"}`}
                 aria-hidden="true"
               >
-                <path d="M18 6 6 18M6 6l12 12" />
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
               </svg>
             </button>
           </div>

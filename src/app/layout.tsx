@@ -53,6 +53,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
       className={`${inter.variable} ${satoshi.variable}`}
     >
+      {/* No manual <meta charset> or <meta name="viewport"> here: Next injects
+          both automatically, and adding them by hand produced TWO of each in
+          the rendered HTML (verified with curl). The values that were added
+          are exactly Next's defaults, so nothing is lost by removing them — if
+          non-default viewport values are ever wanted, export a `viewport`
+          object from this file rather than writing the tag. */}
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

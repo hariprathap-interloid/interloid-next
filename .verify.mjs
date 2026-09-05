@@ -168,16 +168,9 @@ for (const vp of VIEWPORTS) {
   const rest = await page.evaluate(
     () => document.querySelector("#nav > div").className,
   );
-  /* Only the hero is ported, so the document is not yet taller than the
-     viewport and scrollTo() would be a no-op. Add a spacer for the duration of
-     the check; remove this once sections 02-08 land. */
-  await page.evaluate(() => {
-    const s = document.createElement("div");
-    s.id = "__scrollspacer";
-    s.style.height = "2000px";
-    document.body.appendChild(s);
-    window.scrollTo(0, 400);
-  });
+  /* The full page is ported now, so it scrolls on its own — the spacer this
+     used to need is gone. */
+  await page.evaluate(() => window.scrollTo(0, 400));
   await page.waitForTimeout(700);
   const scrollY = await page.evaluate(() => window.scrollY);
   const scrolled = await page.evaluate(

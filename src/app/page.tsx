@@ -1,20 +1,40 @@
+import Advantage from "@/components/Advantage";
+import CtaAnchor from "@/components/CtaAnchor";
+import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import Nav from "@/components/Nav";
+import PlaceholderToggle from "@/components/PlaceholderToggle";
+import Process from "@/components/Process";
 import Reveal from "@/components/Reveal";
+import Services from "@/components/Services";
+import StackMarquee from "@/components/StackMarquee";
+import Work from "@/components/Work";
 
-/* Sections 02-08 (services, stack marquee, advantage bento, process, work,
-   CTA anchor, footer) are still to port from prototype3/index.html — see
-   HANDOFF §6 item 4. Nav + hero go first on purpose: they front-load the only
-   order-dependent risk in the port, which is the WebGL mark against the
-   FCP 364ms budget (§4a). */
+/* The full page, section order per PROTOTYPE3-BRIEF §2's ledger.
+   Only Nav, Services, Advantage, HeroStage, Reveal and PlaceholderToggle are
+   Client Components; everything else ships as HTML with no JavaScript. */
 export default function Home() {
   return (
     <>
       <Reveal />
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-200 focus:rounded-full focus:bg-primary focus:px-5 focus:py-3 focus:font-semibold focus:text-primary-foreground"
+      >
+        Skip to content
+      </a>
       <Nav />
       <main id="main">
         <Hero />
+        <Services />
+        <StackMarquee />
+        <Advantage />
+        <Process />
+        <Work />
+        <CtaAnchor />
       </main>
+      <Footer />
+      <PlaceholderToggle />
     </>
   );
 }

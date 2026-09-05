@@ -20,49 +20,48 @@
 
 @import "tailwindcss";
 
-
 :root {
   --radius: 0.75rem;
 
   /* Surfaces ------------------------------------------------------------- */
-  --background:  oklch(0.9814 0.0045 258.32);   /* #f7f9fc — tinted, not white */
-  --foreground:  oklch(0.2077 0.0398 265.75);   /* #0f172a */
-  --card:        oklch(1 0 0);                  /* pure white — lifts off bg   */
-  --card-foreground:    oklch(0.2077 0.0398 265.75);
-  --popover:            oklch(1 0 0);
+  --background: oklch(0.9814 0.0045 258.32); /* #f7f9fc — tinted, not white */
+  --foreground: oklch(0.2077 0.0398 265.75); /* #0f172a */
+  --card: oklch(1 0 0); /* pure white — lifts off bg   */
+  --card-foreground: oklch(0.2077 0.0398 265.75);
+  --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.2077 0.0398 265.75);
 
   /* Brand ---------------------------------------------------------------- */
-  --primary:            oklch(0.4751 0.1249 253.47);  /* #1f5da0 */
+  --primary: oklch(0.4751 0.1249 253.47); /* #1f5da0 */
   --primary-foreground: oklch(1 0 0);
-  --brand:              oklch(0.4751 0.1249 253.47);  /* #1f5da0 */
-  --brand-light:        oklch(0.5782 0.1362 254.36);  /* #3a7bc8 */
+  --brand: oklch(0.4751 0.1249 253.47); /* #1f5da0 */
+  --brand-light: oklch(0.5782 0.1362 254.36); /* #3a7bc8 */
 
   /* Accent. #289dbe is 3.15:1 on white — display sizes, icons and borders
      only. For body-size accent text use --accent-strong (#1b7c99, 4.6:1). */
-  --accent:             oklch(0.6481 0.1094 221.82);  /* #289dbe */
-  --accent-foreground:  oklch(1 0 0);
-  --accent-strong:      oklch(0.5466 0.0947 223.53);  /* #1b7c99 */
+  --accent: oklch(0.6481 0.1094 221.82); /* #289dbe */
+  --accent-foreground: oklch(1 0 0);
+  --accent-strong: oklch(0.5466 0.0947 223.53); /* #1b7c99 */
 
   /* Neutrals ------------------------------------------------------------- */
-  --secondary:            oklch(0.9621 0.0097 252.81); /* #eef3f9 alt section */
+  --secondary: oklch(0.9621 0.0097 252.81); /* #eef3f9 alt section */
   --secondary-foreground: oklch(0.4751 0.1249 253.47);
-  --muted:                oklch(0.9683 0.0069 247.9);  /* #f1f5f9 */
-  --muted-foreground:     oklch(0.5544 0.0407 257.42); /* #64748b body copy   */
-  --border:               oklch(0.9288 0.0126 255.51); /* #e2e8f0 */
+  --muted: oklch(0.9683 0.0069 247.9); /* #f1f5f9 */
+  --muted-foreground: oklch(0.5544 0.0407 257.42); /* #64748b body copy   */
+  --border: oklch(0.9288 0.0126 255.51); /* #e2e8f0 */
   /* Faint DISPLAY text (the stack marquee, inactive selector arrows). This used
      to borrow --border, which works on light only: in dark --border is white at
      10% alpha and the marquee all but disappeared. A border colour and a text
      colour are not the same thing — they need separate tokens. */
-  --faint:                oklch(0.9288 0.0126 255.51); /* #e2e8f0 */
-  --hairline:             oklch(0.9683 0.0069 247.9);  /* #f1f5f9 */
-  --input:                oklch(0.9288 0.0126 255.51);
-  --ring:                 oklch(0.4751 0.1249 253.47);
+  --faint: oklch(0.9288 0.0126 255.51); /* #e2e8f0 */
+  --hairline: oklch(0.9683 0.0069 247.9); /* #f1f5f9 */
+  --input: oklch(0.9288 0.0126 255.51);
+  --ring: oklch(0.4751 0.1249 253.47);
 
   /* Dark anchors --------------------------------------------------------- */
-  --ink:            oklch(0.2077 0.0398 265.75);  /* #0f172a CTA slab */
-  --ink-deep:       oklch(0.1288 0.0406 264.7);   /* #020617 footer   */
-  --ink-foreground: oklch(0.869 0.0198 252.89);   /* #cbd5e1          */
+  --ink: oklch(0.2077 0.0398 265.75); /* #0f172a CTA slab */
+  --ink-deep: oklch(0.1288 0.0406 264.7); /* #020617 footer   */
+  --ink-foreground: oklch(0.869 0.0198 252.89); /* #cbd5e1          */
 
   --destructive: oklch(0.577 0.245 27.325);
 }
@@ -71,42 +70,67 @@
    so the architecture is complete and a future toggle is a CSS-only change —
    nothing in the prototype activates it today. */
 .dark {
-  --background:  oklch(0.1288 0.0406 264.7);
-  --foreground:  oklch(0.9842 0.0034 247.86);
-  --card:        oklch(0.2077 0.0398 265.75);
-  --card-foreground:    oklch(0.9842 0.0034 247.86);
-  --popover:            oklch(0.2077 0.0398 265.75);
+  --background: oklch(0.1288 0.0406 264.7);
+  --foreground: oklch(0.9842 0.0034 247.86);
+  --card: oklch(0.2077 0.0398 265.75);
+  --card-foreground: oklch(0.9842 0.0034 247.86);
+  --popover: oklch(0.2077 0.0398 265.75);
   --popover-foreground: oklch(0.9842 0.0034 247.86);
 
-  --primary:            oklch(0.6481 0.1094 221.82);
+  --primary: oklch(0.6481 0.1094 221.82);
   --primary-foreground: oklch(0.1288 0.0406 264.7);
-  --brand:              oklch(0.5782 0.1362 254.36);
-  --brand-light:        oklch(0.6481 0.1094 221.82);
+  --brand: oklch(0.5782 0.1362 254.36);
+  --brand-light: oklch(0.6481 0.1094 221.82);
 
-  --accent:             oklch(0.6481 0.1094 221.82);
-  --accent-foreground:  oklch(0.1288 0.0406 264.7);
-  --accent-strong:      oklch(0.7107 0.0351 256.79);
+  --accent: oklch(0.6481 0.1094 221.82);
+  --accent-foreground: oklch(0.1288 0.0406 264.7);
+  --accent-strong: oklch(0.7107 0.0351 256.79);
 
-  --secondary:            oklch(0.2795 0.0368 260.03);
+  --secondary: oklch(0.2795 0.0368 260.03);
   --secondary-foreground: oklch(0.9842 0.0034 247.86);
-  --muted:                oklch(0.2795 0.0368 260.03);
-  --muted-foreground:     oklch(0.7107 0.0351 256.79);
-  --border:               oklch(1 0 0 / 10%);
-  --faint:                oklch(0.3400 0.0300 260);   /* opaque: alpha reads as nothing on ink */
-  --hairline:             oklch(1 0 0 / 6%);
-  --input:                oklch(1 0 0 / 15%);
-  --ring:                 oklch(0.6481 0.1094 221.82);
+  --muted: oklch(0.2795 0.0368 260.03);
+  --muted-foreground: oklch(0.7107 0.0351 256.79);
+  --border: oklch(1 0 0 / 10%);
+  --faint: oklch(0.34 0.03 260); /* opaque: alpha reads as nothing on ink */
+  --hairline: oklch(1 0 0 / 6%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.6481 0.1094 221.82);
 
-  --ink:            oklch(0.2077 0.0398 265.75);
-  --ink-deep:       oklch(0.1288 0.0406 264.7);
+  --ink: oklch(0.2077 0.0398 265.75);
+  --ink-deep: oklch(0.1288 0.0406 264.7);
   --ink-foreground: oklch(0.869 0.0198 252.89);
 }
 
-@keyframes gradient { 0% { background-position: 0% } 50% { background-position: 100% } 100% { background-position: 0% } }
-@keyframes marquee  { from { transform: translateX(0) } to { transform: translateX(-33.333%) } }
+@keyframes gradient {
+  0% {
+    background-position: 0%;
+  }
+  50% {
+    background-position: 100%;
+  }
+  100% {
+    background-position: 0%;
+  }
+}
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-33.333%);
+  }
+}
 /* opacity only: `transform` is owned by the pointer/scroll parallax (§7.2).
    Animating transform here would replace the whole property and cancel it. */
-@keyframes orb      { 0%, 100% { opacity: .95 } 50% { opacity: .6 } }
+@keyframes orb {
+  0%,
+  100% {
+    opacity: 0.95;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -135,9 +159,7 @@
   --color-ink-foreground: var(--ink-foreground);
   --color-brand: var(--brand); /* raw #1f5da0            */
   --color-brand-light: var(--brand-light); /* raw #3a7bc8            */
-  --color-accent-strong: var(
-    --accent-strong
-  ); /* AA-safe accent on light*/
+  --color-accent-strong: var(--accent-strong); /* AA-safe accent on light*/
   --color-hairline: var(--hairline); /* lighter than --border  */
 
   /* next/font supplies hashed family names through these CSS variables, set on
