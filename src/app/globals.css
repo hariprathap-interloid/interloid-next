@@ -1,26 +1,484 @@
+/* ==========================================================================
+   Interloid — globals.css
+
+   The prototype split this in three because the Tailwind *browser* CDN cannot
+   resolve a relative @import (HANDOFF §5.12). That constraint is gone here, so
+   the three rejoin as one file, in the order TAILWIND-MAP §5 specifies:
+
+     1. @import "tailwindcss"
+     2. the semantic tokens  (was prototype3/theme.css)
+     3. @theme inline        (was the inline block in index.html)
+     4. non-utility CSS      (reveals, rail, focus rings, hero stage, keyframes)
+
+   §4 stays real CSS on purpose — TAILWIND-MAP §3: per-element `var(--delay)`
+   transitions, whole-component `prefers-reduced-motion`, and composed
+   focus-ring shadows cannot be expressed as utilities.
+
+   NOTE: the prototype carried this block TWICE — index.html lines 111-163 were
+   a byte-identical duplicate of the head of the surviving block. Ported once.
+   ========================================================================== */
+
 @import "tailwindcss";
 
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --radius: 0.75rem;
+
+  /* Surfaces ------------------------------------------------------------- */
+  --background:  oklch(0.9814 0.0045 258.32);   /* #f7f9fc — tinted, not white */
+  --foreground:  oklch(0.2077 0.0398 265.75);   /* #0f172a */
+  --card:        oklch(1 0 0);                  /* pure white — lifts off bg   */
+  --card-foreground:    oklch(0.2077 0.0398 265.75);
+  --popover:            oklch(1 0 0);
+  --popover-foreground: oklch(0.2077 0.0398 265.75);
+
+  /* Brand ---------------------------------------------------------------- */
+  --primary:            oklch(0.4751 0.1249 253.47);  /* #1f5da0 */
+  --primary-foreground: oklch(1 0 0);
+  --brand:              oklch(0.4751 0.1249 253.47);  /* #1f5da0 */
+  --brand-light:        oklch(0.5782 0.1362 254.36);  /* #3a7bc8 */
+
+  /* Accent. #289dbe is 3.15:1 on white — display sizes, icons and borders
+     only. For body-size accent text use --accent-strong (#1b7c99, 4.6:1). */
+  --accent:             oklch(0.6481 0.1094 221.82);  /* #289dbe */
+  --accent-foreground:  oklch(1 0 0);
+  --accent-strong:      oklch(0.5466 0.0947 223.53);  /* #1b7c99 */
+
+  /* Neutrals ------------------------------------------------------------- */
+  --secondary:            oklch(0.9621 0.0097 252.81); /* #eef3f9 alt section */
+  --secondary-foreground: oklch(0.4751 0.1249 253.47);
+  --muted:                oklch(0.9683 0.0069 247.9);  /* #f1f5f9 */
+  --muted-foreground:     oklch(0.5544 0.0407 257.42); /* #64748b body copy   */
+  --border:               oklch(0.9288 0.0126 255.51); /* #e2e8f0 */
+  /* Faint DISPLAY text (the stack marquee, inactive selector arrows). This used
+     to borrow --border, which works on light only: in dark --border is white at
+     10% alpha and the marquee all but disappeared. A border colour and a text
+     colour are not the same thing — they need separate tokens. */
+  --faint:                oklch(0.9288 0.0126 255.51); /* #e2e8f0 */
+  --hairline:             oklch(0.9683 0.0069 247.9);  /* #f1f5f9 */
+  --input:                oklch(0.9288 0.0126 255.51);
+  --ring:                 oklch(0.4751 0.1249 253.47);
+
+  /* Dark anchors --------------------------------------------------------- */
+  --ink:            oklch(0.2077 0.0398 265.75);  /* #0f172a CTA slab */
+  --ink-deep:       oklch(0.1288 0.0406 264.7);   /* #020617 footer   */
+  --ink-foreground: oklch(0.869 0.0198 252.89);   /* #cbd5e1          */
+
+  --destructive: oklch(0.577 0.245 27.325);
 }
+
+/* DS §1.2 rule 1: "Light-first. There is no dark mode." This block is declared
+   so the architecture is complete and a future toggle is a CSS-only change —
+   nothing in the prototype activates it today. */
+.dark {
+  --background:  oklch(0.1288 0.0406 264.7);
+  --foreground:  oklch(0.9842 0.0034 247.86);
+  --card:        oklch(0.2077 0.0398 265.75);
+  --card-foreground:    oklch(0.9842 0.0034 247.86);
+  --popover:            oklch(0.2077 0.0398 265.75);
+  --popover-foreground: oklch(0.9842 0.0034 247.86);
+
+  --primary:            oklch(0.6481 0.1094 221.82);
+  --primary-foreground: oklch(0.1288 0.0406 264.7);
+  --brand:              oklch(0.5782 0.1362 254.36);
+  --brand-light:        oklch(0.6481 0.1094 221.82);
+
+  --accent:             oklch(0.6481 0.1094 221.82);
+  --accent-foreground:  oklch(0.1288 0.0406 264.7);
+  --accent-strong:      oklch(0.7107 0.0351 256.79);
+
+  --secondary:            oklch(0.2795 0.0368 260.03);
+  --secondary-foreground: oklch(0.9842 0.0034 247.86);
+  --muted:                oklch(0.2795 0.0368 260.03);
+  --muted-foreground:     oklch(0.7107 0.0351 256.79);
+  --border:               oklch(1 0 0 / 10%);
+  --faint:                oklch(0.3400 0.0300 260);   /* opaque: alpha reads as nothing on ink */
+  --hairline:             oklch(1 0 0 / 6%);
+  --input:                oklch(1 0 0 / 15%);
+  --ring:                 oklch(0.6481 0.1094 221.82);
+
+  --ink:            oklch(0.2077 0.0398 265.75);
+  --ink-deep:       oklch(0.1288 0.0406 264.7);
+  --ink-foreground: oklch(0.869 0.0198 252.89);
+}
+
+@keyframes gradient { 0% { background-position: 0% } 50% { background-position: 100% } 100% { background-position: 0% } }
+@keyframes marquee  { from { transform: translateX(0) } to { transform: translateX(-33.333%) } }
+/* opacity only: `transform` is owned by the pointer/scroll parallax (§7.2).
+   Animating transform here would replace the whole property and cancel it. */
+@keyframes orb      { 0%, 100% { opacity: .95 } 50% { opacity: .6 } }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-faint: var(--faint);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Interloid-specific, beyond the shadcn set ---------------------------- */
+  --color-ink: var(--ink); /* dark CTA slab          */
+  --color-ink-deep: var(--ink-deep); /* footer                 */
+  --color-ink-foreground: var(--ink-foreground);
+  --color-brand: var(--brand); /* raw #1f5da0            */
+  --color-brand-light: var(--brand-light); /* raw #3a7bc8            */
+  --color-accent-strong: var(
+    --accent-strong
+  ); /* AA-safe accent on light*/
+  --color-hairline: var(--hairline); /* lighter than --border  */
+
+  /* next/font supplies hashed family names through these CSS variables, set on
+     <html> in layout.tsx. Both faces are SELF-HOSTED — Inter via
+     next/font/google, Satoshi via next/font/local from src/fonts/. That kills
+     the prototype's second font origin (api.fontshare.com), which HANDOFF §8
+     flagged as a DNS+TLS handshake against the FCP 364ms budget. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
+
+  --animate-gradient: gradient 8s linear infinite;
+  --animate-marquee: marquee 28s linear infinite;
+  --animate-orb: orb 10s ease-in-out infinite;
+
+  /* DS §1.2 rule 3 — "nothing is sharp". One knob scales every radius. */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 3.4);
+}
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 7rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* §13.1 scroll-reveal vocabulary: opacity 0→1, y 20→0, ~600ms, once. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.6s cubic-bezier(0, 0, 0.2, 1),
+    transform 0.6s cubic-bezier(0, 0, 0.2, 1);
+  transition-delay: var(--delay, 0ms);
+}
+[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* The process connector draws itself (§8.9). */
+[data-rail] {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
+}
+[data-rail].is-in {
+  transform: scaleX(1);
+}
+@media (max-width: 1023px) {
+  [data-rail] {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  [data-rail].is-in {
+    transform: scaleY(1);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* HANDOFF §5.2 — a component's own shadow out-cascades the global focus ring,
+     while the ring's outline:none still applies. Compose, never replace. */
+:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--background),
+    0 0 0 4px var(--ring);
+}
+.on-dark:focus-visible {
+  box-shadow:
+    0 0 0 2px var(--ink-deep),
+    0 0 0 4px var(--accent);
+}
+
+/* DS 9.10 shine sweep - reserved for the single most important CTA. */
+@keyframes shine {
+  0% {
+    opacity: 0;
+    left: -100%;
+  }
+  20% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 0;
+    left: 100%;
+  }
+}
+.shine::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 55%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.55),
+    transparent
+  );
+  transform: rotate(30deg);
+  animation: shine 5s 1.5s infinite;
+  pointer-events: none;
+}
+.shine > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes cue {
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+  }
+  50% {
+    transform: translate(-50%, 6px);
+  }
+}
+.scroll-cue {
+  animation: cue 2.4s ease-in-out infinite;
+}
+
+/* Placeholder outliner — every prototype ships one (HANDOFF §8). */
+body.show-ph [data-placeholder] {
+  outline: 2px dashed #e11d48;
+  outline-offset: 4px;
+  position: relative;
+}
+body.show-ph [data-placeholder]::after {
+  content: attr(data-placeholder);
+  position: absolute;
+  top: -0.5rem;
+  left: 0;
+  transform: translateY(-100%);
+  background: #e11d48;
+  color: #fff;
+  font:
+    700 10px/1.4 ui-monospace,
+    monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 60;
+  pointer-events: none;
+}
+
+/* ======================================================================
+   HERO STAGE — the WebGL mark (hero-logo.js + logo-points.json).
+   Replaces the orb/dot-grid hero. Light-first like the rest of the page;
+   `.dark` on <html> opts in and is a real, shipping mode here.
+
+   --hero-bg is the one knob: the fallback, the scrim and the bottom fade
+   all read it, so the two themes differ by a single declaration.
+   ====================================================================== */
+#home {
+  --hero-bg: var(--secondary);
+  background: var(--hero-bg);
+}
+html.dark #home {
+  --hero-bg: var(--ink-deep);
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
+.stage.ready canvas {
+  opacity: 1;
+}
+
+/* Stands in until (or instead of) WebGL. z-index 0, under the canvas. */
+.hero-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(
+      55% 50% at 78% 45%,
+      color-mix(in oklab, var(--brand) 16%, transparent),
+      transparent 70%
+    ),
+    var(--hero-bg);
+}
+html.dark .hero-fallback {
+  background:
+    radial-gradient(
+      55% 50% at 74% 45%,
+      color-mix(in oklab, var(--brand) 40%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      40% 40% at 86% 55%,
+      color-mix(in oklab, var(--accent) 34%, transparent),
+      transparent 70%
+    ),
+    var(--hero-bg);
+}
+
+/* The scrim is what keeps the copy readable over the cloud. Light is the
+   harder case — dark particles on a pale ground compete with dark text —
+   so the light scrim is wider and more opaque, not the same ramp. */
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  /* TWO layers, and both are load-bearing.
+
+     1. The top cap. The 90deg ramp below only protects the LEFT, where
+        the copy is — but the nav is full-width and transparent at rest,
+        so its right-hand controls (theme toggle, "Let's talk") sat over
+        the densest part of the cloud with nothing behind them. Stops are
+        in px, not %, because what has to be covered is the nav's fixed
+        height, not a fraction of the section. Solid through 78px covers
+        the pill (24–80px); the fade is spent by 170px, and the mark's
+        own top edge is at ~144px, so it is grazed, not clipped.
+     2. The 90deg ramp that keeps the copy readable over the cloud. */
+  background:
+    linear-gradient(
+      180deg,
+      var(--hero-bg) 0px,
+      color-mix(in oklab, var(--hero-bg) 82%, transparent) 78px,
+      transparent 170px
+    ),
+    linear-gradient(
+      90deg,
+      var(--hero-bg) 0%,
+      var(--hero-bg) 30%,
+      color-mix(in oklab, var(--hero-bg) 82%, transparent) 46%,
+      color-mix(in oklab, var(--hero-bg) 30%, transparent) 62%,
+      transparent 76%
+    );
+}
+html.dark .scrim {
+  background:
+    linear-gradient(
+      180deg,
+      var(--hero-bg) 0px,
+      color-mix(in oklab, var(--hero-bg) 82%, transparent) 78px,
+      transparent 170px
+    ),
+    linear-gradient(
+      90deg,
+      var(--hero-bg) 0%,
+      color-mix(in oklab, var(--hero-bg) 88%, transparent) 34%,
+      color-mix(in oklab, var(--hero-bg) 40%, transparent) 52%,
+      transparent 68%
+    );
+}
+
+/* Below 900px hero-logo.js moves the mark to a band across the TOP and
+   the copy stacks under it. A horizontal scrim protects nothing in that
+   arrangement, and vertically-centred copy fought the mark for the same
+   pixels — so: align to the top, clear 40vh, and run the ramp downward. */
+@media (max-width: 899px) {
+  #home {
+    align-items: flex-start;
+    /* This number is bought and paid for by hero copy length — it has
+       been 40 / 36 / 28 / 36 across four copy passes, tracking the lead
+       up and down. Round 10's lead is 32 words, so the mark gets its
+       band back. The scrim ramp below and hero-logo.js's SCALE cap both
+       key off this value; change it and re-run .verify-index.mjs, which
+       measures the CTA's bottom edge against the viewport. */
+    padding-top: 36vh;
+    padding-bottom: 5rem;
+  }
+  /* Two layers. The second is the main downward ramp that clears the
+     copy; the first is a cap over the top ~13%, because the nav is
+     transparent at rest and the cloud ran straight through the wordmark
+     — badly in light, where both are dark on pale. */
+  .scrim {
+    background:
+      linear-gradient(
+        180deg,
+        var(--hero-bg) 0%,
+        color-mix(in oklab, var(--hero-bg) 72%, transparent) 6%,
+        transparent 13%
+      ),
+      linear-gradient(
+        180deg,
+        transparent 0%,
+        color-mix(in oklab, var(--hero-bg) 40%, transparent) 17%,
+        color-mix(in oklab, var(--hero-bg) 92%, transparent) 27%,
+        var(--hero-bg) 34%
+      );
+  }
+}
+
+/* Only two hero-local tokens are needed; everything else is a theme.css
+   semantic token, so it flips with `.dark` for free. §5.8: #289dbe is
+   3.15:1 on white, so light uses --brand for the display line. */
+/* The cue sits bottom-centre; on a short viewport the CTA row is already
+   down there and the two collide (seen at 1280x720). It is an affordance,
+   not content — drop it rather than move the buttons. */
+@media (max-height: 780px) {
+  .scroll-cue {
+    display: none !important;
+  }
+}
+
+.t-accent {
+  color: var(--brand);
+}
+html.dark .t-accent {
+  color: var(--accent);
+}
+.hero-rule {
+  border-color: var(--border);
+}
+html.dark .hero-rule {
+  border-color: rgb(255 255 255 / 0.14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+  [data-rail] {
+    transform: none;
+  }
 }
