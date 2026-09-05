@@ -36,7 +36,7 @@ export default function Testimonials() {
               data-reveal
               style={{ "--delay": `${i * 100}ms` } as React.CSSProperties}
               data-placeholder="P0 TRUST: collect 2-3 real testimonials with written permission"
-              className="flex h-full flex-col rounded-3xl border border-border bg-card p-8 shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
+              className="flex h-full flex-col rounded-[1.5rem] border border-border bg-card p-8 shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
             >
               <span className="mb-4 text-faint" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="size-8">
@@ -48,7 +48,12 @@ export default function Testimonials() {
               </blockquote>
               <figcaption className="mt-auto flex items-center gap-3.5">
                 <span
-                  className="grid size-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand to-accent font-display text-[15px] font-bold text-white"
+                  /* 13px, not the 15px `.quote__avatar` asks for. In
+                     prototype 1 the sibling rule `.quote__who span` (0,1,1)
+                     out-specifies `.quote__avatar` (0,1,0) and wins, so the
+                     avatar RENDERS at 13px. Matched to the render, as asked —
+                     change to text-[15px] for the authored intent. */
+                  className="grid size-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand to-accent font-display text-[13px] font-bold text-white"
                   aria-hidden="true"
                 >
                   {q.i}

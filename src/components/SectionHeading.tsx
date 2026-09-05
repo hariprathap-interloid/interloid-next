@@ -20,7 +20,7 @@ export default function SectionHeading({
   lead,
   accent,
   children,
-  className = "max-w-3xl",
+  className = "max-w-2xl",
 }: {
   eyebrow: string;
   /** Prototype 1's badge form: a Lucide icon + sentence-case label at
@@ -38,7 +38,8 @@ export default function SectionHeading({
     <div className={`mb-16 ${className}`}>
       <div
         data-reveal
-        className={`mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 ${
+        /* prototype 1 puts the type on the badge itself, not an inner span. */
+        className={`mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium leading-[1.5] ${
           icon ? "shadow-sm" : ""
         }`}
       >
@@ -62,7 +63,10 @@ export default function SectionHeading({
       <h2
         data-reveal
         style={{ "--delay": "100ms" } as React.CSSProperties}
-        className="font-display text-4xl font-medium leading-tight tracking-tight text-foreground md:text-5xl lg:text-6xl"
+        /* prototype 1 `.h-section`: clamp(2rem, 4.5vw, 3.5rem) — 56px at the
+           top, NOT 60px; line-height 1.1, not Tailwind's leading-tight (1.25);
+           tracking -.025em from its `h1,h2,h3,h4` rule. */
+        className="font-display text-4xl font-medium leading-[1.1] tracking-[-0.025em] text-foreground md:text-5xl lg:text-[3.5rem]"
       >
         {children}{" "}
         <span className="bg-gradient-to-r from-brand to-accent bg-clip-text text-transparent">
@@ -73,7 +77,9 @@ export default function SectionHeading({
         <p
           data-reveal
           style={{ "--delay": "200ms" } as React.CSSProperties}
-          className="mt-6 text-lg text-muted-foreground"
+          /* `.intro`: 1.125rem at the body's 1.5 line-height — Tailwind's
+             text-lg would force 1.75. */
+          className="mt-6 text-lg leading-[1.5] text-muted-foreground"
         >
           {lead}
         </p>

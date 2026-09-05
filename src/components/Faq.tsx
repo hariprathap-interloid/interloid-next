@@ -51,7 +51,8 @@ export default function Faq() {
           </p>
         </div>
 
-        <div className="mx-auto flex max-w-3xl flex-col gap-4">
+        <div /* `.faq`: 52rem, wider than max-w-3xl's 48rem. */
+          className="mx-auto flex max-w-[52rem] flex-col gap-4">
           {FAQ.map((f, i) => {
             const isOpen = open === i;
             return (
@@ -59,7 +60,7 @@ export default function Faq() {
                 key={f.q}
                 data-reveal
                 style={{ "--delay": `${i * 60}ms` } as React.CSSProperties}
-                className={`overflow-hidden rounded-2xl border bg-card transition-all duration-300 ${
+                className={`overflow-hidden rounded-[1rem] border bg-card transition-all duration-300 ${
                   isOpen
                     ? "border-border shadow-md"
                     : "border-hairline hover:border-border hover:shadow-sm"
@@ -72,7 +73,7 @@ export default function Faq() {
                     aria-controls={`faq-a-${i}`}
                     id={`faq-q-${i}`}
                     onClick={() => setOpen(isOpen ? null : i)}
-                    className="flex w-full items-center justify-between gap-6 rounded-2xl p-6 text-left font-display text-[17px] font-semibold text-foreground focus-visible:shadow-[inset_0_0_0_2px_var(--ring)]"
+                    className="flex w-full items-center justify-between gap-6 rounded-[1rem] p-6 text-left font-display text-[17px] font-semibold text-foreground focus-visible:shadow-[inset_0_0_0_2px_var(--ring)]"
                   >
                     {f.q}
                     <span

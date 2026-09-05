@@ -60,7 +60,7 @@ export default function Hero() {
           <h1
             data-reveal
             style={{ "--delay": "100ms" } as React.CSSProperties}
-            className="mb-7 font-display text-[2.6rem] font-black leading-[1.04] tracking-tight text-foreground sm:text-5xl md:text-[3.5rem] lg:text-6xl 2xl:text-7xl"
+            className="mb-7 font-hero text-[2.6rem] font-black leading-[1.04] tracking-tight text-foreground sm:text-5xl md:text-[3.5rem] lg:text-6xl 2xl:text-7xl"
           >
             The problem isn&rsquo;t ideas.
             <br />

@@ -62,10 +62,13 @@ export default function Process() {
                   </div>
                 </div>
                 <div className="ml-8 flex flex-col items-start pt-2 text-left lg:ml-0 lg:mt-10 lg:items-center lg:text-center">
-                  <span className="mb-2 rounded-full bg-muted px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-widest text-accent-strong ring-1 ring-border">
+                  <span /* `.step__time`: Inter (NOT mono), .1875rem/.625rem padding,
+                     .08em tracking, on the page ground rather than muted. */
+                  className="mb-2 rounded-full bg-background px-2.5 py-[3px] text-[11px] font-bold uppercase tracking-[0.08em] text-accent-strong ring-1 ring-border">
                     {s.when}
                   </span>
-                  <h3 className="mb-3 font-display text-xl font-bold text-foreground transition-colors group-hover:text-primary lg:text-2xl">
+                  <h3 /* `.h-card`: 1.25rem/700/1.25 at every width — it does not step up. */
+                  className="mb-3 font-display text-xl font-bold leading-[1.5] tracking-[-0.025em] text-foreground transition-colors group-hover:text-primary">
                     {s.title}
                   </h3>
                   <p className="leading-relaxed text-muted-foreground lg:text-sm xl:text-base">

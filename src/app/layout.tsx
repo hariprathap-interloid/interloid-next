@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -11,7 +11,18 @@ const inter = Inter({
   display: "swap",
 });
 
-/* Display face. Satoshi is a Fontshare font, so there is no next/font/google
+/* Display face for EVERY section heading, card title and label: Outfit, which
+   is what prototype 1 used. Satoshi is now reserved for the hero H1 only —
+   the user's call, and it is a defensible one: one distinctive face used once,
+   at the largest size on the page, reads as deliberate; used everywhere it
+   just becomes the body font's louder sibling. */
+const outfit = Outfit({
+  variable: "--font-outfit",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+/* Hero H1 only. Satoshi is a Fontshare font, so there is no next/font/google
    loader for it — the four weights are vendored into src/fonts/ and loaded
    locally. This is what removes api.fontshare.com from the critical path.
 
@@ -51,7 +62,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${satoshi.variable}`}
+      className={`${inter.variable} ${outfit.variable} ${satoshi.variable}`}
     >
       {/* No manual <meta charset> or <meta name="viewport"> here: Next injects
           both automatically, and adding them by hand produced TWO of each in

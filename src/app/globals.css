@@ -20,16 +20,26 @@
 
 @import "tailwindcss";
 
+/* NEUTRALS ARE TAILWIND **v4** SLATE (corrected 2026-09-06).
+   They were written from v3 values — slate-500 #64748b, slate-900 #0f172a,
+   slate-300 #cbd5e1, slate-950 #020617 — while DESIGN-SYSTEM.md §2.2 specifies
+   v4 and the reference site renders v4. This is the exact trap HANDOFF §4 and
+   TAILWIND-MAP §1 call the highest-risk item in the port, arriving from the
+   unexpected side: the build was already pinned to v4, but these hand-written
+   tokens still encoded v3, so every neutral sat one hair off spec with nothing
+   visibly broken. Found by diffing the ported sections against prototype 1,
+   where all 17 remaining colour differences traced back to these four values.
+   Do not "restore" the old numbers. */
 :root {
   --radius: 0.75rem;
 
   /* Surfaces ------------------------------------------------------------- */
   --background: oklch(0.9814 0.0045 258.32); /* #f7f9fc — tinted, not white */
-  --foreground: oklch(0.2077 0.0398 265.75); /* #0f172a */
+  --foreground: oklch(0.2084 0.0417 266.36); /* #0f172b */
   --card: oklch(1 0 0); /* pure white — lifts off bg   */
-  --card-foreground: oklch(0.2077 0.0398 265.75);
+  --card-foreground: oklch(0.2084 0.0417 266.36);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2077 0.0398 265.75);
+  --popover-foreground: oklch(0.2084 0.0417 266.36);
 
   /* Brand ---------------------------------------------------------------- */
   --primary: oklch(0.4751 0.1249 253.47); /* #1f5da0 */
@@ -47,7 +57,7 @@
   --secondary: oklch(0.9621 0.0097 252.81); /* #eef3f9 alt section */
   --secondary-foreground: oklch(0.4751 0.1249 253.47);
   --muted: oklch(0.9683 0.0069 247.9); /* #f1f5f9 */
-  --muted-foreground: oklch(0.5544 0.0407 257.42); /* #64748b body copy   */
+  --muted-foreground: oklch(0.5542 0.0460 257.53); /* #62748e body copy   */
   --border: oklch(0.9288 0.0126 255.51); /* #e2e8f0 */
   /* Faint DISPLAY text (the stack marquee, inactive selector arrows). This used
      to borrow --border, which works on light only: in dark --border is white at
@@ -59,9 +69,9 @@
   --ring: oklch(0.4751 0.1249 253.47);
 
   /* Dark anchors --------------------------------------------------------- */
-  --ink: oklch(0.2077 0.0398 265.75); /* #0f172a CTA slab */
-  --ink-deep: oklch(0.1288 0.0406 264.7); /* #020617 footer   */
-  --ink-foreground: oklch(0.869 0.0198 252.89); /* #cbd5e1          */
+  --ink: oklch(0.2084 0.0417 266.36); /* #0f172b CTA slab */
+  --ink-deep: oklch(0.1298 0.0425 265.13); /* #020618 footer   */
+  --ink-foreground: oklch(0.8686 0.0216 252.51); /* #cad5e2          */
 
   --destructive: oklch(0.577 0.245 27.325);
 }
@@ -70,20 +80,20 @@
    so the architecture is complete and a future toggle is a CSS-only change —
    nothing in the prototype activates it today. */
 .dark {
-  --background: oklch(0.1288 0.0406 264.7);
+  --background: oklch(0.1298 0.0425 265.13);
   --foreground: oklch(0.9842 0.0034 247.86);
-  --card: oklch(0.2077 0.0398 265.75);
+  --card: oklch(0.2084 0.0417 266.36);
   --card-foreground: oklch(0.9842 0.0034 247.86);
-  --popover: oklch(0.2077 0.0398 265.75);
+  --popover: oklch(0.2084 0.0417 266.36);
   --popover-foreground: oklch(0.9842 0.0034 247.86);
 
   --primary: oklch(0.6481 0.1094 221.82);
-  --primary-foreground: oklch(0.1288 0.0406 264.7);
+  --primary-foreground: oklch(0.1298 0.0425 265.13);
   --brand: oklch(0.5782 0.1362 254.36);
   --brand-light: oklch(0.6481 0.1094 221.82);
 
   --accent: oklch(0.6481 0.1094 221.82);
-  --accent-foreground: oklch(0.1288 0.0406 264.7);
+  --accent-foreground: oklch(0.1298 0.0425 265.13);
   --accent-strong: oklch(0.7107 0.0351 256.79);
 
   --secondary: oklch(0.2795 0.0368 260.03);
@@ -96,9 +106,9 @@
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.6481 0.1094 221.82);
 
-  --ink: oklch(0.2077 0.0398 265.75);
-  --ink-deep: oklch(0.1288 0.0406 264.7);
-  --ink-foreground: oklch(0.869 0.0198 252.89);
+  --ink: oklch(0.2084 0.0417 266.36);
+  --ink-deep: oklch(0.1298 0.0425 265.13);
+  --ink-foreground: oklch(0.8686 0.0216 252.51);
 }
 
 @keyframes gradient {
@@ -168,7 +178,11 @@
      the prototype's second font origin (api.fontshare.com), which HANDOFF §8
      flagged as a DNS+TLS handshake against the FCP 364ms budget. */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
+  /* Outfit everywhere the design says "display" — prototype 1's face. */
+  --font-display: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  /* Satoshi is reserved for the hero H1. `font-hero` is the only way to reach
+     it; do not widen that. */
+  --font-hero: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
 
   --animate-gradient: gradient 8s linear infinite;
   --animate-marquee: marquee 28s linear infinite;

@@ -29,7 +29,9 @@ export default function CtaAnchor() {
   return (
     <section id="contact" className="relative bg-background px-4 pb-24 pt-8 sm:px-6">
       <div className="mx-auto max-w-7xl">
-        <div className="relative flex flex-col items-center justify-center overflow-hidden rounded-4xl bg-ink px-6 py-12 text-center shadow-2xl sm:px-16 sm:py-16">
+        <div /* `.cta`: 4rem/1.5rem, then 5rem/4rem at sm. Radius is a flat 3rem,
+              not the token scale's rounded-4xl (2.55rem). */
+          className="relative flex flex-col items-center justify-center overflow-hidden rounded-[3rem] bg-ink px-6 py-16 text-center shadow-2xl sm:px-16 sm:py-20">
           <div
             className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-brand/40 via-ink to-ink"
             aria-hidden="true"
@@ -68,7 +70,7 @@ export default function CtaAnchor() {
             {/* This paragraph is the reason to take prototype 1's version:
                 offering to name someone else is the most disarming thing on
                 the page, and it costs nothing to say. */}
-            <p className="mb-10 max-w-xl text-[17px] leading-[1.7] text-ink-foreground/80">
+            <p className="mb-10 max-w-xl text-[17px] leading-[1.7] text-ink-foreground">
               Book 30 minutes. We&rsquo;ll tell you honestly whether we&rsquo;re
               the right fit &mdash; and if we&rsquo;re not, who is.
             </p>
