@@ -1,3 +1,5 @@
+import Icon from "./Icon";
+
 /* The eyebrow badge + two-tone H2 + optional lead, repeated identically by
    Services, Advantage, Process and Selected Work. In the prototype this was
    four hand-copied blocks; here it is one component, which is exactly the
@@ -14,12 +16,17 @@
    H1 is the only font-black on the page. */
 export default function SectionHeading({
   eyebrow,
+  icon,
   lead,
   accent,
   children,
   className = "max-w-3xl",
 }: {
   eyebrow: string;
+  /** Prototype 1's badge form: a Lucide icon + sentence-case label at
+   *  text-sm, instead of the dot + uppercase micro-label. Pass an icon name
+   *  to opt in. */
+  icon?: string;
   /** The neutral clause. */
   children: React.ReactNode;
   /** The single gradient clause. */
@@ -31,10 +38,24 @@ export default function SectionHeading({
     <div className={`mb-16 ${className}`}>
       <div
         data-reveal
-        className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2"
+        className={`mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 ${
+          icon ? "shadow-sm" : ""
+        }`}
       >
-        <span className="size-1.5 rounded-full bg-accent" aria-hidden="true" />
-        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+        {icon ? (
+          <span className="text-accent-strong">
+            <Icon name={icon} className="size-4" />
+          </span>
+        ) : (
+          <span className="size-1.5 rounded-full bg-accent" aria-hidden="true" />
+        )}
+        <span
+          className={
+            icon
+              ? "text-sm font-medium text-muted-foreground"
+              : "text-[10px] font-bold uppercase tracking-widest text-muted-foreground"
+          }
+        >
           {eyebrow}
         </span>
       </div>

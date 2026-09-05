@@ -3,9 +3,12 @@
    specifically to become `.map()` calls (TAILWIND-MAP §4). Editing copy means
    editing this file; no component changes.
 
-   Only HANDOFF §7's six allowed numeric claims appear as fact anywhere here:
+   Claims allowed as fact, per HANDOFF §7 plus the 2026-09-06 confirmation:
    free 30-min consult · 48-hr written proposal · weekly working demo ·
-   30 days post-launch support · 30-day notice · 100% code/IP ownership.
+   30 days post-launch support · 30-day notice · 100% code/IP ownership ·
+   $25k–$90k build range · 8–12 week first version (14–20 larger) ·
+   engineers with 8–12 years each · no juniors substituted after signing.
+   Anything NOT on that list stays data-placeholder — see CASES and QUOTES.
    ========================================================================== */
 
 export type Hue = "brand" | "accent" | "light" | "indigo" | "teal";
@@ -220,3 +223,80 @@ export const CASES = [
   title: string;
   body: string;
 }[];
+
+/* ==========================================================================
+   FAQ — lifted from prototype/script.js.
+
+   CONFIRMED AS FACT by the user 2026-09-06. These four were previously
+   unverifiable and would have needed data-placeholder:
+     · $25k–$90k per full build, monthly per engineer for augmentation
+     · 8–12 weeks to a focused first version, 14–20 for larger platforms
+     · senior engineers with 8–12 years of experience each
+     · no juniors swapped in after signing
+
+   That confirmation also closes HANDOFF §7's open P1 on pricing — the site now
+   publishes a range rather than claiming transparency without one. Do not
+   soften these back to qualitative language without asking; they are load-
+   bearing answers to the questions that actually block a booking. */
+export const FAQ = [
+  {
+    q: "What does a typical project cost?",
+    a: "Most full builds land between $25k and $90k depending on scope. Staff augmentation runs monthly per engineer. We give you a fixed number in writing within 48 hours of the first call — and we’ll tell you upfront if your budget and scope don’t match.",
+  },
+  {
+    q: "How long until we launch?",
+    a: "A focused first version is typically 8–12 weeks. Larger platforms run 14–20. We work in short sprints with a working demo every week, so you see progress rather than waiting for a reveal.",
+  },
+  {
+    q: "Who actually writes the code?",
+    a: "Senior engineers with 8–12 years of experience each. The people on your discovery call are the people on your project. We don’t swap in juniors after the contract is signed.",
+  },
+  {
+    q: "What happens if we want to leave?",
+    a: "You take everything. All code, infrastructure, documentation and credentials are yours throughout — not handed over at the end. There is no notice period on ownership and nothing is licensed back to you.",
+  },
+  {
+    q: "You’re in India — how does that work across timezones?",
+    a: "We keep deliberate overlap with US and UK business hours for standups, demos and anything urgent. Async by default, with a guaranteed live window every working day.",
+  },
+  {
+    q: "Can you work with our existing team and codebase?",
+    a: "Yes — that’s most of our staff-augmentation work. We join your repo, your board and your review process rather than running a parallel track.",
+  },
+];
+
+/* ==========================================================================
+   TESTIMONIALS — §8.3.
+
+   STILL PLACEHOLDER, and deliberately so. Every card and the pull-quote carry
+   data-placeholder. A testimonials block with visible "Placeholder Name" is
+   worse than no testimonials at all: an empty space reads as an early company,
+   a fake quote reads as a company that fabricates proof. The quotes themselves
+   are plausible drafts of what a real client might say — they are here to hold
+   the design, not to ship. Replace with real, permissioned quotes before
+   launch (HANDOFF §7 P0, same bucket as the case studies). */
+export const QUOTES = [
+  {
+    q: "They pushed back on half our original scope and were right about all of it. We shipped smaller and sooner than we planned.",
+    n: "Placeholder Name",
+    r: "VP Product, Placeholder Co",
+    i: "PN",
+  },
+  {
+    q: "The handover was the most complete I have received from any vendor. Our team picked it up without a single follow-up call.",
+    n: "Placeholder Name",
+    r: "CTO, Placeholder Co",
+    i: "PN",
+  },
+  {
+    q: "Weekly demos meant no surprises. We knew exactly where we were the entire build.",
+    n: "Placeholder Name",
+    r: "Founder, Placeholder Co",
+    i: "PN",
+  },
+];
+
+export const PULL_QUOTE = {
+  q: "The weekly demo changed how our own team works. We stopped writing status reports and started showing the thing.",
+  who: "Placeholder Name · Head of Product, Placeholder Co",
+};

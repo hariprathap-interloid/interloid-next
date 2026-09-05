@@ -38,12 +38,16 @@ export default function Advantage() {
       />
 
       <div className="relative z-10 mx-auto max-w-7xl">
+        {/* Structure, badge form and the five tiles are unchanged — those were
+            settled in phase 1. Only the headline and intro take prototype 1's
+            copy: "the things agencies won't put in writing" names the enemy,
+            where "commitments we put in writing" only describes us. */}
         <SectionHeading
           eyebrow="Why Interloid"
-          accent="put in writing."
-          lead="Not values. Terms — the things you can hold us to from day one."
+          accent={"won’t put in writing."}
+          lead="We commit to these in the contract, not just on the website."
         >
-          Commitments we
+          The things agencies
         </SectionHeading>
 
         <div className="grid gap-6 md:grid-cols-2 lg:auto-rows-[300px] lg:grid-cols-3">

@@ -15,7 +15,18 @@ export default function Process() {
       className="relative overflow-hidden border-t border-border bg-background py-32"
     >
       <div className="relative z-10 mx-auto max-w-7xl px-6">
-        <SectionHeading eyebrow="How an engagement runs" accent="code you own.">
+        {/* Badge converted to prototype 1's form (icon + sentence case).
+            The headline stays "code you own" rather than prototype 1's
+            "production": production is table stakes, ownership is the
+            differentiator. Intro line is prototype 1's — the current section
+            had none, and it earns its place by naming the two things a buyer
+            actually worries about. */}
+        <SectionHeading
+          eyebrow="How we work"
+          icon="clock"
+          accent="code you own."
+          lead="Every step is timeboxed and written down. You always know what happens next and what it costs."
+        >
           From first call to
         </SectionHeading>
 
@@ -51,7 +62,7 @@ export default function Process() {
                   </div>
                 </div>
                 <div className="ml-8 flex flex-col items-start pt-2 text-left lg:ml-0 lg:mt-10 lg:items-center lg:text-center">
-                  <span className="mb-2 rounded-full bg-muted px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-widest text-muted-foreground ring-1 ring-border">
+                  <span className="mb-2 rounded-full bg-muted px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-widest text-accent-strong ring-1 ring-border">
                     {s.when}
                   </span>
                   <h3 className="mb-3 font-display text-xl font-bold text-foreground transition-colors group-hover:text-primary lg:text-2xl">

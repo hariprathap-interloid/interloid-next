@@ -1,3 +1,5 @@
+import Icon from "./Icon";
+
 /* DS §11.1 — a light section wrapping a dark rounded slab.
 
    The 24 drifting particles use a seeded LCG so the layout is identical on
@@ -43,20 +45,33 @@ export default function CtaAnchor() {
           </div>
 
           <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center">
+            {/* prototype 1's `.badge--dark`: uppercase, tracking-[.2em],
+                accent-coloured icon and label — a different object from the
+                light-section badge, not the same one recoloured. */}
             <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-sm">
-              <span className="size-1.5 rounded-full bg-accent" aria-hidden="true" />
-              <span className="text-sm font-medium text-ink-foreground">
-                Free 30-minute consult · written proposal in 48 hours
+              <span className="text-accent" aria-hidden="true">
+                <Icon name="star" className="size-4" />
+              </span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
+                Let&rsquo;s start
               </span>
             </div>
 
-            <h2 className="mb-8 font-display text-4xl font-medium leading-tight tracking-tight text-white md:text-5xl lg:text-7xl">
-              Ready to turn a plan
+            <h2 className="mb-5 font-display text-4xl font-medium leading-[1.1] tracking-tight text-white md:text-5xl lg:text-6xl">
+              Still comparing
               <br />
               <span className="bg-gradient-to-r from-accent to-brand-light bg-clip-text text-transparent">
-                into working software?
+                development partners?
               </span>
             </h2>
+
+            {/* This paragraph is the reason to take prototype 1's version:
+                offering to name someone else is the most disarming thing on
+                the page, and it costs nothing to say. */}
+            <p className="mb-10 max-w-xl text-[17px] leading-[1.7] text-ink-foreground/80">
+              Book 30 minutes. We&rsquo;ll tell you honestly whether we&rsquo;re
+              the right fit &mdash; and if we&rsquo;re not, who is.
+            </p>
 
             {/* `on-dark` swaps the focus ring for the dark-ground variant.
                 HANDOFF §5.2: a component's own box-shadow out-cascades the
@@ -82,9 +97,27 @@ export default function CtaAnchor() {
               </svg>
             </a>
 
+            {/* prototype 1's `.cta__meta` — three objection-removers under
+                the button, where the hesitation actually happens. */}
+            <ul className="mt-10 flex flex-wrap justify-center gap-6">
+              {["No obligation", "No sales pressure", "Proposal in 48 hours"].map(
+                (m) => (
+                  <li
+                    key={m}
+                    className="flex items-center gap-2 text-[13px] text-ink-foreground/70"
+                  >
+                    <span className="text-accent" aria-hidden="true">
+                      <Icon name="check" className="size-3.5" />
+                    </span>
+                    {m}
+                  </li>
+                ),
+              )}
+            </ul>
+
             {/* §10.1's conversational form is still unbuilt — this is a bare
                 mailto. HANDOFF §6 item 5. */}
-            <p className="mt-6 text-sm text-ink-foreground/70">
+            <p className="mt-8 text-sm text-ink-foreground/70">
               Or email{" "}
               <a
                 href="mailto:hello@interloid.com"

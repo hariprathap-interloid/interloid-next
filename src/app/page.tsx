@@ -1,5 +1,6 @@
 import Advantage from "@/components/Advantage";
 import CtaAnchor from "@/components/CtaAnchor";
+import Faq from "@/components/Faq";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import Nav from "@/components/Nav";
@@ -8,6 +9,7 @@ import Process from "@/components/Process";
 import Reveal from "@/components/Reveal";
 import Services from "@/components/Services";
 import StackMarquee from "@/components/StackMarquee";
+import Testimonials from "@/components/Testimonials";
 import Work from "@/components/Work";
 
 /* The full page, section order per PROTOTYPE3-BRIEF §2's ledger.
@@ -31,6 +33,8 @@ export default function Home() {
         <Advantage />
         <Process />
         <Work />
+        <Testimonials />
+        <Faq />
         <CtaAnchor />
       </main>
       <Footer />
