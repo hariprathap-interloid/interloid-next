@@ -143,7 +143,25 @@
   --accent-foreground: oklch(0.1298 0.0425 265.13);
   --accent-strong: oklch(0.7107 0.0351 256.79);
 
-  --secondary: oklch(0.2795 0.0368 260.03);
+  /* ── THE ALT SECTION GROUND MUST STAY BELOW --card ────────────────────
+     Was oklch(0.2795 0.0368 260.03) (#1e293b) — the same value as --muted,
+     and that was the bug rather than the taste. In dark it made --secondary
+     the LIGHTEST surface on the page, above --card:
+
+         background #020618 L .0021  <  card #0f172b L .0089  <  #1e293b L .0218
+
+     So on the two `bg-secondary` sections (Advantage and the FAQ) the cards
+     were DARKER than the ground they sat on — 0.82x, a hole rather than a
+     lift — while the same cards lifted 1.13x on every other section. Light
+     mode has it right (card #fff is the lightest thing there); dark had the
+     stack upside down.
+
+     It now sits BETWEEN background and card, so the order matches light mode's
+     intent — the alternating band still reads, and cards lift on every
+     section. Deliberately NOT shared with --muted any more: --muted is a chip
+     and hover ground (Nav, the Services pills) which sits ON dark sections and
+     is supposed to come forward. Same colour, opposite jobs. */
+  --secondary: oklch(0.166 0.043 264.5);
   --secondary-foreground: oklch(0.9842 0.0034 247.86);
   --muted: oklch(0.2795 0.0368 260.03);
   --muted-foreground: oklch(0.7107 0.0351 256.79);
