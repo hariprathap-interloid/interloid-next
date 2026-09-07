@@ -15,16 +15,20 @@ export default function Process() {
       className="relative overflow-hidden border-t border-border bg-background py-32"
     >
       <div className="relative z-10 mx-auto max-w-7xl px-6">
-        {/* Badge converted to prototype 1's form (icon + sentence case).
-            The headline stays "code you own" rather than prototype 1's
-            "production": production is table stakes, ownership is the
-            differentiator. Intro line is prototype 1's — the current section
-            had none, and it earns its place by naming the two things a buyer
-            actually worries about. */}
+        {/* Badge is prototype 1's form (icon + sentence case).
+
+            THE ACCENT IS "production." AGAIN. An earlier pass changed it to
+            "code you own" on the argument that production is table stakes and
+            ownership is the differentiator. That was reversed on 2026-09-07:
+            ownership is now stated four times over in the Why Interloid
+            section, so repeating it here spent the headline on a point already
+            made, and "first call to code you own" describes a deliverable
+            where "first call to production" describes the journey the four
+            steps below actually walk through. Prototype 1 had it right. */}
         <SectionHeading
           eyebrow="How we work"
           icon="clock"
-          accent="code you own."
+          accent="production."
           lead="Every step is timeboxed and written down. You always know what happens next and what it costs."
         >
           From first call to

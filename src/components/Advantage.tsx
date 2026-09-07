@@ -14,7 +14,18 @@ import { BENTO } from "@/content/site";
    the array length rather than hard-coded, so a 5-tile set falls back to
    prototype 1's original single wide tile without an edit here.
 
-   `lg:auto-rows-[18rem]` is prototype 1's 18rem, not prototype3's 300px. */
+   THE ROW HEIGHT IS A MIN, NOT A TRACK — changed 2026-09-07, and it is a bug
+   fix. `lg:auto-rows-[18rem]` defined a fixed grid TRACK, and a track cannot
+   grow: between the lg breakpoint and ~1280px the three columns are narrow
+   enough that the copy wraps past 18rem, and the tile (overflow-hidden) cut
+   it. Measured on the running build: 5 of 7 tiles clipped at 1024px, up to
+   50px; 1 tile at 1180px; clean from 1280px up. Every screenshot in this
+   project had been taken at 1440, which is why it survived.
+
+   The fix is `min-h-[18rem]` on the TILE (see CommitmentTile) with auto rows
+   here: prototype 1's 18rem proportion is kept as a floor, and copy that needs
+   more room gets it. Verified clean at 1024/1180/1280/1440/1600 in
+   why-interloid-lab.html, layout G. Do not put a fixed height back. */
 export default function Advantage() {
   const last = BENTO.length - 1;
 
@@ -42,7 +53,7 @@ export default function Advantage() {
           Commitments we
         </SectionHeading>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:auto-rows-[18rem] lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {BENTO.map((b, i) => (
             <CommitmentTile
               key={b.title}

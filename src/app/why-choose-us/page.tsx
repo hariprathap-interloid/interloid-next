@@ -85,7 +85,7 @@ export default function WhyChooseUs() {
             {/* Five tiles: 2 + 1 + 1 + 1 = the wide tile plus four singles
                 fills two rows of three exactly, which is the arrangement
                 prototype 1's grid was designed around. */}
-            <div className="grid gap-6 md:grid-cols-2 lg:auto-rows-[18rem] lg:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {all.map((c, i) => (
                 <CommitmentTile
                   key={c.title}

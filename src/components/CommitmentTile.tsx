@@ -63,7 +63,18 @@ import Icon from "./Icon";
       frame — and per HANDOFF §5.14 it must not touch `transform`, which would
       cancel the plate's hover scale.
 
-   3. GLASS, NOT CARD. bg-white/60 over a tinted section with a 16px backdrop
+   3. WIDE TILES LIE DOWN. A `lg:col-span-2` tile is ~810px wide holding two
+      lines of copy, so stacking the plate above the title left 59-86px of
+      forced gap (measured in why-interloid-lab.html, layout A). At lg the wide
+      form turns into a row — plate beside the copy — which spends the extra
+      width instead of padding the height. Narrow viewports keep the stack,
+      because there is no spare width to spend there.
+
+      `lg:min-h-[18rem]` is prototype 1's 18rem proportion kept as a FLOOR. It
+      replaced `lg:auto-rows-[18rem]` on the grid, which was a fixed track and
+      cut copy between 1024 and 1280px — see the note in Advantage.tsx.
+
+   4. GLASS, NOT CARD. bg-white/60 over a tinted section with a 16px backdrop
       blur — the section's orbs are meant to show through. A solid `bg-card`
       kills the effect entirely.
 
@@ -146,8 +157,8 @@ export default function CommitmentTile({
       ref={node as React.RefObject<HTMLElement>}
       onPointerMove={spot}
       onPointerLeave={stop}
-      className={`group relative flex flex-col justify-between overflow-hidden rounded-[1.5rem] border border-border/80 bg-card/60 p-8 shadow-[0_20px_35px_-20px_rgba(15,23,43,.25)] backdrop-blur-[16px] transition-all duration-500 hover:border-border hover:bg-card/85 hover:shadow-[0_28px_50px_-20px_rgba(31,93,160,.22)] ${
-        wide ? "lg:col-span-2" : ""
+      className={`group relative flex flex-col justify-between overflow-hidden rounded-[1.5rem] border border-border/80 bg-card/60 p-8 shadow-[0_20px_35px_-20px_rgba(15,23,43,.25)] backdrop-blur-[16px] transition-all duration-500 lg:min-h-[18rem] hover:border-border hover:bg-card/85 hover:shadow-[0_28px_50px_-20px_rgba(31,93,160,.22)] ${
+        wide ? "lg:col-span-2 lg:flex-row lg:items-center lg:gap-8" : ""
       }`}
     >
       {/* Layer 1 - the wash. Five stops, unmasked; see 2 and 2b above. */}
@@ -185,11 +196,13 @@ export default function CommitmentTile({
       <div /* shrink-0 is load-bearing: the tile is a flex column inside a fixed
          18rem row, so on a tile with long copy the plate gets squashed —
          measured 44.9px instead of 56px before this. */
-      className="relative z-10 mb-8 grid size-14 shrink-0 place-items-center rounded-[1rem] border border-white bg-card/85 text-brand shadow-sm backdrop-blur-[8px] transition-transform duration-500 group-hover:scale-110">
+      className={`relative z-10 mb-8 grid size-14 shrink-0 place-items-center rounded-[1rem] border border-white bg-card/85 text-brand shadow-sm backdrop-blur-[8px] transition-transform duration-500 group-hover:scale-110 ${
+          wide ? "lg:mb-0" : ""
+        }`}>
         <Icon name={item.k} className="size-6" />
       </div>
 
-      <div className="relative z-10 mt-auto">
+      <div className={`relative z-10 mt-auto ${wide ? "lg:mt-0" : ""}`}>
         <h3
           className={`mb-3 font-display font-bold leading-[1.5] tracking-[-0.025em] text-foreground ${
             wide ? "text-[1.75rem]" : "text-[1.375rem]"

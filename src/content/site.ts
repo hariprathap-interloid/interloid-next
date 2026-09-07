@@ -144,49 +144,49 @@ export const STACK = [
    Every claim is on HANDOFF §7's allowed list. */
 export const BENTO = [
   {
-    k: "lock",
+    k: "key-round",
     hue: "brand",
     span: "",
     title: "You own 100% of the code",
     body: "Every repo, every credential, every architecture decision transfers to you. No proprietary framework, no licence, no hostage situation. It’s in the contract, not just on this page.",
   },
   {
-    k: "wallet",
+    k: "receipt",
     hue: "indigo",
     span: "",
     title: "Fixed price or transparent hourly",
     body: "You know the number before we start. Scope changes are quoted, never surprise-invoiced.",
   },
   {
-    k: "users",
+    k: "user-check",
     hue: "light",
     span: "",
     title: "Senior engineers only",
     body: "The people on your call are the people writing the code. No bait-and-switch to juniors after signing.",
   },
   {
-    k: "handshake",
+    k: "split",
     hue: "teal",
     span: "",
     title: "We tell you when to walk away",
     body: "If your project doesn’t need us, or needs someone else, we say so on the first call.",
   },
   {
-    k: "zap",
+    k: "phone",
     hue: "accent",
     span: "",
     title: "Small team, direct line",
     body: "You talk to the engineer building your feature — not an account manager relaying messages to a pod.",
   },
   {
-    k: "repeat",
+    k: "monitor-play",
     hue: "accent",
     span: "",
     title: "A working demo every week",
     body: "Not a status report. Software you can click, every week, from week one.",
   },
   {
-    k: "shield",
+    k: "buoy",
     hue: "teal",
     span: "",
     title: "30 days of post-launch support",
@@ -211,34 +211,52 @@ export const COMMITMENTS_EXTRA = [] as const satisfies readonly {
   body: string;
 }[];
 
+/* ==========================================================================
+   HOW WE WORK — the four steps.
+
+   Replaced 2026-09-07 with prototype 1's `process` array verbatim (its
+   script.js), which is the approved reference for this section. What changed
+   and why it matters:
+
+   TITLES ARE NOW PHRASES, NOT LABELS. "Consult / Proposal / Build / Handover"
+   were nouns naming a stage; "Discovery call / Written proposal / Build in the
+   open / Launch & handover" say what actually happens. "Build in the open" in
+   particular is a claim, where "Build" was a category.
+
+   THE `when` CHIP CARRIES THE COMMITMENT. "Day 0 / Within 48h / Weekly /
+   +30 days" described a schedule. "30 minutes / 48 hours / Weekly demos /
+   30-day support" names the thing being promised, and each one is already on
+   HANDOFF §7's allowed list — they restate commitments the Why Interloid
+   section makes, rather than introducing new claims. The chip upper-cases in
+   CSS; store it sentence case. ========================================== */
 export const STEPS = [
   {
     k: "search",
     n: "01",
-    title: "Consult",
-    when: "Day 0",
-    body: "A free 30-minute call. You describe the problem; we tell you whether we are the right team for it.",
+    title: "Discovery call",
+    when: "30 minutes",
+    body: "A free, no-pressure call. We assess feasibility, rough timeline and budget — and tell you if you don’t need us.",
   },
   {
     k: "doc",
     n: "02",
-    title: "Proposal",
-    when: "Within 48h",
-    body: "Scope, price, timeline and assumptions in writing. Fixed price or transparent hourly — your choice.",
+    title: "Written proposal",
+    when: "48 hours",
+    body: "Scope, milestones and a fixed price or transparent hourly rate. In writing, so you can compare it against anyone else.",
   },
   {
     k: "code",
     n: "03",
-    title: "Build",
-    when: "Weekly",
-    body: "Two-week cycles with a working demo every week, in your repos and your accounts from commit one.",
+    title: "Build in the open",
+    when: "Weekly demos",
+    body: "Short sprints with a working demo every week. You have access to the repo and the board from day one.",
   },
   {
     k: "rocket",
     n: "04",
-    title: "Handover",
-    when: "+30 days",
-    body: "Documentation, a walkthrough with your team, and 30 days of support after go-live.",
+    title: "Launch & handover",
+    when: "30-day support",
+    body: "We ship it, document it and hand over the keys. 30 days of support included, then a retainer only if you want one.",
   },
 ];
 
