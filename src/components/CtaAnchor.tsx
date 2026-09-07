@@ -1,3 +1,4 @@
+import CtaStage from "./CtaStage";
 import Icon from "./Icon";
 
 /* DS §11.1 — a light section wrapping a dark rounded slab.
@@ -58,20 +59,28 @@ export default function CtaAnchor() {
       <div className="mx-auto max-w-7xl">
         <div /* `.cta`: 4rem/1.5rem, then 5rem/4rem at sm. Radius is a flat 3rem,
               not the token scale's rounded-4xl (2.55rem). */
+          data-cta-slab
           className="relative flex flex-col items-center justify-center overflow-hidden rounded-[3rem] bg-ink px-6 py-16 text-center shadow-[0_25px_50px_-12px_rgba(15,23,43,.35)] sm:px-16 sm:py-20">
           <div
             className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-brand/40 via-ink to-ink"
             aria-hidden="true"
           />
           <div
-            className="pointer-events-none absolute bottom-0 left-1/2 h-[400px] w-full max-w-[800px] -translate-x-1/2 rounded-t-full bg-accent/25 blur-[120px]"
+            className="pointer-events-none absolute bottom-0 left-1/2 h-[400px] w-full max-w-[800px] -translate-x-1/2 rounded-t-full bg-accent/14 blur-[120px]"
             aria-hidden="true"
           />
-          <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          {/* The no-JS / no-WebGL field. CtaStage fades this out once its
+              canvas has drawn — see its note on the handshake. */}
+          <div
+            data-cta-fallback
+            className="pointer-events-none absolute inset-0"
+            aria-hidden="true"
+          >
             {particles().map((p, i) => (
               <span key={i} className="absolute rounded-full bg-white" style={p} />
             ))}
           </div>
+          <CtaStage />
 
           <div className="relative z-10 mx-auto flex max-w-4xl flex-col items-center">
             {/* prototype 1's `.badge--dark`: uppercase, tracking-[.2em],
@@ -111,7 +120,7 @@ export default function CtaAnchor() {
                 replacing it. */}
             <a
               href="mailto:hello@interloid.com"
-              className="on-dark group inline-flex h-14 items-center gap-2 rounded-full border border-white/12 bg-ink-cta px-10 text-[17px] font-bold text-white shadow-[0_0_40px_-10px_rgba(40,157,190,.6)] transition-[background-color,box-shadow] duration-300 ease-out hover:bg-ink-cta-hover hover:shadow-[0_0_60px_-10px_rgba(40,157,190,1)] active:scale-95"
+              className="on-dark group inline-flex h-14 items-center gap-2 rounded-full border border-white/12 bg-ink-cta px-10 text-[17px] font-bold text-white shadow-[0_0_36px_-14px_rgba(40,157,190,.34)] transition-[background-color,box-shadow] duration-300 ease-out hover:bg-ink-cta-hover hover:shadow-[0_0_46px_-14px_rgba(40,157,190,.52)] active:scale-95"
             >
               Book a free 30-min consult
               <svg

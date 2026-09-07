@@ -114,11 +114,13 @@
      drops saturation reads as dimming whatever the luminance does. So the
      hover stays in the blue family and simply lightens.
 
-     #2d74c4 is the brightest blue that still clears AA on the label: white on
-     it is 4.77:1, and the button's 17px bold text is NOT "large text" under
-     WCAG (that starts at 18.66px bold), so it needs the full 4.5:1, not 3:1.
-     brand-light #3a7bc8 was the obvious pick and measures 4.33:1 — it fails. */
-  --ink-cta-hover: #2d74c4; /* a LIGHTER BLUE, not the teal */
+     It then went too far the other way: #2d74c4 (1.41x) read as too bright,
+     so this is #2666a8 — a 1.13x lift, which is enough to register as a state
+     change and not enough to flare. It also buys contrast back: white on it is
+     5.92:1 against #2d74c4's 4.77:1, and the button's 17px bold label is NOT
+     "large text" under WCAG (that starts at 18.66px bold), so it needs the
+     full 4.5:1, not 3:1 — 5.92 is a margin, 4.77 was a squeak. */
+  --ink-cta-hover: #2666a8; /* a LIGHTER BLUE, not the teal */
 
   --destructive: oklch(0.577 0.245 27.325);
 }
@@ -404,6 +406,16 @@ body.show-ph [data-placeholder]::after {
    --hero-bg is the one knob: the fallback, the scrim and the bottom fade
    all read it, so the two themes differ by a single declaration.
    ====================================================================== */
+/* The CTA slab's CSS particles are the fallback for CtaStage. They stay put
+   until the canvas has drawn a frame, then cross-fade out, so a failed or slow
+   WebGL boot leaves a field on screen rather than an empty slab. */
+[data-cta-fallback] {
+  transition: opacity 0.8s ease-out;
+}
+[data-cta-slab][data-webgl="ready"] [data-cta-fallback] {
+  opacity: 0;
+}
+
 #home {
   --hero-bg: var(--secondary);
   background: var(--hero-bg);
