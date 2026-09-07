@@ -9,10 +9,16 @@
    mechanisms:
 
      slice      one vertical slice crossing every layer, in production first
-     lineage    a dashboard figure traceable back to the row it came from
+     stores     one codebase, one release train, two app stores
+     api        one typed contract, many clients, with the data behind it
      deploy     push → plan → deploy → observe, with the rollback arc
      retrieval  a model call wrapped in retrieval, guardrails and evaluation
      merge      two lanes of engineers converging on one repository
+
+   Rebuilt 2026-09-08 for the live site's SIX services: `stores` and `api`
+   are new (Mobile and Backend were one service before), and `lineage` was
+   retired with the Data & analytics capability, which interloid.com does not
+   sell as a separate service.
 
    ── THREE CONSTRAINTS, ALL LOAD-BEARING ─────────────────────────────────
    1. NO `id`s, no `<defs>`, no gradients. Every diagram renders TWICE on the
@@ -185,122 +191,258 @@ function Slice() {
   );
 }
 
-/* ── 02 · DATA & ANALYTICS ─────────────────────────────────────────────────
-   A figure on a dashboard, and the path back to the row that produced it.
-   The single dashed return arrow is the whole point: lineage is a property of
-   the pipeline, not a document about it. */
-function Lineage() {
-  const nodes = [
-    { x: 40, label: "Source rows", micro: "INGEST" },
-    { x: 190, label: "Modelled", micro: "TRANSFORM" },
-    { x: 340, label: "Metric, once", micro: "DEFINITION" },
-  ];
+/* ── 02 · MOBILE ───────────────────────────────────────────────────────────
+   One codebase, one release train, two stores. The claim being drawn is the
+   one the live site makes as "one team, two platforms": the shared trunk is
+   wide and the platform-specific work is the two short branches at the end,
+   not two parallel builds. The store-review gate is drawn because it is the
+   part every client forgets exists until it rejects them. */
+function Stores() {
   return (
-    <Frame label="A dashboard figure traced back through a single metric definition and a transform step to the source rows it came from, with quality checks gating the path.">
-      {nodes.map((n, i) => (
-        <g key={n.label}>
+    <Frame label="A single shared codebase feeding one release pipeline, which branches at the end into iOS and Android store submissions, each passing a review gate. Native modules attach to the shared trunk where the bridge is the wrong answer.">
+      {/* shared codebase */}
+      <rect
+        x={32}
+        y={158}
+        width={150}
+        height={84}
+        rx={18}
+        className="fill-indigo-600/10 stroke-indigo-600"
+        strokeWidth={1.5}
+      />
+      <Micro x={50} y={186}>
+        ONE CODEBASE
+      </Micro>
+      <Label x={50} y={210} strong>
+        React Native
+      </Label>
+      <Label x={50} y={230}>
+        TypeScript
+      </Label>
+
+      {/* native modules attaching to the trunk */}
+      <rect
+        x={214}
+        y={62}
+        width={132}
+        height={44}
+        rx={12}
+        className="fill-muted stroke-border"
+        strokeWidth={1}
+      />
+      <Label x={280} y={89} anchor="middle">
+        native modules
+      </Label>
+      <path
+        d="M280 106 v46"
+        className="stroke-border"
+        strokeWidth={1.5}
+        strokeDasharray="4 4"
+      />
+
+      {/* the release train */}
+      <path d="M182 200 h44" className="stroke-indigo-600" strokeWidth={2} />
+      <rect
+        x={226}
+        y={168}
+        width={108}
+        height={64}
+        rx={16}
+        className="fill-card stroke-indigo-600"
+        strokeWidth={1.5}
+      />
+      <Micro x={242} y={192}>
+        ONE PIPELINE
+      </Micro>
+      <Label x={242} y={214} strong>
+        Release
+      </Label>
+
+      {/* split to the two stores */}
+      <path
+        d="M334 200 C 372 200, 372 132, 410 132"
+        className="stroke-indigo-600"
+        strokeWidth={2}
+      />
+      <path
+        d="M334 200 C 372 200, 372 268, 410 268"
+        className="stroke-indigo-600"
+        strokeWidth={2}
+      />
+
+      {[
+        { y: 104, micro: "REVIEW GATE", label: "App Store" },
+        { y: 240, micro: "REVIEW GATE", label: "Play Store" },
+      ].map((s) => (
+        <g key={s.label}>
           <rect
-            x={n.x}
-            y={120}
-            width={130}
-            height={92}
+            x={410}
+            y={s.y}
+            width={122}
+            height={56}
             rx={16}
             className="fill-card stroke-border"
             strokeWidth={1}
           />
-          <Micro x={n.x + 16} y={146}>
-            {n.micro}
+          <Micro x={426} y={s.y + 22}>
+            {s.micro}
           </Micro>
-          <Label x={n.x + 16} y={172} strong>
-            {n.label}
+          <Label x={426} y={s.y + 42} strong>
+            {s.label}
           </Label>
-          {/* three rows of "data" inside the first node only */}
-          {i === 0 &&
-            [0, 1, 2].map((r) => (
-              <rect
-                key={r}
-                x={n.x + 16}
-                y={182 + r * 8}
-                width={r === 1 ? 60 : 92}
-                height={4}
-                rx={2}
-                className="fill-teal-600/40"
-              />
-            ))}
-          {i > 0 && (
-            <rect
-              x={n.x + 16}
-              y={182}
-              width={98}
-              height={4}
-              rx={2}
-              className="fill-teal-600/40"
-            />
-          )}
-          {i < 2 && (
-            <path
-              d={`M${n.x + 130} 166 h20`}
-              className="stroke-teal-600"
-              strokeWidth={1.5}
-              markerEnd=""
-            />
-          )}
         </g>
       ))}
 
-      {/* the dashboard figure */}
+      {/* signed once */}
       <rect
-        x={410}
-        y={104}
-        width={120}
-        height={124}
-        rx={18}
-        className="fill-card stroke-teal-600"
-        strokeWidth={1.5}
+        x={226}
+        y={286}
+        width={108}
+        height={38}
+        rx={12}
+        className="fill-muted stroke-border"
+        strokeWidth={1}
       />
-      <Micro x={426} y={130}>
-        DASHBOARD
-      </Micro>
-      <text
-        x={426}
-        y={172}
-        fill="currentColor"
-        className="fill-foreground"
-        style={{ fontSize: 28, fontWeight: 700 }}
-      >
-        1,284
-      </text>
-      <Label x={426} y={196}>
-        active accounts
+      <Label x={280} y={310} anchor="middle">
+        signing, in CI
       </Label>
-      <path d="M390 166 h20" className="stroke-teal-600" strokeWidth={1.5} />
-
-      {/* the return path — lineage */}
       <path
-        d="M470 244 v34 H105 v-42"
-        className="stroke-teal-600"
+        d="M280 286 v-54"
+        className="stroke-border"
         strokeWidth={1.5}
-        strokeDasharray="5 5"
+        strokeDasharray="4 4"
       />
-      <Micro x={288} y={296} anchor="middle">
-        TRACEABLE BACK TO THE ROW
-      </Micro>
 
-      {/* quality gate */}
+      <Micro x={280} y={356} anchor="middle">
+        ONE TEAM, BOTH PLATFORMS
+      </Micro>
+    </Frame>
+  );
+}
+
+/* ── 03 · BACKEND & APIs ───────────────────────────────────────────────────
+   One typed contract in the middle, several clients on the left, the data and
+   the operational surface behind it. The section's claim is that growth does
+   not require a rewrite, so what is drawn is the seam: clients depend on the
+   contract, never on the store behind it. */
+function Api() {
+  return (
+    <Frame label="Web, mobile and third-party clients all calling one typed, versioned API contract, which fronts a primary database, a cache and background jobs, with traces and alerts on the side.">
+      {/* clients */}
+      {[
+        { y: 66, label: "Web app" },
+        { y: 150, label: "Mobile app" },
+        { y: 234, label: "Partners" },
+      ].map((c) => (
+        <g key={c.label}>
+          <rect
+            x={28}
+            y={c.y}
+            width={116}
+            height={54}
+            rx={14}
+            className="fill-card stroke-border"
+            strokeWidth={1}
+          />
+          <Label x={44} y={c.y + 33}>
+            {c.label}
+          </Label>
+          <path
+            d={`M144 ${c.y + 27} H196`}
+            className="stroke-teal-600"
+            strokeWidth={1.5}
+          />
+        </g>
+      ))}
+
+      {/* the contract */}
       <rect
         x={196}
-        y={40}
-        width={168}
+        y={54}
+        width={140}
+        height={226}
+        rx={20}
+        className="fill-teal-600/10 stroke-teal-600"
+        strokeWidth={1.5}
+      />
+      <Micro x={266} y={84} anchor="middle">
+        TYPED · VERSIONED
+      </Micro>
+      <Label x={266} y={112} anchor="middle" strong>
+        API contract
+      </Label>
+      {["GET /orders", "POST /orders", "GET /orders/:id"].map((r, i) => (
+        <g key={r}>
+          <rect
+            x={212}
+            y={132 + i * 40}
+            width={108}
+            height={30}
+            rx={9}
+            className="fill-card stroke-border"
+            strokeWidth={1}
+          />
+          <text
+            x={224}
+            y={152 + i * 40}
+            fill="currentColor"
+            className="fill-muted-strong"
+            style={{ fontSize: 11, fontWeight: 600 }}
+          >
+            {r}
+          </text>
+        </g>
+      ))}
+      <Micro x={266} y={302} anchor="middle">
+        THE SEAM THAT SURVIVES GROWTH
+      </Micro>
+
+      {/* behind it */}
+      {[
+        { y: 54, micro: "PRIMARY", label: "PostgreSQL" },
+        { y: 138, micro: "HOT PATH", label: "Redis cache" },
+        { y: 222, micro: "IDEMPOTENT", label: "Background jobs" },
+      ].map((n) => (
+        <g key={n.label}>
+          <path
+            d={`M336 ${n.y + 29} H388`}
+            className="stroke-teal-600"
+            strokeWidth={1.5}
+            strokeDasharray="4 4"
+          />
+          <rect
+            x={388}
+            y={n.y}
+            width={144}
+            height={58}
+            rx={14}
+            className="fill-card stroke-border"
+            strokeWidth={1}
+          />
+          <Micro x={404} y={n.y + 24}>
+            {n.micro}
+          </Micro>
+          <Label x={404} y={n.y + 44} strong>
+            {n.label}
+          </Label>
+        </g>
+      ))}
+
+      {/* operations */}
+      <rect
+        x={388}
+        y={306}
+        width={144}
         height={40}
         rx={12}
         className="fill-muted stroke-border"
         strokeWidth={1}
       />
-      <Label x={280} y={65} anchor="middle">
-        quality checks in CI
+      <Label x={460} y={331} anchor="middle">
+        traces & alerts
       </Label>
       <path
-        d="M280 80 v34"
+        d="M460 306 v-26"
         className="stroke-border"
         strokeWidth={1.5}
         strokeDasharray="4 4"
@@ -309,7 +451,7 @@ function Lineage() {
   );
 }
 
-/* ── 03 · CLOUD & DEVOPS ───────────────────────────────────────────────────
+/* ── 04 · CLOUD & DEVOPS ───────────────────────────────────────────────────
    The loop, with the rollback drawn as a first-class arc rather than an
    afterthought — the section's claim is that the client's own team can run
    both directions of it. */
@@ -383,7 +525,7 @@ function Deploy() {
   );
 }
 
-/* ── 04 · AI INTEGRATION ───────────────────────────────────────────────────
+/* ── 05 · AI INTEGRATION ───────────────────────────────────────────────────
    The demo-versus-shipped distinction, drawn: the model call is the small
    box in the middle, and everything around it — retrieval, guardrails,
    evaluation, cost ceiling — is what makes it survive review. */
@@ -533,7 +675,7 @@ function Retrieval() {
   );
 }
 
-/* ── 05 · TEAM AUGMENTATION ────────────────────────────────────────────────
+/* ── 06 · STAFF AUGMENTATION ────────────────────────────────────────────────
    Two lanes converging into one branch — the claim being that there is one
    repository and one review process, not a vendor track reporting in. The
    exit arrow at the right is the 30-day notice, drawn because it is the
@@ -611,7 +753,8 @@ function Merge() {
 
 const DIAGRAMS: Record<string, () => React.ReactElement> = {
   slice: Slice,
-  lineage: Lineage,
+  stores: Stores,
+  api: Api,
   deploy: Deploy,
   retrieval: Retrieval,
   merge: Merge,

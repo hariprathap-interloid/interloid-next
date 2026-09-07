@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
 import Reveal from "@/components/Reveal";
 import ApproachPrinciples from "@/components/service/ApproachPrinciples";
-import CapabilityShowcase from "@/components/service/CapabilityShowcase";
+import CapabilitiesAndStacks from "@/components/service/CapabilitiesAndStacks";
 import EngagementPanel from "@/components/service/EngagementPanel";
 import { ModeProvider } from "@/components/service/ModeContext";
 import ProblemLedger from "@/components/service/ProblemLedger";
@@ -15,7 +15,7 @@ import { SERVICE_START } from "@/content/service";
 export const metadata: Metadata = {
   title: "Services — build it with us, or extend your team | Interloid",
   description:
-    "Product engineering, data & analytics, cloud & DevOps, AI integration and team augmentation. Built from scratch in your own accounts, or senior engineers embedded in your team on contract. Written scope and price within 48 hours.",
+    "Web and mobile development, backend and APIs, cloud infrastructure and DevOps, AI integration and staff augmentation. Built from scratch in your own accounts, or senior engineers embedded in your team on contract. Written scope and price within 48 hours.",
 };
 
 /* ==========================================================================
@@ -33,8 +33,11 @@ export const metadata: Metadata = {
                           the rest of the page.
      ProblemLedger        five sentences a client actually says, each opening
                           onto a concrete answer.
-     CapabilityShowcase   the five capabilities, each drawn as a working
+     CapabilitiesAndStacks
+       CapabilityShowcase the six live services, each drawn as a working
                           mechanism in a sticky panel that follows the read.
+       TechStacks         interloid.com's #technologies tabs, rebuilt with
+                          real brand marks instead of emoji.
      ApproachPrinciples   the method — with the last line of each principle
                           written for the mode you picked.
      EngagementPanel      the terms of that mode, before anything is asked.
@@ -58,11 +61,15 @@ export const metadata: Metadata = {
    the CTA's light band. Each section owns its own ground and `border-t`.
 
    ── CLAIMS ───────────────────────────────────────────────────────────────
-   Every fact stated on this page is on HANDOFF §7's allowed list, which is
-   why it carries NO data-placeholder — the first page on this site that
-   doesn't. There is deliberately no client count, no logo wall and no named
-   customer. Keep it that way: a new line that needs a flag needs the user's
-   confirmation more than it needs to ship.
+   The content is interloid.com's OWN #services and #technologies sections,
+   read with Playwright on 2026-09-08 at the user's instruction. Its outcome
+   bullets carry performance numbers that are not on HANDOFF §7's allowed
+   list ("save 40%", "99.99% uptime SLA", "50+ deploys a day", "60% fewer
+   support tickets", "SOC 2 / HIPAA"), so each of those renders under
+   `data-placeholder` and is listed in service.ts's banner. Two live claims
+   CONTRADICTED verified ones and were reconciled to the verified figure
+   rather than flagged — the 30-60 day timeline and "10+ years" experience.
+   The $25k–$90k range was removed from this page on request.
    ========================================================================== */
 export default function Services() {
   return (
@@ -79,7 +86,7 @@ export default function Services() {
         <ModeProvider>
           <ServiceHero />
           <ProblemLedger />
-          <CapabilityShowcase />
+          <CapabilitiesAndStacks />
           <ApproachPrinciples />
           <EngagementPanel />
           <ServiceTerms />

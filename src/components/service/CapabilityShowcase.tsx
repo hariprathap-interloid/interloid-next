@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Icon from "../Icon";
 import SectionHeading from "../SectionHeading";
-import TechIcon from "../TechIcon";
 import Diagram from "./Diagrams";
+import TechLogo from "./TechLogo";
 import { CAPABILITIES } from "@/content/service";
 import { HUE } from "@/content/site";
 
@@ -48,7 +48,14 @@ import { HUE } from "@/content/site";
    the DOM and only their opacity/visibility classes change. Every
    [data-reveal] node keeps a static className.
    ========================================================================== */
-export default function CapabilityShowcase() {
+export default function CapabilityShowcase({
+  onStackLink,
+}: {
+  /** Selects the matching tab in <TechStacks> when a "whole stack" link is
+      followed, so the anchor lands on the stack the reader was reading about
+      rather than on whichever tab happened to be open. */
+  onStackLink: (i: number) => void;
+}) {
   const [active, setActive] = useState(0);
   const blocks = useRef<(HTMLElement | null)[]>([]);
 
@@ -96,11 +103,11 @@ export default function CapabilityShowcase() {
         <SectionHeading
           eyebrow="What we do"
           icon="layers"
-          accent="a working mechanism."
-          lead="Five capabilities, one team, and the same senior engineers from the first call to handover. Each is drawn here as the thing it actually is, so you can judge the mechanism rather than the adjective."
+          accent="for modern businesses."
+          lead="Six services, one team, and the same senior engineers from the first call to handover. Each is drawn here as the mechanism it actually is, so you can judge the engineering rather than the adjective."
           className="max-w-3xl"
         >
-          Not a service list —
+          Full-stack development
         </SectionHeading>
 
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
@@ -190,12 +197,16 @@ export default function CapabilityShowcase() {
                     className="mt-8 flex items-center gap-2 font-display text-[12px] font-bold uppercase tracking-[0.14em] text-muted-foreground"
                   >
                     <Icon name="check" className="size-4 text-accent-strong" />
-                    What lands in your repo
+                    What you get
                   </h4>
+                  {/* The live site's own outcome bullets. `ph` marks the ones
+                      whose numbers are unverified — the component renders the
+                      flag so `npm run verify` and the placeholder toggle count
+                      them; site.ts's banner lists which and why. */}
                   <ul className="mt-4 space-y-3">
-                    {c.deliver.map((d, j) => (
+                    {c.outcomes.map((o, j) => (
                       <li
-                        key={d}
+                        key={o.text}
                         data-reveal
                         style={
                           { "--delay": `${280 + j * 60}ms` } as React.CSSProperties
@@ -203,10 +214,14 @@ export default function CapabilityShowcase() {
                         className="flex gap-3 text-[15px] leading-[1.7] text-muted-strong"
                       >
                         <span
-                          className={`mt-[9px] size-1.5 shrink-0 rounded-full ${h.tile}`}
+                          className={`mt-1 shrink-0 ${h.text}`}
                           aria-hidden="true"
-                        />
-                        {d}
+                        >
+                          <Icon name="check" className="size-4" />
+                        </span>
+                        <span {...(o.ph ? { "data-placeholder": o.ph } : {})}>
+                          {o.text}
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -214,25 +229,36 @@ export default function CapabilityShowcase() {
                   {/* Technology supports the story rather than being it: the
                       marks sit UNDER the argument, small, and the capability
                       whose stack is the client's own carries none. */}
-                  {c.tech && (
-                    <ul
-                      data-reveal
-                      style={{ "--delay": "460ms" } as React.CSSProperties}
-                      className="mt-7 flex flex-wrap items-center gap-2"
-                    >
-                      <li className="mr-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                        Usually
-                      </li>
-                      {c.tech.map((t) => (
-                        <li
-                          key={t}
-                          className="grid size-9 place-items-center rounded-xl bg-white ring-1 ring-border"
-                        >
-                          <TechIcon name={t} className="size-5" />
+                  {/* A TASTE of the stack, not the stack: the first group's
+                      marks, then a link into the full tabbed section below.
+                      Technology supports the story here; #technologies is
+                      where it gets to be the subject. */}
+                  <div
+                    data-reveal
+                    style={{ "--delay": "460ms" } as React.CSSProperties}
+                    className="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2"
+                  >
+                    <span className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                      Built with
+                    </span>
+                    <ul className="flex flex-wrap items-center gap-2">
+                      {c.stack[0].items.slice(0, 6).map((t) => (
+                        <li key={t.name}>
+                          <TechLogo tech={t} size="sm" />
                         </li>
                       ))}
                     </ul>
-                  )}
+                    <a
+                      href="#technologies"
+                      onClick={() => onStackLink(i)}
+                      className="group/link inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary transition-colors hover:text-accent-strong"
+                    >
+                      the whole stack
+                      <span className="transition-transform group-hover/link:translate-x-1">
+                        <Icon name="arrow" className="size-4" />
+                      </span>
+                    </a>
+                  </div>
                 </article>
               );
             })}

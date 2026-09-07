@@ -40,20 +40,25 @@ ok("home · hero cue → #advantage", (await page.locator('a[href="#advantage"]'
 /* ---- /services structure ---------------------------------------------- */
 await page.goto(BASE + "/services", { waitUntil: "networkidle" });
 await page.waitForTimeout(700);
-for (const id of ["services-top", "problems", "capabilities", "approach", "engagement", "terms", "start"])
+for (const id of ["services-top", "problems", "capabilities", "technologies", "approach", "engagement", "terms", "start"])
   ok(`services · #${id}`, (await page.locator(`#${id}`).count()) === 1);
 ok("services · exactly one h1", (await page.locator("h1").count()) === 1);
-ok("services · no placeholders on the page", (await page.locator("main [data-placeholder]").count()) === 0);
+/* The live site's outcome bullets carry unverified performance numbers; each
+   is deliberately flagged rather than silently published (service.ts banner).
+   The check is that they ARE flagged, and that the count is what we expect. */
+const phCount = await page.locator("main [data-placeholder]").count();
+ok(`services · unverified live metrics are flagged (${phCount})`, phCount === 10);
+ok("services · the price range is gone", !(await page.locator("main").innerText()).includes("$25k"));
 
 /* ---- the mode switch drives the page ---------------------------------- */
 const heroText = () => page.locator("#mode-panel-hero").innerText();
 ok("mode · defaults to build", (await heroText()).includes("build the thing you can't staff"));
-ok("mode · hero figure is the build range", (await page.locator("#services-top").innerText()).includes("$25k–$90k"));
+ok("mode · hero figure is the verified timeline", (await page.locator("#services-top").innerText()).includes("8–12 wks"));
 await page.click("#mode-tab-1");
 await page.waitForTimeout(250);
 ok("mode · switching rewrites the H1", (await heroText()).includes("join the team you already have"));
 ok("mode · switching rewrites the CTA", (await heroText()).includes("Add engineers to our team"));
-ok("mode · switching rewrites the figure", (await page.locator("#services-top").innerText()).includes("Monthly"));
+ok("mode · switching rewrites the figure", (await page.locator("#services-top").innerText()).includes("30 days"));
 ok("mode · roving tabindex", (await page.getAttribute("#mode-tab-1", "tabindex")) === "0" && (await page.getAttribute("#mode-tab-0", "tabindex")) === "-1");
 await page.focus("#mode-tab-1");
 await page.keyboard.press("ArrowLeft");
@@ -81,7 +86,7 @@ ok("problems · opening row 2 reveals the answer", (await p1.evaluate((e) => get
 ok("problems · accordion closes the previous row", (await firstBtn.getAttribute("aria-expanded")) === "false");
 
 /* ---- the scroll-linked capability panel -------------------------------- */
-await page.evaluate(() => document.getElementById("capability-product").scrollIntoView({ behavior: "instant", block: "center" }));
+await page.evaluate(() => document.getElementById("capability-web").scrollIntoView({ behavior: "instant", block: "center" }));
 await page.waitForTimeout(700);
 const panelActive = () =>
   page.evaluate(() => {
@@ -89,13 +94,38 @@ const panelActive = () =>
     const shown = [...stage.querySelectorAll("[aria-hidden]")].filter((e) => e.getAttribute("aria-hidden") === "false");
     return shown.map((e) => e.querySelector("svg")?.getAttribute("aria-label")?.slice(0, 40));
   });
-ok("capabilities · panel shows the product diagram", (await panelActive())[0]?.startsWith("Four product layers"));
+ok("capabilities · panel shows the web diagram", (await panelActive())[0]?.startsWith("Four product layers"));
 await page.evaluate(() => document.getElementById("capability-ai").scrollIntoView({ behavior: "instant", block: "center" }));
 await page.waitForTimeout(800);
 ok("capabilities · panel follows the scroll to AI", (await panelActive())[0]?.startsWith("A workflow step"));
 ok("capabilities · exactly one diagram visible at a time", (await panelActive()).length === 1);
-ok("capabilities · index marks the active one", (await page.locator('#capabilities a[aria-current="true"]').innerText()).includes("AI integration"));
-ok("capabilities · every diagram has an accessible name", (await page.locator("#capabilities svg[role=img]:not([aria-label=''])").count()) >= 5);
+ok("capabilities · index marks the active one", (await page.locator('#capabilities a[aria-current="true"]').innerText()).includes("AI Integration"));
+ok("capabilities · every diagram has an accessible name", (await page.locator("#capabilities svg[role=img]:not([aria-label=''])").count()) >= 6);
+
+/* ---- the technology stacks -------------------------------------------- */
+await page.evaluate(() => document.getElementById("technologies").scrollIntoView({ behavior: "instant", block: "start" }));
+await page.waitForTimeout(500);
+ok("tech · six service tabs", (await page.locator("#technologies [role=tab]").count()) === 6);
+ok("tech · one panel visible, the rest hidden", (await page.locator("#technologies [role=tabpanel]:not(.hidden)").count()) === 1);
+const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u;
+ok("tech · no emoji anywhere in the section", !EMOJI.test(await page.locator("#technologies").innerText()));
+await page.click("#stack-tab-2");
+await page.waitForTimeout(300);
+ok("tech · switching tab swaps the stack", (await page.locator("#technologies [role=tabpanel]:not(.hidden)").innerText()).includes("PostgreSQL"));
+ok("tech · roving tabindex", (await page.getAttribute("#stack-tab-2", "tabindex")) === "0" && (await page.getAttribute("#stack-tab-0", "tabindex")) === "-1");
+const logos = await page.locator("#technologies [role=tabpanel]:not(.hidden) img").count();
+ok(`tech · brand marks render (${logos} in this panel)`, logos >= 8);
+const broken = await page.evaluate(() =>
+  [...document.querySelectorAll("#technologies img")].filter((i) => i.complete && i.naturalWidth === 0).length,
+);
+ok(`tech · no broken logo files (${broken})`, broken === 0);
+/* the cross-link: reading about Mobile and following "the whole stack" must
+   select Mobile's tab, not whichever happened to be open */
+await page.evaluate(() => document.getElementById("capability-mobile").scrollIntoView({ behavior: "instant", block: "center" }));
+await page.waitForTimeout(400);
+await page.click('#capability-mobile a[href="#technologies"]');
+await page.waitForTimeout(400);
+ok("tech · capability link selects that service's tab", (await page.getAttribute("#stack-tab-1", "aria-selected")) === "true");
 
 /* ---- reveals ----------------------------------------------------------- */
 await sweep(page);
@@ -114,7 +144,7 @@ await page.waitForTimeout(400);
 ok("theme · dark changes the ground", (await bg()) !== light);
 /* the diagrams must not carry literal colours: check a stroke resolves to a
    token that actually changed between themes */
-await page.evaluate(() => document.getElementById("capability-data").scrollIntoView({ behavior: "instant", block: "center" }));
+await page.evaluate(() => document.getElementById("capability-backend").scrollIntoView({ behavior: "instant", block: "center" }));
 await page.waitForTimeout(600);
 await page.screenshot({ path: join(HERE, "svc-dark-capabilities.png") });
 await page.click('button[aria-label*="light theme"]');
@@ -170,7 +200,7 @@ for (const [w, h, tag] of [[390, 844, "mobile"], [768, 1024, "tablet"], [1920, 1
     });
     ok(`${tag} · sticky panel is not used`, !stickyVisible);
     const inline = await page.locator("#capabilities .lg\\:hidden svg[role=img]").count();
-    ok(`${tag} · diagrams render inline instead (${inline})`, inline >= 5);
+    ok(`${tag} · diagrams render inline instead (${inline})`, inline >= 6);
   }
   await sweep(page);
   await page.waitForTimeout(1400);

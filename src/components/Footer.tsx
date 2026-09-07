@@ -4,13 +4,13 @@
    links that do not resolve yet carry data-placeholder so the toggle counts
    them; they are not hidden. `/careers` resolved on 2026-09-07 and lost its
    flag; `/about` has not. */
-const SERVICE_LINKS = [
-  "Product engineering",
-  "Data & analytics",
-  "Cloud & DevOps",
-  "AI integration",
-  "Team augmentation",
-];
+import { CAPABILITIES } from "@/content/service";
+
+/* The six services, matching /services and the live site exactly. Derived
+   from CAPABILITIES rather than hand-kept: a footer that names a service the
+   services page does not have is how a nav loses trust, and this list has
+   already drifted once. */
+const SERVICE_LINKS = CAPABILITIES.map((c) => c.name);
 
 const COMPANY_LINKS = [
   /* "Commitments", matching the nav. Same destination, and it was the
