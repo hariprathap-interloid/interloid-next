@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Answers from "@/components/Answers";
 import Clauses from "@/components/Clauses";
-import CommitmentTile from "@/components/CommitmentTile";
 import CtaAnchor from "@/components/CtaAnchor";
 import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
@@ -10,7 +9,7 @@ import Reveal from "@/components/Reveal";
 import SoundFamiliar from "@/components/SoundFamiliar";
 import WeekStrip from "@/components/WeekStrip";
 import WhyHero from "@/components/WhyHero";
-import { BENTO, COMMITMENTS_EXTRA, WHY_QUOTE } from "@/content/site";
+import { WHY_QUOTE } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Why Interloid — the commitments we put in writing",
@@ -20,10 +19,27 @@ export const metadata: Metadata = {
 
 /* /why-choose-us — the standalone page for the commitment set.
 
-   The 2026-09-06 home/page split was reverted on 2026-09-07: home now carries
-   the full set, and this page renders the SAME list (BENTO plus the
-   now-empty COMMITMENTS_EXTRA, kept so the split can be re-made without
-   touching this file). It is still linked from the nav and the footer.
+   ── SECTION ORDER IS THE BUYER'S SEQUENCE, 2026-09-08 ─────────────────────
+   Ordered so a prospect can get from "who are you" to "book the call" without
+   backtracking, each section answering the question the previous one raises:
+
+     1  WhyHero        the claim            — every vendor sounds identical
+     2  SoundFamiliar  is this me?          — four problems in the client's voice
+     3  Clauses        the substance        — the five clauses, as a document
+     4  PullQuote      proof                — + the only route to the case studies
+     5  WeekStrip      what it looks like   — the agreement on a Tuesday
+     6  Answers        objections           — the six awkward questions
+     7  CtaAnchor      the ask              — book 30 minutes
+
+   Claim → relevance → substance → proof → texture → objections → ask. The
+   two conversion points are the hero and the closing slab; everything between
+   them exists to remove a reason not to click one of the two.
+
+   NOTE the commitment GRID (BENTO via CommitmentTile) is deliberately not
+   here — the Clauses document says the same five things in the form the page
+   argues for, and home already renders the grid through Advantage. The unused
+   CommitmentTile/BENTO imports were removed 2026-09-08; do not re-add them
+   expecting a rendered section.
 
    ── PORTED FROM prototype2-archive/why-choose-us.html, 2026-09-07 ─────────
    The page was the commitment grid and nothing else. It now carries the
@@ -46,8 +62,6 @@ export const metadata: Metadata = {
    fabricated proof — the review flags it explicitly. Both claim lines (here
    and in the agreement's foot) are marked data-placeholder until then. */
 export default function WhyChooseUs() {
-  const all = [...BENTO, ...COMMITMENTS_EXTRA];
-
   return (
     <>
       <Reveal />
@@ -66,21 +80,30 @@ export default function WhyChooseUs() {
             commitment. No `capabilitiesHref`: the answers would link into the
             /services explorer, and that route is not in the app right now —
             see the component's note. */}
-        <SoundFamiliar />
 
         <Clauses />
         <WeekStrip />
+        {/* <SoundFamiliar /> */}
 
-        {/* The archive's proof band: one quote, then a route to the work. It
-            lands here, between the promises and the answers, because that is
-            where a reader has just been told a lot and has not been shown
-            anything. Same component as home's pull-quote, different words. */}
+        {/* The archive's proof band: one quote, then a route to the work.
+            MOVED above WeekStrip 2026-09-08. It used to sit after it, on the
+            reasoning that the reader had "been told a lot and shown nothing" —
+            true, but that moment arrives one section EARLIER. The agreement is
+            the page's central asset and its five promises are where a reader
+            is most sceptical, so the proof answers them immediately instead of
+            waiting behind the week. Its "see the work behind the words" link
+            is also the page's only route to the case studies, and it now sits
+            in the middle of the page rather than two-thirds down. */}
         <PullQuote
           quote={WHY_QUOTE.q}
           name={WHY_QUOTE.name}
           role={WHY_QUOTE.role}
           link={WHY_QUOTE.link}
         />
+
+        {/* Operational texture, AFTER the claim has been validated: this is
+            what the agreement looks like on a Tuesday. Reads as evidence
+            rather than more promises now that proof precedes it. */}
 
         <Answers />
 

@@ -75,19 +75,29 @@ export default function CapabilityShowcase() {
   return (
     <section
       id="capabilities"
-      className="relative overflow-hidden border-t border-border bg-secondary py-32"
+      /* NO `overflow-hidden` ON THIS SECTION, and that is deliberate. It is
+         the second thing that breaks `position: sticky`: an ancestor with a
+         non-visible overflow becomes the sticky element's scroll container,
+         and since that box never scrolls, the panel just scrolls away with
+         the page (measured: 2589px off the top). Every other section on the
+         site clips its orbs at the section level; this one clips them in
+         their own wrapper instead, which contains the blur just as well and
+         leaves the sticky chain intact. See also layout.tsx's <body>. */
+      className="relative border-t border-border bg-secondary py-32"
     >
       <div
-        className="pointer-events-none absolute left-0 top-1/4 size-[560px] -translate-x-1/3 rounded-full bg-accent/10 blur-[120px]"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
         aria-hidden="true"
-      />
+      >
+        <div className="absolute left-0 top-1/4 size-[560px] -translate-x-1/3 rounded-full bg-accent/10 blur-[120px]" />
+      </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         <SectionHeading
           eyebrow="What we do"
           icon="layers"
           accent="a working mechanism."
-          lead="Five capabilities, one team, and the same senior engineers from the first call to handover. Each one is drawn here as what it actually is —"
+          lead="Five capabilities, one team, and the same senior engineers from the first call to handover. Each is drawn here as the thing it actually is, so you can judge the mechanism rather than the adjective."
           className="max-w-3xl"
         >
           Not a service list —
@@ -148,13 +158,22 @@ export default function CapabilityShowcase() {
                     {c.body}
                   </p>
 
-                  {/* The diagram, inline — mobile and tablet only. */}
+                  {/* The diagram, inline — mobile and tablet only.
+
+                      THE `lg:hidden` IS ON THE INNER NODE, AND THAT IS
+                      LOAD-BEARING. Putting it on the [data-reveal] element
+                      itself makes that element `display:none` at lg, where an
+                      IntersectionObserver never fires for it — it has no box
+                      to intersect with. It would then sit at `opacity: 0`
+                      forever, which is invisible at lg (so nothing looks
+                      wrong) but leaves five permanently-unrevealed nodes in
+                      the page and fails any reveal audit. The wrapper stays
+                      displayed and collapses to zero height instead. */}
                   <div
                     data-reveal
                     style={{ "--delay": "200ms" } as React.CSSProperties}
-                    className="mt-8 lg:hidden"
                   >
-                    <div className="relative overflow-hidden rounded-[1.5rem] border border-border bg-card p-4 shadow-sm">
+                    <div className="relative mt-8 overflow-hidden rounded-[1.5rem] border border-border bg-card p-4 shadow-sm lg:hidden">
                       <div
                         className={`pointer-events-none absolute right-0 top-0 size-48 -translate-y-1/3 translate-x-1/3 rounded-full blur-[70px] ${h.glow}`}
                         aria-hidden="true"
@@ -272,6 +291,14 @@ export default function CapabilityShowcase() {
                           <a
                             href={`#capability-${c.k}`}
                             aria-current={on ? "true" : undefined}
+                            /* Set it immediately rather than waiting for the
+                               observer. A jump lands the target block at the
+                               top of the viewport, which is ABOVE the reading
+                               band, so the observer would not fire until the
+                               reader scrolled further — leaving the panel
+                               showing the capability they just navigated away
+                               from. The observer still owns scrolling. */
+                            onClick={() => setActive(i)}
                             className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-[13px] font-semibold transition-all duration-300 ${
                               on
                                 ? "border-transparent bg-primary text-primary-foreground shadow-sm shadow-primary/25"

@@ -73,7 +73,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="overflow-x-hidden bg-background font-sans text-muted-foreground antialiased">
+      {/* `overflow-x-clip`, NOT `overflow-x-hidden` — corrected 2026-09-08.
+          `hidden` on either axis makes <body> a SCROLL CONTAINER, and a scroll
+          container is where `position: sticky` sticks: every sticky element on
+          the site was therefore pinning to a box that never scrolls, i.e. not
+          sticking at all. Measured on /services, where the capability panel
+          scrolled 2589px off the top of the viewport instead of holding.
+          `clip` clips exactly the same overflow without establishing a scroll
+          container, so the horizontal-overflow guard is unchanged and sticky
+          works. Do not "restore" `overflow-x-hidden`. */}
+      <body className="overflow-x-clip bg-background font-sans text-muted-foreground antialiased">
         {children}
       </body>
     </html>

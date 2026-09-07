@@ -165,7 +165,13 @@ export const SERVICE_PROBLEMS = [
    Five, each with a mechanism diagram (Diagrams.tsx) rather than an
    illustration. The headline names the outcome or the pain — never the
    capability, which is already the label above it. */
-export const CAPABILITIES = [
+/* ANNOTATED, not `as const satisfies` like the arrays around it. `tech` is
+   optional and the team-augmentation entry omits it, so under `as const` the
+   element type becomes a union in which one member has no `tech` at all and
+   `c.tech` stops type-checking at the call site. Annotating gives every entry
+   the same `Capability` type — which is also what the components want, since
+   they are written against the type rather than against this page's data. */
+export const CAPABILITIES: readonly Capability[] = [
   {
     k: "product",
     icon: "code",
@@ -245,7 +251,7 @@ export const CAPABILITIES = [
       "A clean exit: 30-day notice either way, with nothing of yours in our hands.",
     ],
   },
-] as const satisfies readonly Capability[];
+];
 
 /* ── APPROACH ──────────────────────────────────────────────────────────────
    How we take a problem apart. Deliberately NOT the four engagement steps

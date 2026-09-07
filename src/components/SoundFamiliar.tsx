@@ -1,5 +1,5 @@
 import Icon from "./Icon";
-import { SERVICES, SERVICE_PROBLEMS } from "@/content/site";
+import { CAPABILITIES, SERVICE_PROBLEMS } from "@/content/service";
 
 /* "Sound familiar?" — CLAUDE.md §7.2: the four problem→answer pairs from
    prototype2-archive's `#problems`.
@@ -14,22 +14,28 @@ import { SERVICES, SERVICE_PROBLEMS } from "@/content/site";
    content on short viewports.
 
    ── WHY THE CAPABILITY LINK IS OPTIONAL ───────────────────────────────────
-   Each answer maps to a SERVICES entry, and when a page exists that explains
-   that capability the answer should route to it — the label is derived from
-   SERVICES so there is no second hand-kept list. But `/services` is NOT in
-   the app right now (the route and its components were removed from the tree
-   on 2026-09-08; only the content in site.ts remains), so a link would 404.
-   Pass `capabilitiesHref` to switch the links on when that page returns; with
-   no prop, the answers simply end without one. Never hardcode a bare
-   `#capabilities` here — a fragment is a silent no-op on any page that lacks
-   the section (CLAUDE.md gotcha 9). */
+   Each answer maps to a CAPABILITIES entry, and where a page exists that
+   explains that capability the answer routes to it — the label is derived
+   from the capability list so there is no second hand-kept one. `/services`
+   was rebuilt on 2026-09-08 and does have `#capabilities`, so a caller can
+   now pass `capabilitiesHref="/services#capabilities"`; with no prop the
+   answers simply end without a link. Never hardcode a bare `#capabilities`
+   here — a fragment is a silent no-op on any page that lacks the section
+   (CLAUDE.md gotcha 9), and this component renders on /why-choose-us.
+
+   ⚠ THE CONTENT IS SHARED WITH /services. Both this section and that page's
+   ProblemLedger read SERVICE_PROBLEMS, so the same client sentences appear
+   on two pages in two compositions. That was true the moment /services came
+   back and it is a content decision, not a bug — but it is worth settling:
+   the ledger on /services is the one built for this material, and it opens
+   each answer on demand rather than printing all of them. */
 export default function SoundFamiliar({
   capabilitiesHref,
 }: {
   capabilitiesHref?: string;
 }) {
   const nameOf = (key: string) =>
-    SERVICES.find((s) => s.k === key)?.name ?? "See the capability";
+    CAPABILITIES.find((c) => c.k === key)?.name ?? "See the capability";
 
   return (
     <section
@@ -79,7 +85,7 @@ export default function SoundFamiliar({
           <div className="flex flex-col gap-6 lg:col-span-7">
             {SERVICE_PROBLEMS.map((p, i) => (
               <article
-                key={p.service}
+                key={p.q}
                 data-reveal
                 style={{ "--delay": `${i * 90}ms` } as React.CSSProperties}
                 className="group rounded-[1.5rem] border border-border bg-card p-7 shadow-sm transition-[border-color,box-shadow] duration-300 ease-out hover:border-accent/30 hover:shadow-lg sm:p-8"
@@ -99,7 +105,7 @@ export default function SoundFamiliar({
                     href={capabilitiesHref}
                     className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-accent-strong"
                   >
-                    {nameOf(p.service)}
+                    {nameOf(p.to)}
                     <span className="transition-transform group-hover:translate-x-1">
                       <Icon name="arrow" className="size-4" />
                     </span>
