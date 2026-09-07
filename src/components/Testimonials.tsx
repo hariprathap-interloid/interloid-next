@@ -1,5 +1,5 @@
 import SectionHeading from "./SectionHeading";
-import { PULL_QUOTE, QUOTES } from "@/content/site";
+import { QUOTES } from "@/content/site";
 
 /* DS §8.3 — client feedback, converted from prototype/ (hand-CSS → tokens).
 
@@ -13,7 +13,12 @@ import { PULL_QUOTE, QUOTES } from "@/content/site";
 
    Card design is prototype 1's `.quote`: a large quote mark, the quote at
    17px/1.7, and the attribution pinned to the bottom (mt-auto) with a
-   gradient initials avatar so cards of different lengths still line up. */
+   gradient initials avatar so cards of different lengths still line up.
+
+   THE PULL-QUOTE USED TO LIVE HERE and was moved to PullQuote.tsx on
+   2026-09-07. It is not a fourth testimonial: this grid is evidence, that is a
+   slogan, and hanging it off the bottom of the grid under this section's
+   heading filed it as the former. Do not fold it back in. */
 export default function Testimonials() {
   return (
     <section
@@ -31,66 +36,57 @@ export default function Testimonials() {
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {QUOTES.map((q, i) => (
-            <figure
+            /* Wrapper reveals, figure hovers — same split as WorkCard and
+               CommitmentTile. `[data-reveal]` is unlayered in globals.css and
+               out-ranks any transition utility on its own element, so this
+               card's hover shadow was snapping. */
+            <div
               key={i}
               data-reveal
               style={{ "--delay": `${i * 100}ms` } as React.CSSProperties}
-              data-placeholder="P0 TRUST: collect 2-3 real testimonials with written permission"
-              className="flex h-full flex-col rounded-[1.5rem] border border-border bg-card p-8 shadow-sm transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
+              className="h-full"
             >
-              <span className="mb-4 text-faint" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="currentColor" className="size-8">
-                  <path d="M9.5 4C6.5 6 5 8.7 5 12v8h7v-8H8.3c0-2.4.9-4.2 2.7-5.4L9.5 4Zm9 0c-3 2-4.5 4.7-4.5 8v8h7v-8h-3.7c0-2.4.9-4.2 2.7-5.4L18.5 4Z" />
-                </svg>
-              </span>
-              <blockquote className="mb-8 text-[17px] leading-[1.7] text-foreground">
-                {q.q}
-              </blockquote>
-              <figcaption className="mt-auto flex items-center gap-3.5">
-                <span
-                  /* 13px, not the 15px `.quote__avatar` asks for. In
+              <figure
+                data-placeholder="P0 TRUST: collect 2-3 real testimonials with written permission"
+                className="flex h-full flex-col rounded-[1.5rem] border border-border bg-card p-8 shadow-sm transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-1.5 hover:shadow-xl"
+              >
+                <span className="mb-4 text-faint" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="size-8"
+                  >
+                    <path d="M9.5 4C6.5 6 5 8.7 5 12v8h7v-8H8.3c0-2.4.9-4.2 2.7-5.4L9.5 4Zm9 0c-3 2-4.5 4.7-4.5 8v8h7v-8h-3.7c0-2.4.9-4.2 2.7-5.4L18.5 4Z" />
+                  </svg>
+                </span>
+                <blockquote className="mb-8 text-[17px] leading-[1.7] text-foreground">
+                  {q.q}
+                </blockquote>
+                <figcaption className="mt-auto flex items-center gap-3.5">
+                  <span
+                    /* 13px, not the 15px `.quote__avatar` asks for. In
                      prototype 1 the sibling rule `.quote__who span` (0,1,1)
                      out-specifies `.quote__avatar` (0,1,0) and wins, so the
                      avatar RENDERS at 13px. Matched to the render, as asked —
                      change to text-[15px] for the authored intent. */
-                  className="grid size-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand to-accent font-display text-[13px] font-bold text-white"
-                  aria-hidden="true"
-                >
-                  {q.i}
-                </span>
-                <span>
-                  <strong className="block text-[15px] font-semibold text-foreground">
-                    {q.n}
-                  </strong>
-                  <span className="text-[13px] text-muted-foreground">{q.r}</span>
-                </span>
-              </figcaption>
-            </figure>
+                    className="grid size-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand to-accent font-display text-[13px] font-bold text-white"
+                    aria-hidden="true"
+                  >
+                    {q.i}
+                  </span>
+                  <span>
+                    <strong className="block text-[15px] font-semibold text-foreground">
+                      {q.n}
+                    </strong>
+                    <span className="text-[13px] text-muted-foreground">
+                      {q.r}
+                    </span>
+                  </span>
+                </figcaption>
+              </figure>
+            </div>
           ))}
         </div>
-
-        {/* The pull-quote, from prototype2-archive. One line, given room —
-            it does a different job from the card grid: the grid is evidence,
-            this is a single sentence you are meant to remember. */}
-        <figure
-          data-reveal
-          style={{ "--delay": "300ms" } as React.CSSProperties}
-          data-placeholder="P0 TRUST: replace with a real, permissioned quote"
-          className="mx-auto mt-20 max-w-3xl text-center"
-        >
-          <span
-            className="mx-auto mb-6 block font-display text-6xl leading-none text-faint"
-            aria-hidden="true"
-          >
-            &ldquo;
-          </span>
-          <blockquote className="font-display text-2xl font-medium leading-snug tracking-tight text-foreground md:text-3xl">
-            {PULL_QUOTE.q}
-          </blockquote>
-          <figcaption className="mt-6 text-sm text-muted-foreground">
-            {PULL_QUOTE.who}
-          </figcaption>
-        </figure>
       </div>
     </section>
   );

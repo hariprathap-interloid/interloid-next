@@ -169,6 +169,16 @@ export const ICONS = {
       <path d="m2 12 10 5 10-5" />
     </>
   ),
+  /* The QUOTATION MARK, from prototype2-archive's `.pullquote__mark`. Not to
+     be confused with `quote` below, which is the speech-bubble the Client
+     feedback badge uses — two different glyphs doing two different jobs, and
+     the names are one letter apart on purpose so a wrong import is visible. */
+  "quote-mark": (
+    <>
+      <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2-2-2H4c-1.25 0-2 .75-2 2v7c0 1.25.75 2 2 2h3" />
+      <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2-2-2h-4c-1.25 0-2 .75-2 2v7c0 1.25.75 2 2 2h3" />
+    </>
+  ),
   quote: (
     <>
       <path d="M8 12h8" />

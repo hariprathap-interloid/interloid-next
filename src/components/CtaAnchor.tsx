@@ -2,6 +2,25 @@ import Icon from "./Icon";
 
 /* DS §11.1 — a light section wrapping a dark rounded slab.
 
+   ── MEASURED AGAINST PROTOTYPE 1, 2026-09-07 ──────────────────────────────
+   The user supplied a reference screenshot and named prototype/index.html as
+   the source. `.cta` was then diffed against this component property by
+   property; the differences were all colour and type, and every one of them
+   came from reaching for --accent where prototype 1 reaches for something
+   brighter. The slab is #0f172b, and the brand cyan goes muddy on it.
+
+   The BUTTON is the one to remember: it is `.btn--glow`, whose background is
+   var(--brand) — the blue in the reference — not var(--accent). It had been
+   built teal. Its glow is `rgba(40,157,190,.6)`, i.e. accent at 60%, which is
+   the accent appearing as LIGHT around a blue button rather than as its fill.
+
+   The trailing "Or email hello@interloid.com" paragraph was removed here:
+   neither the reference screenshot nor prototype 1 has it, and the user asked
+   for the screenshot's content. It also carried `data-placeholder="confirm
+   real address"`, so this is one fewer unverified claim on the page, not a
+   lost one. The button's mailto still points at that address — if the address
+   should be visible, put the paragraph back rather than trusting the href.
+
    The 24 drifting particles use a seeded LCG so the layout is identical on
    every load and screenshot diffs stay meaningful. Because it is deterministic
    it runs at BUILD time in this Server Component rather than in the browser:
@@ -27,11 +46,19 @@ function particles() {
 
 export default function CtaAnchor() {
   return (
-    <section id="contact" className="relative bg-background px-4 pb-24 pt-8 sm:px-6">
+    <section
+      id="contact"
+      /* The LIGHT BAND, not the slab. Deepened on request 2026-09-07:
+         pt-8/pb-24 (32/96px, which was prototype 1's `.cta-wrap` padding to
+         the pixel) -> pt-24/pb-40 (96/160px). The slab's own padding is
+         untouched, so the card is the same size and only the ground around it
+         grew — that was the ask, and it is the one knob that does it. */
+      className="relative bg-background px-4 pb-40 pt-24 sm:px-6"
+    >
       <div className="mx-auto max-w-7xl">
         <div /* `.cta`: 4rem/1.5rem, then 5rem/4rem at sm. Radius is a flat 3rem,
               not the token scale's rounded-4xl (2.55rem). */
-          className="relative flex flex-col items-center justify-center overflow-hidden rounded-[3rem] bg-ink px-6 py-16 text-center shadow-2xl sm:px-16 sm:py-20">
+          className="relative flex flex-col items-center justify-center overflow-hidden rounded-[3rem] bg-ink px-6 py-16 text-center shadow-[0_25px_50px_-12px_rgba(15,23,43,.35)] sm:px-16 sm:py-20">
           <div
             className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-brand/40 via-ink to-ink"
             aria-hidden="true"
@@ -50,11 +77,11 @@ export default function CtaAnchor() {
             {/* prototype 1's `.badge--dark`: uppercase, tracking-[.2em],
                 accent-coloured icon and label — a different object from the
                 light-section badge, not the same one recoloured. */}
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-sm">
-              <span className="text-accent" aria-hidden="true">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2 shadow-[0_1px_2px_0_rgba(15,23,43,.06)] backdrop-blur-sm">
+              <span className="text-spark" aria-hidden="true">
                 <Icon name="star" className="size-4" />
               </span>
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent">
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-spark">
                 Let&rsquo;s start
               </span>
             </div>
@@ -62,7 +89,10 @@ export default function CtaAnchor() {
             <h2 className="mb-5 font-display text-4xl font-medium leading-[1.1] tracking-tight text-white md:text-5xl lg:text-6xl">
               Still comparing
               <br />
-              <span className="bg-gradient-to-r from-accent to-brand-light bg-clip-text text-transparent">
+              {/* `/srgb`: Tailwind v4 interpolates gradients in oklab by default,
+                    which bends the midpoint of a blue->green ramp visibly. The
+                    prototype's `linear-gradient(90deg, ...)` is plain sRGB. */}
+                <span className="bg-linear-to-r/srgb from-spark to-spark-end bg-clip-text text-transparent">
                 development partners?
               </span>
             </h2>
@@ -81,7 +111,7 @@ export default function CtaAnchor() {
                 replacing it. */}
             <a
               href="mailto:hello@interloid.com"
-              className="on-dark group inline-flex h-14 items-center gap-2 rounded-full border border-white/10 bg-accent px-10 text-lg font-bold text-white shadow-[0_0_40px_-10px_var(--accent)] transition-all hover:scale-105 hover:shadow-[0_0_60px_-10px_var(--accent)] active:scale-95"
+              className="on-dark group inline-flex h-14 items-center gap-2 rounded-full border border-white/12 bg-ink-cta px-10 text-[17px] font-bold text-white shadow-[0_0_40px_-10px_rgba(40,157,190,.6)] transition-[background-color,box-shadow] duration-300 ease-out hover:bg-ink-cta-hover hover:shadow-[0_0_60px_-10px_rgba(40,157,190,1)] active:scale-95"
             >
               Book a free 30-min consult
               <svg
@@ -106,9 +136,9 @@ export default function CtaAnchor() {
                 (m) => (
                   <li
                     key={m}
-                    className="flex items-center gap-2 text-[13px] text-ink-foreground/70"
+                    className="flex items-center gap-2 text-[13px] text-ink-muted"
                   >
-                    <span className="text-accent" aria-hidden="true">
+                    <span className="text-spark" aria-hidden="true">
                       <Icon name="check" className="size-3.5" />
                     </span>
                     {m}
@@ -116,19 +146,6 @@ export default function CtaAnchor() {
                 ),
               )}
             </ul>
-
-            {/* §10.1's conversational form is still unbuilt — this is a bare
-                mailto. HANDOFF §6 item 5. */}
-            <p className="mt-8 text-sm text-ink-foreground/70">
-              Or email{" "}
-              <a
-                href="mailto:hello@interloid.com"
-                className="on-dark text-white underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-white"
-                data-placeholder="confirm real address"
-              >
-                hello@interloid.com
-              </a>
-            </p>
           </div>
         </div>
       </div>

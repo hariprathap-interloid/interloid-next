@@ -6,6 +6,7 @@ import Hero from "@/components/Hero";
 import Nav from "@/components/Nav";
 import PlaceholderToggle from "@/components/PlaceholderToggle";
 import Process from "@/components/Process";
+import PullQuote from "@/components/PullQuote";
 import Reveal from "@/components/Reveal";
 import Services from "@/components/Services";
 import StackMarquee from "@/components/StackMarquee";
@@ -34,6 +35,7 @@ export default function Home() {
         <Process />
         <Work />
         <Testimonials />
+        <PullQuote />
         <Faq />
         <CtaAnchor />
       </main>

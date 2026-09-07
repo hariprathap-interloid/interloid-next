@@ -81,6 +81,44 @@
   --ink: oklch(0.2084 0.0417 266.36); /* #0f172b CTA slab */
   --ink-deep: oklch(0.1298 0.0425 265.13); /* #020618 footer   */
   --ink-foreground: oklch(0.8686 0.0216 252.51); /* #cad5e2          */
+  --ink-muted: #90a1b9; /* slate-400. Literal: the oklch round-trip landed
+                           1-3 units off per channel against the reference. */
+
+  /* The dark slab's own accents. They are NOT --accent: the CTA reads against
+     #0f172b, where the brand cyan (#289dbe) goes muddy, so prototype 1 lights
+     it with a brighter pair — the badge, the check marks and the headline
+     gradient all come from here.
+
+     Written as literal hex ON PURPOSE. These are Tailwind v3's sky-400 and
+     emerald-400; v4 moved sky-400 to #00bcff, so `text-sky-400` in this build
+     would NOT reproduce the prototype. Same class of trap as the neutrals in
+     CLAUDE.md gotcha 2, caught the same way — by measuring rather than by
+     trusting the name.
+
+     Constant across themes: the slab is dark in both, so there is no dark
+     override for these three and there must not be one. */
+  --spark: #38bdf8; /* v3 sky-400     — badge, checks, gradient start */
+  --spark-end: #34d399; /* v3 emerald-400 — gradient end               */
+
+  /* The CTA button's fill and hover, pinned. These are --brand and
+     --accent-strong in the light theme, and it is tempting to just use those
+     — but BOTH are redefined under .dark, and the slab is not: it is #0f172b
+     in either theme. Measured: with `bg-brand` the button rendered #1f5da0 in
+     light and #3a7bc8 in dark, i.e. the same dark slab showed two different
+     buttons for no reason a reader could see. Anything painted ON the slab
+     has to be theme-independent, like --ink itself. */
+  --ink-cta: #1f5da0; /* = light --brand          */
+  /* The hover was prototype 1's `--accent-text` (#1b7c99) and the user read it
+     as going DARKER. The numbers say it was in fact 1.40x brighter — but it is
+     a desaturated TEAL arriving over a saturated blue, and a hue shift that
+     drops saturation reads as dimming whatever the luminance does. So the
+     hover stays in the blue family and simply lightens.
+
+     #2d74c4 is the brightest blue that still clears AA on the label: white on
+     it is 4.77:1, and the button's 17px bold text is NOT "large text" under
+     WCAG (that starts at 18.66px bold), so it needs the full 4.5:1, not 3:1.
+     brand-light #3a7bc8 was the obvious pick and measures 4.33:1 — it fails. */
+  --ink-cta-hover: #2d74c4; /* a LIGHTER BLUE, not the teal */
 
   --destructive: oklch(0.577 0.245 27.325);
 }
@@ -171,6 +209,11 @@
   --color-destructive: var(--destructive);
   --color-border: var(--border);
   --color-faint: var(--faint);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-cta: var(--ink-cta);
+  --color-ink-cta-hover: var(--ink-cta-hover);
+  --color-spark: var(--spark);
+  --color-spark-end: var(--spark-end);
   --color-input: var(--input);
   --color-ring: var(--ring);
 

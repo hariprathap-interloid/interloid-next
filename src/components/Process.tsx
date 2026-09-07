@@ -1,13 +1,29 @@
 import Icon from "./Icon";
+import ProcessPath from "./ProcessPath";
 import SectionHeading from "./SectionHeading";
 import { STEPS } from "@/content/site";
 
-/* DS §8.9. The connector draws itself on reveal ([data-rail]), and a ghost
-   numeral sits behind each node.
+/* DS §8.9. Still a Server Component; only the connector is client.
 
-   HANDOFF §5.7: a full-height centred rail draws straight through centred
-   text, so the rail is offset — left-[39px] stacked, top-[44px] horizontal —
-   to run through the NODES rather than the copy. Server Component. */
+   THE CONNECTOR IS A GENERATED PATH — changed 2026-09-07, chosen in
+   motion-path-lab.html. It replaced two absolutely-positioned rail divs
+   (`left-[39px]` stacked, `top-[44px]` horizontal) whose whole job was
+   HANDOFF §5.7: a centred full-height rail draws through centred text, so it
+   had to be nudged to run through the nodes instead. A path measured FROM the
+   nodes cannot have that problem — it goes through their centres by
+   construction, at any width, in either arrangement. §5.7 is satisfied by the
+   method now rather than by two magic numbers.
+
+   ProcessPath owns the geometry, the comet and the waypoint lighting. Two
+   contracts it depends on, both here:
+
+     data-step   on each <li>. It reads --lit and data-lit back off these, so
+                 the numeral ramp and the node fill are driven from scroll
+                 position along the path.
+     data-node   on the 80px circle. This is what gets measured; the path is
+                 built through these rects and nothing else.
+
+   Remove either attribute and the connector silently draws nothing. */
 export default function Process() {
   return (
     <section
@@ -35,31 +51,54 @@ export default function Process() {
         </SectionHeading>
 
         <div className="relative mt-20">
-          <div
-            className="absolute left-[39px] top-0 hidden h-full w-[2px] bg-border max-lg:block lg:left-[5%] lg:right-[5%] lg:top-[44px] lg:block lg:h-[2px] lg:w-auto"
-            aria-hidden="true"
-          />
-          <div
-            data-rail
-            className="absolute left-[39px] top-0 hidden h-full w-[2px] bg-gradient-to-b from-brand via-accent to-brand-light max-lg:block lg:left-[5%] lg:right-[5%] lg:top-[44px] lg:block lg:h-[2px] lg:w-auto lg:bg-gradient-to-r"
-            aria-hidden="true"
-          />
+          <ProcessPath />
           <ol className="relative z-10 flex flex-col justify-between gap-12 lg:flex-row lg:gap-6">
             {STEPS.map((s, i) => (
               <li
                 key={s.n}
                 data-reveal
+                data-step
                 style={{ "--delay": `${i * 120}ms` } as React.CSSProperties}
                 className="group relative flex w-full flex-row items-start lg:w-1/4 lg:flex-col lg:items-center"
               >
                 <div className="relative flex shrink-0 items-center justify-center">
-                  <div className="relative z-10 grid size-[80px] place-items-center rounded-full border-4 border-card bg-card shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_0_30px_-5px_rgba(31,93,160,.35)]">
-                    <div className="grid size-14 place-items-center rounded-full bg-brand/10 text-brand ring-1 ring-brand/15">
+                  {/* data-node is the measured element. The hover scale here is
+                      fine — it runs long after build() — but nothing may move
+                      this node's RESTING position with a transition, or the
+                      path gets built through a stale rect. */}
+                  <div
+                    data-node
+                    className="relative z-10 grid size-[80px] place-items-center rounded-full border-4 border-card bg-card shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_0_30px_-5px_rgba(31,93,160,.35)]"
+                  >
+                    <div className="grid size-14 place-items-center rounded-full bg-brand/10 text-brand ring-1 ring-brand/15 transition-colors duration-500 group-data-[lit=1]:bg-brand group-data-[lit=1]:text-primary-foreground">
                       <Icon name={s.k} className="size-6" />
                     </div>
                   </div>
+                  {/* ── NUMERAL PLACEMENT IS THE USER'S, FROM A REFERENCE ──
+                      `top: -1.5rem; right: -56px`, given directly and matched
+                      to shots/ends-inset.png. The numeral is MEANT to sit
+                      behind the node with its leading 0 tucked away — that is
+                      the look, not a defect.
+
+                      This reverses an earlier pass that moved it clear of the
+                      node entirely. That pass was answering a real measurement
+                      (41-46% of the glyph was occluded) but it answered it the
+                      wrong way: the reference shows the overlap reads fine
+                      because -56px slides the numeral far enough right that
+                      what survives is a whole, balanced shape. The problem was
+                      never the overlap, it was that at `-right-8` the numeral
+                      was cut down its middle.
+
+                      Do not "fix" this back to a clearing position. If the
+                      glyph looks wrong, change the RIGHT offset, which is what
+                      controls how much of the leading digit survives.
+
+                      Mobile keeps a smaller inset: at -56px the numeral would
+                      run under the step's own body copy, which starts 32px to
+                      the right of the node in the stacked layout. */}
                   <div
-                    className="pointer-events-none absolute -right-4 -top-6 z-0 select-none font-display text-[60px] font-bold text-faint/40 transition-colors group-hover:text-primary/10 lg:-right-8 lg:-top-8 lg:text-[80px]"
+                    style={{ opacity: "calc(0.14 + var(--lit, 0) * 0.38)" }}
+                    className="pointer-events-none absolute -top-6 -right-6 z-0 select-none font-display text-[60px] font-bold leading-none text-brand lg:-top-6 lg:-right-14 lg:text-[80px]"
                     aria-hidden="true"
                   >
                     {s.n}

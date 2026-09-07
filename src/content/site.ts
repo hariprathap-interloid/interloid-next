@@ -15,6 +15,10 @@ export type Hue = "brand" | "accent" | "light" | "indigo" | "teal";
 
 /* DS §2.3: one hue per category, reused wherever that category appears.
 
+   `softHover` is a WHOLE class including its `group-hover:` prefix for the
+   same reason as `glow` below — a variant prefix is as invisible to the
+   scanner as a `/10` suffix if either is glued on at runtime.
+
    `glow` exists ONLY because of the build. The prototype composed the blur
    colour at runtime as `${h.tile}/10`, which the Tailwind *browser CDN*
    happily generated on the fly. A compiled build scans source for complete
@@ -23,11 +27,19 @@ export type Hue = "brand" | "accent" | "light" | "indigo" | "teal";
    must stay a whole, literal string. Never rebuild one by concatenation. */
 export const HUE: Record<
   Hue,
-  { tile: string; soft: string; ring: string; text: string; glow: string }
+  {
+    tile: string;
+    soft: string;
+    softHover: string;
+    ring: string;
+    text: string;
+    glow: string;
+  }
 > = {
   brand: {
     tile: "bg-brand",
     soft: "bg-brand/10",
+    softHover: "group-hover:bg-brand/20",
     ring: "ring-brand/15",
     text: "text-brand",
     glow: "bg-brand/10",
@@ -35,6 +47,7 @@ export const HUE: Record<
   accent: {
     tile: "bg-accent",
     soft: "bg-accent/10",
+    softHover: "group-hover:bg-accent/20",
     ring: "ring-accent/15",
     text: "text-accent-strong",
     glow: "bg-accent/10",
@@ -42,6 +55,7 @@ export const HUE: Record<
   light: {
     tile: "bg-brand-light",
     soft: "bg-brand-light/10",
+    softHover: "group-hover:bg-brand-light/20",
     ring: "ring-brand-light/15",
     text: "text-brand-light",
     glow: "bg-brand-light/10",
@@ -49,6 +63,7 @@ export const HUE: Record<
   indigo: {
     tile: "bg-indigo-600",
     soft: "bg-indigo-600/10",
+    softHover: "group-hover:bg-indigo-600/20",
     ring: "ring-indigo-600/15",
     text: "text-indigo-600",
     glow: "bg-indigo-600/10",
@@ -56,6 +71,7 @@ export const HUE: Record<
   teal: {
     tile: "bg-teal-600",
     soft: "bg-teal-600/10",
+    softHover: "group-hover:bg-teal-600/20",
     ring: "ring-teal-600/15",
     text: "text-teal-600",
     glow: "bg-teal-600/10",
@@ -360,7 +376,11 @@ export const QUOTES = [
   },
 ];
 
+/* Split into name + role on 2026-09-07: prototype2-archive's pull-quote bolds
+   the name and leaves the role muted, which a single `who` string cannot
+   express without markup in the content layer. Copy stays copy. */
 export const PULL_QUOTE = {
   q: "The weekly demo changed how our own team works. We stopped writing status reports and started showing the thing.",
-  who: "Placeholder Name · Head of Product, Placeholder Co",
+  name: "Placeholder Name",
+  role: "Head of Product, Placeholder Co",
 };
