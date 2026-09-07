@@ -2,7 +2,8 @@
    live site's footer as a P0 ("fabricated navigation"). The Industries and
    Resources columns are deliberately absent rather than stubbed. The four
    links that do not resolve yet carry data-placeholder so the toggle counts
-   them; they are not hidden. */
+   them; they are not hidden. `/careers` resolved on 2026-09-07 and lost its
+   flag; `/about` has not. */
 const SERVICE_LINKS = [
   "Product engineering",
   "Data & analytics",
@@ -12,12 +13,15 @@ const SERVICE_LINKS = [
 ];
 
 const COMPANY_LINKS = [
-  { href: "/why-choose-us", label: "Why Interloid" },
+  /* "Commitments", matching the nav. Same destination, and it was the
+     last visible "Why Interloid" left on that page after the hero kicker
+     came off — one link naming the page two ways is how a nav loses trust. */
+  { href: "/why-choose-us", label: "Commitments" },
   { href: "/#process", label: "How we work" },
   { href: "/#work", label: "Selected work" },
   { href: "/#contact", label: "Contact" },
   { href: "/about", label: "About us", placeholder: "page not built yet" },
-  { href: "/careers", label: "Careers", placeholder: "page not built yet" },
+  { href: "/careers", label: "Careers" },
 ];
 
 export default function Footer() {

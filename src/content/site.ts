@@ -400,6 +400,20 @@ export const PULL_QUOTE = {
    somebody reads the actual contract. Do not un-flag it to tidy the page up.
    ========================================================================== */
 
+/* The archive's hero, verbatim. `ctaHref` is /#contact (gotcha 9 — the
+   section only exists on home); `subHref` is a bare fragment on purpose,
+   because #agreement IS on this page. */
+export const WHY_HERO = {
+  eyebrow: "Why Interloid",
+  head: "Every vendor sounds identical.",
+  accent: "Our contract doesn't.",
+  lead: "The pitch-deck promises are the same everywhere: senior people, transparency, partnership. So we stopped asking clients to take our word for it. Below is what working with Interloid commits us to, in plain language.",
+  cta: "Book a free 30-min consult",
+  ctaHref: "/#contact",
+  sub: "Read the agreement",
+  subHref: "#agreement",
+};
+
 export const CLAUSES = [
   {
     n: "01",
@@ -499,3 +513,474 @@ export const ANSWERS = [
     a: "A fixed price or a transparent hourly rate, in writing within 48 hours of the first call. If budget and scope do not line up, you hear it on that call — and if the honest number is smaller than you planned to spend, you hear that too.",
   },
 ] as const;
+
+/* ==========================================================================
+   /careers — added 2026-09-07.
+   ==========================================================================
+   Built after reading conversedatasolutions.com/careers with Playwright. That
+   page is: hero → three core values → a photo bento → a flat list of four
+   openings → "don't see the perfect fit". None of that structure is copied.
+   Two of its moves are deliberately NOT reproduced:
+
+     · the photo bento ("Life at …"). We have no photographs of a team, and
+       HANDOFF §7 P1 is explicit that we do not launch with invented people.
+       Stock faces on a careers page are the exact failure the review calls
+       "asking for trust while showing no proof".
+     · "Our Core Values" as three abstractions (Innovation / Collaboration /
+       Integrity). Those are unfalsifiable and every firm publishes them.
+
+   What replaces them is this site's own argument turned inward. The client
+   pages promise transparency, senior-only staffing and no surprises; a
+   candidate reading this page should recognise the same terms pointed at
+   them — OFFER is the commitment grid, PATH is the process section, and
+   FIT_YES/FIT_NO is "we tell you when to walk away" addressed to applicants.
+
+   ⚠ CLAIM STATUS. Everything about the hiring PROCESS, the COMPENSATION and
+   whether these roles are open today is unverified — none of it is on
+   HANDOFF §7's allowed list, because that list was written about client
+   commitments. Every such string is rendered with data-placeholder by its
+   component. Do not un-flag them without the user confirming the real hiring
+   practice; a careers page that overstates its own process is the same
+   fabricated-proof problem as a fake testimonial, one audience over.
+   ========================================================================== */
+
+/* The hero's four facts. Three of them ARE on the allowed list (senior-only,
+   8–12 years, no juniors after signing, named in the proposal) — they are the
+   client promises restated for a candidate, not new claims. `ph` marks the
+   one that is not. */
+export const CAREER_FACTS = [
+  {
+    k: "user-check",
+    label: "Senior only",
+    body: "No junior bench, no shadow team",
+    ph: null,
+  },
+  {
+    k: "clock",
+    label: "US & UK overlap",
+    body: "Async by default, one live window",
+    ph: null,
+  },
+  {
+    k: "handshake",
+    label: "Named, not pooled",
+    body: "You appear in the client's proposal",
+    ph: null,
+  },
+  {
+    k: "layers",
+    label: "One project at a time",
+    body: "You are not split across three accounts",
+    ph: "confirm staffing policy",
+  },
+] as const satisfies readonly {
+  k: string;
+  label: string;
+  body: string;
+  ph: string | null;
+}[];
+
+/* ==========================================================================
+   OFFER — the candidate-facing commitment grid.
+
+   Same idea as BENTO on the client side, and the parallel is the point: the
+   answer to "why work here" is the same sentence as "why hire us", which is
+   the only version of that answer a senior engineer believes.
+
+   SIX tiles, not seven: this grid is a plain three-column layout with no wide
+   slot, so the count only has to divide by 3. Do not port BENTO's wide-tile
+   arithmetic here — it is a different grid.
+   ========================================================================== */
+export const OFFER = [
+  {
+    k: "code",
+    hue: "brand",
+    title: "You write production code in week one",
+    body: "There is no bench, no ramp-up project and no internal-tooling purgatory. Your first pull request goes into a client repository in your first week.",
+    ph: null,
+  },
+  {
+    k: "monitor-play",
+    hue: "accent",
+    title: "You demo your own work",
+    body: "Every Friday the client sees the software, presented by the person who built it. No manager translating your week into a slide.",
+    ph: null,
+  },
+  {
+    k: "users",
+    hue: "light",
+    title: "Peers, not a pyramid",
+    body: "Engineers here have 8–12 years each. Your code is reviewed by somebody who has shipped the same thing before, and you review theirs.",
+    ph: null,
+  },
+  {
+    k: "search",
+    hue: "teal",
+    title: "You talk to the client directly",
+    body: "Scope questions go to the person who asked for the feature. Nobody relays requirements to you second-hand, and nobody relays your estimate back.",
+    ph: null,
+  },
+  {
+    k: "layers",
+    hue: "indigo",
+    title: "Depth over utilisation",
+    body: "One project at a time. We would rather bill fewer hours than have you context-switching across three accounts before lunch.",
+    ph: "confirm staffing policy before launch",
+  },
+  {
+    k: "zap",
+    hue: "accent",
+    title: "A budget for getting better",
+    body: "An annual allowance for machines, conferences, courses and books — yours to spend without writing a business case for it.",
+    ph: "confirm the learning budget exists, and its amount",
+  },
+] as const satisfies readonly {
+  k: string;
+  hue: Hue;
+  title: string;
+  body: string;
+  ph: string | null;
+}[];
+
+/* ==========================================================================
+   ROLES.
+
+   Six, and the four the user named are the first four: React, Ruby on Rails,
+   Python, Node. The last two (React Native, Platform) are already in STACK
+   above, so they add a discipline to filter by without inventing a capability
+   the site does not otherwise claim.
+
+   `disciplines` is an ARRAY on purpose — Node is genuinely both Backend and
+   Platform, and forcing one tag would make the filter lie. The filter chips
+   are derived from these values in Roles.tsx; adding a role with a new
+   discipline adds a chip, with no second list to keep in sync.
+
+   `pay` is a RANGE, AND IT IS UNVERIFIED. It is here because a posted band is
+   the single thing that most reduces wasted screening on both sides — but a
+   wrong number is worse than none, so every card renders it under
+   data-placeholder until the user confirms the real bands.
+   ========================================================================== */
+export const ROLE_DISCIPLINES = [
+  "Frontend",
+  "Backend",
+  "Data & AI",
+  "Platform",
+  "Mobile",
+] as const;
+
+export type Discipline = (typeof ROLE_DISCIPLINES)[number];
+
+export const ROLES = [
+  {
+    id: "senior-react-engineer",
+    title: "Senior React Engineer",
+    hue: "brand",
+    disciplines: ["Frontend"],
+    seniority: "6+ years",
+    type: "Full-time",
+    mode: "Remote (India) · Gobi desk optional",
+    pay: "₹28–42L / year",
+    summary:
+      "Own the front end of a client product end to end — the component library, the data layer, the accessibility, and the Friday demo that shows it working.",
+    ship: [
+      "A typed component library the client's own team can extend after we leave.",
+      "Server components and streaming where they earn their complexity, plain pages where they do not.",
+      "An accessibility and performance budget that fails the build, not a report nobody reads.",
+    ],
+    look: [
+      "You have shipped a React application and then maintained it — you have paid for your own architectural decisions at least once.",
+      "TypeScript in strict mode is how you already work, not a migration you are considering.",
+      "You can explain a rendering choice to a non-engineer without using the word “hydration”.",
+    ],
+    stack: ["React", "Next.js", "TypeScript", "Tailwind", "Playwright"],
+  },
+  {
+    id: "senior-rails-engineer",
+    title: "Senior Ruby on Rails Engineer",
+    hue: "accent",
+    disciplines: ["Backend"],
+    seniority: "6+ years",
+    type: "Full-time",
+    mode: "Remote (India) · Gobi desk optional",
+    pay: "₹28–42L / year",
+    summary:
+      "Take Rails applications that grew faster than their design and make them boring again — without a rewrite nobody funded.",
+    ship: [
+      "A monolith that stays a monolith, with the seams drawn where the domain actually splits.",
+      "Background work that is idempotent and observable, so a retry is a non-event.",
+      "Query budgets and N+1 detection in CI, because performance regressions arrive one commit at a time.",
+    ],
+    look: [
+      "You have carried a Rails app across at least one major upgrade and lived with the result.",
+      "You reach for Postgres before you reach for a new service.",
+      "You write the test that would have caught it, not the test that covers the line.",
+    ],
+    stack: ["Ruby on Rails", "PostgreSQL", "Sidekiq", "RSpec", "Docker"],
+  },
+  {
+    id: "senior-python-engineer",
+    title: "Senior Python Engineer",
+    hue: "teal",
+    disciplines: ["Backend", "Data & AI"],
+    seniority: "6+ years",
+    type: "Full-time",
+    mode: "Remote (India) · Gobi desk optional",
+    pay: "₹30–45L / year",
+    summary:
+      "Build the pipelines, and the model-backed features on top of them, with evaluation, cost ceilings and lineage — not a notebook that impressed once.",
+    ship: [
+      "Pipelines with lineage, so the number on a dashboard can be traced back to the row it came from.",
+      "Retrieval and evaluation harnesses that can tell a prompt change from a regression.",
+      "A cost model per feature, agreed before it ships rather than discovered on an invoice.",
+    ],
+    look: [
+      "You have put a model-backed feature in front of real users and kept it working.",
+      "You treat data quality as a test suite, not a dashboard.",
+      "You are comfortable saying that a problem does not need an LLM.",
+    ],
+    stack: ["Python", "FastAPI", "PostgreSQL", "dbt", "Airflow"],
+  },
+  {
+    id: "senior-node-engineer",
+    title: "Senior Node.js Engineer",
+    hue: "indigo",
+    disciplines: ["Backend", "Platform"],
+    seniority: "6+ years",
+    type: "Full-time",
+    mode: "Remote (India) · Gobi desk optional",
+    pay: "₹28–42L / year",
+    summary:
+      "Design the APIs everything else in the product leans on — and the unglamorous operational work that keeps them up at 3am without you.",
+    ship: [
+      "Typed, versioned APIs with a contract the client's other vendors can build against.",
+      "Structured logs, traces and alerts that page a human only when a human is required.",
+      "Migrations that run forward and back, rehearsed against a copy of production.",
+    ],
+    look: [
+      "You have run Node in production and debugged it there, not only locally.",
+      "You know where the event loop hurts, and you have measured it rather than read about it.",
+      "You would rather delete a service than add one.",
+    ],
+    stack: ["Node.js", "TypeScript", "GraphQL", "PostgreSQL", "AWS"],
+  },
+  {
+    id: "senior-react-native-engineer",
+    title: "Senior React Native Engineer",
+    hue: "light",
+    disciplines: ["Mobile", "Frontend"],
+    seniority: "5+ years",
+    type: "Full-time",
+    mode: "Remote (India) · Gobi desk optional",
+    pay: "₹26–40L / year",
+    summary:
+      "Ship to both stores from one codebase, including the parts that are never one codebase: permissions, push, release trains and store review.",
+    ship: [
+      "A release pipeline the client can run themselves, signing and store submission included.",
+      "Offline-first behaviour designed on purpose rather than discovered in the field.",
+      "Native modules where the bridge is the wrong answer, and only there.",
+    ],
+    look: [
+      "You have taken an app through App Store and Play review, rejections included.",
+      "You can read a native stack trace without flinching.",
+      "You have opinions about over-the-air updates and can defend them.",
+    ],
+    stack: ["React Native", "TypeScript", "Expo", "Fastlane", "Detox"],
+  },
+  {
+    id: "platform-engineer",
+    title: "Platform / DevOps Engineer",
+    hue: "brand",
+    disciplines: ["Platform"],
+    seniority: "6+ years",
+    type: "Full-time",
+    mode: "Remote (India) · Gobi desk optional",
+    pay: "₹30–45L / year",
+    summary:
+      "Provision everything as code in the client's own cloud accounts, then hand over a deploy that any engineer on their team can trigger without you.",
+    ship: [
+      "Terraform in the client's account, reviewed like application code and planned in CI.",
+      "A pipeline that runs on every push, and a rollback that is one documented command.",
+      "Observability the client's team reads on their own, because it was built with them.",
+    ],
+    look: [
+      "You have handed infrastructure over to another team and watched them operate it.",
+      "You write runbooks that a tired person can follow.",
+      "You treat a manual console change as an incident, not a shortcut.",
+    ],
+    stack: ["AWS", "Terraform", "Kubernetes", "GitHub Actions", "Grafana"],
+  },
+] as const satisfies readonly {
+  id: string;
+  title: string;
+  hue: Hue;
+  disciplines: readonly Discipline[];
+  seniority: string;
+  type: string;
+  mode: string;
+  pay: string;
+  summary: string;
+  ship: readonly string[];
+  look: readonly string[];
+  stack: readonly string[];
+}[];
+
+/* ==========================================================================
+   PATH — how we hire.
+
+   Deliberately the same SHAPE as STEPS on the home page: numbered, with a
+   time chip carrying the commitment. A candidate who has read the client-side
+   process should notice the rhyme.
+
+   PATH_NO is the counter-list — the three things we say we do NOT do. It is
+   the most attractive part of the section precisely because it is falsifiable,
+   which is also why it is placeholder until confirmed. Publishing "no unpaid
+   take-home" and then sending one is the single worst thing this page could do
+   to the firm's reputation with engineers.
+   ========================================================================== */
+export const PATH = [
+  {
+    k: "doc",
+    n: "01",
+    title: "You apply, we read it",
+    when: "Reply in 3 days",
+    body: "A CV or a GitHub handle is enough — no cover letter, no portal account, no forty-field form. Every applicant gets a written answer, including a no.",
+  },
+  {
+    k: "phone",
+    n: "02",
+    title: "A conversation, not a screen",
+    when: "45 minutes",
+    body: "With an engineer, not a recruiter. We talk about something you have actually built and where it hurt. Half the time is yours to interrogate us.",
+  },
+  {
+    k: "code",
+    n: "03",
+    title: "Real code, in your own time",
+    when: "3 hours, paid",
+    body: "A small change to a real-shaped codebase, then a session where we pair on extending it. No algorithm whiteboard, and nothing you cannot invoice.",
+  },
+  {
+    k: "handshake",
+    n: "04",
+    title: "Offer, in writing",
+    when: "48 hours",
+    body: "Number, level, project and start date in one document — the same 48-hour rule we give clients. Ask us anything before you sign; we would rather you did.",
+  },
+] as const;
+
+export const PATH_NO = [
+  "No algorithm whiteboards",
+  "No unpaid take-home projects",
+  "No eight-round interview loops",
+  "No ghosting — every applicant hears back",
+] as const;
+
+/* ==========================================================================
+   FIRST_90 — "your first 90 days".
+
+   The section almost nobody writes, and the one a senior candidate most wants
+   to read. It is also the most concrete thing this page can promise, which is
+   exactly why it is flagged: it describes an onboarding that has to exist.
+   ========================================================================== */
+export const FIRST_90 = [
+  {
+    tag: "Week 1",
+    title: "Commit, do not observe",
+    body: "Laptop, accounts and repository access on day one. You ship something small and real in the first week — we would rather fix a genuine mistake than watch you read documentation for a month.",
+  },
+  {
+    tag: "Weeks 2–6",
+    title: "Own a surface",
+    body: "One area of one client product becomes yours: the decisions, the reviews, and the Friday demo. You present it to the client yourself from the first demo you are on.",
+  },
+  {
+    tag: "Weeks 7–12",
+    title: "Shape the work",
+    body: "You start writing the estimates and scoping the next milestone, not only executing it. By the end of the quarter your name is on the proposal for what comes next.",
+  },
+] as const;
+
+/* Two honest lists. The client-side promise is "we tell you when to walk
+   away"; this is that promise pointed at applicants, and it is the reason the
+   page does not need a values section. */
+export const FIT_YES = [
+  "You would rather delete code than defend it.",
+  "You are happiest when somebody can see the thing working, not read about it.",
+  "You have shipped something you still maintain, and it taught you something.",
+  "You can disagree with a client's request and still be useful in the same meeting.",
+  "You write things down, because you have been on the receiving end of a handover.",
+] as const;
+
+export const FIT_NO = [
+  "You want a large team to sit behind. There is not one — the room is small on purpose.",
+  "You want a ticket queue and a finished spec. You will be asked what we should build, not only how.",
+  "You want to specialise in exactly one framework forever. Client work will move you.",
+  "You dislike having your work seen weekly, unfinished, by the person paying for it.",
+] as const;
+
+/* Grouped, rather than a marquee: home's StackMarquee is a client-facing
+   impression of breadth, but a candidate reads a stack list to answer "which
+   of these would I touch", and grouping is what answers that. */
+export const CAREER_STACK = [
+  {
+    group: "Ship",
+    note: "What the user touches",
+    items: ["TypeScript", "React", "Next.js", "React Native", "Tailwind"],
+  },
+  {
+    group: "Serve",
+    note: "What answers it",
+    items: ["Node.js", "Python", "Ruby on Rails", "GraphQL", "PostgreSQL"],
+  },
+  {
+    group: "Run",
+    note: "Where it lives",
+    items: ["AWS", "Terraform", "Docker", "Kubernetes", "GitHub Actions"],
+  },
+  {
+    group: "Work",
+    note: "How we talk",
+    items: ["GitHub", "Slack / Teams", "Linear", "Figma", "Notion"],
+  },
+] as const;
+
+/* Candidate-side FAQ. Kept separate from FAQ above: same shape, different
+   audience, and merging them would put "what does a project cost" next to
+   "do you hire interns". */
+export const CAREER_FAQ = [
+  {
+    q: "Is this remote, or do I have to move to Gobichettipalayam?",
+    a: "Remote within India, with the office in Gobichettipalayam, Tamil Nadu open to anyone who wants a desk. What is not flexible is the overlap window: clients are in the US and UK, so there is one scheduled live hour every working day, and the Friday demo is fixed.",
+  },
+  {
+    q: "You say senior only. What counts as senior?",
+    a: "Not years on their own. It is whether you have owned something in production long enough to have been wrong about it and to have fixed it. Somebody with five years of that is senior here; somebody with twelve years of greenfield handoffs may not be.",
+  },
+  {
+    q: "Will I be on one project or several?",
+    a: "One at a time. Work rotates when a project ends, not weekly — you are named in a client's proposal, and your staying on it is part of what they are buying.",
+  },
+  {
+    q: "What happens if there is no client project for my stack?",
+    a: "You are paid the same, and you work on internal tooling, an upgrade, or the open source we depend on. Nobody is put on an unpaid bench and nobody is asked to sell.",
+  },
+  {
+    q: "Do you hire juniors or interns?",
+    a: "Not onto client projects — clients are told explicitly that no juniors are substituted after signing, and that has to stay true. When there is a mentored path that does not break that promise, it will be posted here first.",
+  },
+  {
+    q: "I do not match every line of a role. Should I still apply?",
+    a: "Yes. The requirement lists describe the work; they are not a checklist to score yourself against. Tell us which part you have not done and how you would approach it — that answer is the one we actually read.",
+  },
+] as const;
+
+/* The proof quote on /why-choose-us. A DIFFERENT quote from PULL_QUOTE on
+   home, and deliberately so — the archive picks one that argues the page's
+   own thesis (they were not needed again) rather than repeating the home
+   page's. Same P0 bucket: placeholder until a real, permissioned one exists. */
+export const WHY_QUOTE = {
+  q: "Six months after handover we haven’t needed them once — which, strangely, is exactly why we’d hire them again.",
+  name: "Placeholder Name",
+  role: "CTO, Placeholder Co",
+  link: { label: "See the work behind the words", href: "/#work" },
+} as const;

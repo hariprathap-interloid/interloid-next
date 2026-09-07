@@ -4,11 +4,12 @@ import Clauses from "@/components/Clauses";
 import CommitmentTile from "@/components/CommitmentTile";
 import CtaAnchor from "@/components/CtaAnchor";
 import Footer from "@/components/Footer";
-import Icon from "@/components/Icon";
 import Nav from "@/components/Nav";
+import PullQuote from "@/components/PullQuote";
 import Reveal from "@/components/Reveal";
 import WeekStrip from "@/components/WeekStrip";
-import { BENTO, COMMITMENTS_EXTRA } from "@/content/site";
+import WhyHero from "@/components/WhyHero";
+import { BENTO, COMMITMENTS_EXTRA, WHY_QUOTE } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Why Interloid — the commitments we put in writing",
@@ -57,70 +58,21 @@ export default function WhyChooseUs() {
       </a>
       <Nav />
       <main id="main">
-        <section className="relative overflow-hidden bg-secondary pb-32 pt-40">
-          <div
-            className="pointer-events-none absolute bottom-0 left-0 size-[600px] -translate-x-1/3 translate-y-1/3 rounded-full bg-brand/15 blur-[120px]"
-            aria-hidden="true"
-          />
-          <div
-            className="pointer-events-none absolute right-0 top-1/4 size-[420px] translate-x-1/3 rounded-full bg-accent/15 blur-[120px]"
-            aria-hidden="true"
-          />
-
-          <div className="relative z-10 mx-auto max-w-7xl px-6">
-            <div className="mb-16 max-w-2xl">
-              <div
-                data-reveal
-                className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium leading-[1.5] shadow-sm"
-              >
-                <span className="text-accent-strong">
-                  <Icon name="star" className="size-4" />
-                </span>
-                <span className="text-muted-foreground">Why Interloid</span>
-              </div>
-              {/* h1, not h2 — this is the page's own title. Same metrics as
-                  the section H2 elsewhere; the level changes, not the size. */}
-              <h1
-                data-reveal
-                style={{ "--delay": "100ms" } as React.CSSProperties}
-                className="font-display text-4xl font-medium leading-[1.1] tracking-[-0.025em] text-foreground md:text-5xl lg:text-[3.5rem]"
-              >
-                Commitments we{" "}
-                <span className="bg-gradient-to-r from-brand to-accent bg-clip-text text-transparent">
-                  put in writing.
-                </span>
-              </h1>
-              <p
-                data-reveal
-                style={{ "--delay": "200ms" } as React.CSSProperties}
-                data-placeholder="P1: verify against the real engagement agreement before launch"
-                className="mt-6 text-lg leading-[1.5] text-muted-foreground"
-              >
-                Every commitment, carried into every engagement agreement —
-                not just written on a website.
-              </p>
-            </div>
-
-            {/* Five tiles: 2 + 1 + 1 + 1 = the wide tile plus four singles
-                fills two rows of three exactly, which is the arrangement
-                prototype 1's grid was designed around. */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {all.map((c, i) => (
-                <CommitmentTile
-                  key={c.title}
-                  item={c}
-                  index={i}
-                  wide={
-                    i === 0 || (all.length % 3 === 1 && i === all.length - 1)
-                  }
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
+        <WhyHero />
         <Clauses />
         <WeekStrip />
+
+        {/* The archive's proof band: one quote, then a route to the work. It
+            lands here, between the promises and the answers, because that is
+            where a reader has just been told a lot and has not been shown
+            anything. Same component as home's pull-quote, different words. */}
+        <PullQuote
+          quote={WHY_QUOTE.q}
+          name={WHY_QUOTE.name}
+          role={WHY_QUOTE.role}
+          link={WHY_QUOTE.link}
+        />
+
         <Answers />
 
         {/* `id="contact"` would collide with nothing on this page, but the nav
@@ -135,7 +87,11 @@ export default function WhyChooseUs() {
             "Book 30 minutes and test every clause on this page against your project. " +
             "If the honest answer is “don’t hire us,” that is the answer you’ll get."
           }
-          meta={["No obligation", "No sales pressure", "Written price in 48 hours"]}
+          meta={[
+            "No obligation",
+            "No sales pressure",
+            "Written price in 48 hours",
+          ]}
         />
       </main>
       <Footer />

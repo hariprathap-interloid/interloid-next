@@ -12,18 +12,18 @@ import {
    and radius (0→rounded-full) animate together over 300ms.
 
    HANDOFF §4: 8 links, desktop pill at `xl:` (1280px); below that the mobile
-   menu. `about` and `careers` do not exist yet and 404 — kept honest with
-   data-placeholder rather than removed, so the placeholder toggle still
-   counts them (§7 P1). */
+   menu. `/careers` was built 2026-09-07 and its flag is gone; `/about` still
+   does not exist and 404s — kept honest with data-placeholder rather than
+   removed, so the placeholder toggle still counts it (§7 P1). */
 const LINKS = [
   { href: "/#home", label: "Home" },
   { href: "/#services", label: "Services" },
   { href: "/#stack", label: "Stack" },
-  { href: "/why-choose-us", label: "Why us" },
+  { href: "/why-choose-us", label: "Commitments" },
   { href: "/#process", label: "Process" },
   { href: "/#work", label: "Work" },
   { href: "/about", label: "About us", placeholder: "page not built yet" },
-  { href: "/careers", label: "Careers", placeholder: "page not built yet" },
+  { href: "/careers", label: "Careers" },
 ] as const;
 
 /* THEME AS EXTERNAL STATE.

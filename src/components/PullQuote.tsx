@@ -39,7 +39,22 @@ import { PULL_QUOTE } from "@/content/site";
    No heading. That is deliberate: a slogan that has to be introduced is not
    doing its job, and the band itself is now the separation the label was
    standing in for. */
-export default function PullQuote() {
+/* Parameterised 2026-09-07 so /why-choose-us's proof section is this band with
+   a different quote, not a second implementation. Defaults are home's, so
+   `<PullQuote />` is unchanged. `link` is the one addition — the archive ends
+   its proof section by sending the reader to the work, which is the right move
+   on a page that has just spent 1700px making promises. */
+export default function PullQuote({
+  quote = PULL_QUOTE.q,
+  name = PULL_QUOTE.name,
+  role = PULL_QUOTE.role,
+  link,
+}: {
+  quote?: string;
+  name?: string;
+  role?: string;
+  link?: { label: string; href: string };
+} = {}) {
   return (
     <section className="relative overflow-hidden border-y border-border bg-card py-24">
       <div className="relative z-10 mx-auto max-w-7xl px-6">
@@ -60,15 +75,33 @@ export default function PullQuote() {
             <Icon name="quote-mark" className="size-8" />
           </span>
           <blockquote className="font-display text-[clamp(1.25rem,2.2vw,1.5rem)] font-medium leading-[1.5] text-foreground">
-            {PULL_QUOTE.q}
+            {quote}
           </blockquote>
           <figcaption className="mt-6 text-sm text-muted-foreground">
             <strong className="font-semibold text-foreground">
-              {PULL_QUOTE.name}
+              {name}
             </strong>{" "}
-            &middot; {PULL_QUOTE.role}
+            &middot; {role}
           </figcaption>
         </figure>
+
+        {link ? (
+          <p
+            data-reveal
+            style={{ "--delay": "120ms" } as React.CSSProperties}
+            className="mt-10 text-center"
+          >
+            <a
+              href={link.href}
+              className="group inline-flex items-center gap-2 font-semibold text-foreground transition-colors hover:text-primary"
+            >
+              {link.label}
+              <span className="transition-transform group-hover:translate-x-1">
+                <Icon name="arrow" className="size-4" />
+              </span>
+            </a>
+          </p>
+        ) : null}
       </div>
     </section>
   );

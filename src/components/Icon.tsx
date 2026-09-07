@@ -42,6 +42,12 @@ export const ICONS = {
       <path d="m12 5 7 7-7 7" />
     </>
   ),
+  "arrow-down": (
+    <>
+      <path d="M12 5v14" />
+      <path d="m19 12-7 7-7-7" />
+    </>
+  ),
   check: <path d="M20 6 9 17l-5-5" />,
   doc: (
     <>

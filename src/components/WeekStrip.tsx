@@ -43,13 +43,30 @@ export default function WeekStrip() {
               style={{ "--delay": `${i * 80}ms` } as React.CSSProperties}
               className="h-full"
             >
+              {/* Hover is colour + elevation ONLY — no lift. WorkCard's note:
+                  hover-triggered geometry on the hovered element flickers at
+                  its own edges. */}
               <div
-                className={`flex h-full flex-col rounded-[1.25rem] border p-6 transition-[border-color,box-shadow] duration-300 ease-out ${
+                className={`group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border p-6 transition-[border-color,box-shadow] duration-300 ease-out ${
                   d.hi
                     ? "border-accent/40 bg-card shadow-md ring-1 ring-accent/15"
                     : "border-border bg-card shadow-sm hover:border-accent/30 hover:shadow-md"
                 }`}
               >
+                {/* DS §8.9's ghost numeral, which names week markers as a use.
+                    Sequence position, not the tag repeated — so "Anytime" is
+                    05, the fifth beat. Painted first, so the content that
+                    follows sits above it without a z-index. */}
+                <span
+                  className={`pointer-events-none absolute -right-2 -top-4 select-none font-display text-[64px] font-bold leading-none transition-colors duration-500 ${
+                    d.hi
+                      ? "text-accent/10"
+                      : "text-foreground/5 group-hover:text-accent/10"
+                  }`}
+                  aria-hidden="true"
+                >
+                  {`0${i + 1}`}
+                </span>
                 <span
                   className={`mb-3 inline-flex w-fit rounded-full px-2.5 py-[3px] text-[11px] font-bold uppercase tracking-[0.08em] ${
                     d.hi
