@@ -109,23 +109,37 @@ ok("tech · six service tabs", (await page.locator("#technologies [role=tab]").c
 ok("tech · one panel visible, the rest hidden", (await page.locator("#technologies [role=tabpanel]:not(.hidden)").count()) === 1);
 const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u;
 ok("tech · no emoji anywhere in the section", !EMOJI.test(await page.locator("#technologies").innerText()));
-await page.click("#stack-tab-2");
-await page.waitForTimeout(300);
-ok("tech · switching tab swaps the stack", (await page.locator("#technologies [role=tabpanel]:not(.hidden)").innerText()).includes("PostgreSQL"));
-ok("tech · roving tabindex", (await page.getAttribute("#stack-tab-2", "tabindex")) === "0" && (await page.getAttribute("#stack-tab-0", "tabindex")) === "-1");
+/* The six-tab stack list was replaced by the three-level ecosystem map on
+   2026-09-08 (TechStacks.tsx is kept but no longer called). The service nodes
+   are the tabs now, and the panel is the branch that opens beside the wheel.
+   The full cross-variant suite lives in the ecosystem check; these are the
+   assertions that belong to the page. */
+await page.evaluate(() => document.getElementById("technologies").scrollIntoView({ behavior: "instant", block: "center" }));
+await page.waitForTimeout(500);
+/* park the pointer in the stage so the resting cycle stops and boxes settle */
+await page.locator("#technologies .eco-stage").hover({ position: { x: 4, y: 4 } });
+await page.waitForTimeout(350);
+await page.hover("#branch-svc-2");
+await page.waitForTimeout(450);
+const openPanel = page.locator("#branch-panel-2");
+ok("eco · hovering a service opens its branch", (await openPanel.innerText()).includes("PostgreSQL"));
+/* toLowerCase: the group labels render through `uppercase`, and innerText
+   returns the RENDERED casing - the same trap that bit the capability panel
+   check earlier. */
+ok("eco · the branch names its groups", (await openPanel.innerText()).toLowerCase().includes("node.js ecosystem"));
+ok("eco · roving tabindex", (await page.getAttribute("#branch-svc-2", "tabindex")) === "0" && (await page.getAttribute("#branch-svc-0", "tabindex")) === "-1");
+await page.focus("#branch-svc-2");
+await page.keyboard.press("ArrowRight");
+await page.waitForTimeout(400);
+ok("eco · arrow keys move between services", (await page.getAttribute("#branch-svc-3", "aria-selected")) === "true");
 const logos = await page.locator("#technologies [role=tabpanel]:not(.hidden) img").count();
-ok(`tech · brand marks render (${logos} in this panel)`, logos >= 8);
+ok(`eco · brand marks render (${logos} in the open branch)`, logos >= 8);
 const broken = await page.evaluate(() =>
   [...document.querySelectorAll("#technologies img")].filter((i) => i.complete && i.naturalWidth === 0).length,
 );
-ok(`tech · no broken logo files (${broken})`, broken === 0);
-/* the cross-link: reading about Mobile and following "the whole stack" must
-   select Mobile's tab, not whichever happened to be open */
-await page.evaluate(() => document.getElementById("capability-mobile").scrollIntoView({ behavior: "instant", block: "center" }));
-await page.waitForTimeout(400);
-await page.click('#capability-mobile a[href="#technologies"]');
-await page.waitForTimeout(400);
-ok("tech · capability link selects that service's tab", (await page.getAttribute("#stack-tab-1", "aria-selected")) === "true");
+ok(`eco · no broken logo files (${broken})`, broken === 0);
+const srCount = await page.locator("#technologies [role=status]").count();
+ok("eco · the panel swap is announced", srCount === 1);
 
 /* ---- reveals ----------------------------------------------------------- */
 await sweep(page);
@@ -172,6 +186,7 @@ for (const [id, name] of [
   ["problems", "svc-problems"],
   ["capabilities", "svc-capabilities"],
   ["approach", "svc-approach"],
+  ["technologies", "svc-ecosystem"],
   ["engagement", "svc-engagement"],
   ["terms", "svc-terms"],
 ]) {

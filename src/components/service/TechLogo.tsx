@@ -53,10 +53,16 @@ export default function TechLogo({
   size = "md",
 }: {
   tech: Tech;
-  size?: "sm" | "md";
+  /** Bumped a step across the board on 2026-09-08: at 32px plate / 16px mark
+      the logos were not readable on the diagram, which is the one place they
+      have to do the whole job of naming a technology. `lg` exists for the
+      radial layouts, where a mark is the only thing standing in for a label. */
+  size?: "sm" | "md" | "lg";
 }) {
-  const box = size === "sm" ? "size-8" : "size-10";
-  const img = size === "sm" ? "size-4" : "size-5";
+  const box =
+    size === "sm" ? "size-9" : size === "lg" ? "size-12" : "size-10";
+  const img =
+    size === "sm" ? "size-5" : size === "lg" ? "size-7" : "size-6";
 
   return (
     <span
@@ -80,7 +86,9 @@ export default function TechLogo({
       ) : (
         <span
           aria-hidden="true"
-          className="font-display text-[10px] font-bold tracking-tight text-slate-500"
+          className={`font-display font-bold tracking-tight text-slate-500 ${
+            size === "lg" ? "text-[13px]" : "text-[11px]"
+          }`}
         >
           {monogram(tech.name)}
         </span>

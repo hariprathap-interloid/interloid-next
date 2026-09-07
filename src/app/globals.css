@@ -372,6 +372,154 @@ html {
   animation: cue 2.4s ease-in-out infinite;
 }
 
+/* ======================================================================
+   ECOSYSTEM MAP — the /services three-level diagram.
+
+   Real CSS, not utilities, for the three reasons TAILWIND-MAP §3 lists:
+   these are per-element `var(--delay)` transitions, they must be switchable
+   as WHOLE COMPONENTS under prefers-reduced-motion (CLAUDE.md rule 7), and
+   two of them animate SVG geometry that no utility expresses.
+
+   ── THE RESTING CYCLE ────────────────────────────────────────────────
+   At rest the map narrates itself: one service is emphasised at a time, on
+   a ~3.4s beat, looping — the behaviour measured on the reference's agent
+   diagram (scale 1.15, spring settle, ~3.4s per node). Here it is pure CSS
+   with a staggered `animation-delay`, NOT a JS timer: no client state, no
+   re-render, and the desktop copy and the mobile copy each run their own
+   without being told to.
+
+   THE KEYFRAME'S END STATE IS THE RESTING STATE, AND THAT IS LOAD-BEARING.
+   The global reduced-motion block below forces `animation-iteration-count: 1`
+   and a 0.01ms duration, which lands every animated element on its FINAL
+   keyframe. So 100% must be the un-emphasised node — otherwise a
+   reduced-motion visitor would get six permanently-enlarged services.
+
+   The translate is inside the keyframe because the node's position comes
+   from left/top percentages plus a centring translate; animating `transform`
+   without it would fling every node to the stage origin. */
+@keyframes eco-cycle {
+  0%,
+  13% {
+    transform: translate(-50%, -50%) scale(1.13);
+  }
+  21%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.eco-node {
+  /* THE BASE TRANSFORM IS NOT OPTIONAL. The node is positioned by left/top
+     percentages and centred by this translate. When the cycle below is
+     switched off (`animation: none` on hover, or under reduced motion) the
+     keyframe's transform vanishes with it — without a base transform here
+     every service would jump half its own size down and right at the moment
+     the visitor's cursor arrives. Found by hovering, not by reading. */
+  transform: translate(-50%, -50%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  /* 6 services × 3.4s = 20.4s for a full turn of the map. DS §13.4 puts
+     continuous loops in the 2–25s band. */
+  animation: eco-cycle 20.4s linear infinite;
+  animation-delay: calc(var(--i) * 3.4s);
+}
+
+/* Any deliberate selection outranks the ambient cycle: the moment a visitor
+   hovers, focuses or pins a service, the map stops talking over them and the
+   emphasis becomes theirs to drive. */
+.eco-stage:hover .eco-node,
+.eco-stage:focus-within .eco-node,
+.eco-stage[data-pinned="true"] .eco-node {
+  animation: none;
+}
+
+/* The selected service, once the cycle has yielded. Same 1.13 the cycle
+   uses, so nothing jumps as control changes hands. */
+.eco-node[data-active="true"] {
+  transform: translate(-50%, -50%) scale(1.13);
+  z-index: 3;
+}
+
+/* While a layout that MOVES its nodes is settling, the nodes that are not
+   selected stop accepting the pointer — otherwise whichever one slides under
+   the cursor fires its own mouseenter and takes the selection, which moves
+   the wheel again. Only the variant that turns its wheel sets this flag; see
+   useEcosystem's `guardMovingLayout`. */
+.eco-stage[data-settling="true"] .eco-node:not([data-active="true"]) {
+  pointer-events: none;
+}
+
+/* ── CONNECTORS ───────────────────────────────────────────────────────
+   The reference draws its connectors on, staggered, when the section
+   scrolls in — its lines carry fractional `stroke-dasharray` values with no
+   CSS animation, which is the signature of a pathLength-normalised draw.
+   Ours is the same effect keyed to this site's own reveal observer: the SVG
+   carries [data-reveal], and `is-in` releases the dash.
+
+   `pathLength="1"` on the line makes the dash unit-independent, so one rule
+   works for connectors of six different lengths. */
+.eco-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--d, 0ms);
+}
+[data-reveal].is-in .eco-line {
+  stroke-dashoffset: 0;
+}
+
+/* The branch that belongs to the open service brightens; the rest stay at
+   their resting weight. Opacity only — stroke colour is a token. */
+.eco-line[data-on="true"] {
+  opacity: 1;
+}
+.eco-line[data-on="false"] {
+  opacity: 0.35;
+}
+
+/* ── LEVEL 2 AND 3 ────────────────────────────────────────────────────
+   Groups and technologies fade+rise into place, staggered outward from the
+   service so the eye follows the branch growing rather than a block
+   appearing. 260ms is inside DS §13.3's 300ms workhorse band; the stagger
+   is what carries the sense of sequence, not the duration. */
+.eco-grow {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.82);
+  transition:
+    opacity 0.26s ease-out,
+    transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--d, 0ms);
+  pointer-events: none;
+}
+.eco-branch[data-open="true"] .eco-grow {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+
+/* ── REDUCED MOTION ───────────────────────────────────────────────────
+   The global block at the end of this file already flattens durations, but
+   it cannot express "and the resting cycle should simply not exist". These
+   rules say that explicitly, at the component level, which is the standard
+   CLAUDE.md rule 7 sets. The map stays fully usable: selection still works,
+   the branch still appears — it just appears rather than grows. */
+@media (prefers-reduced-motion: reduce) {
+  .eco-node {
+    animation: none;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  .eco-line {
+    stroke-dashoffset: 0;
+    transition: none;
+  }
+  .eco-grow {
+    transition: none;
+  }
+  .eco-branch[data-open="true"] .eco-grow {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
 /* Placeholder outliner — every prototype ships one (HANDOFF §8). */
 body.show-ph [data-placeholder] {
   outline: 2px dashed #e11d48;
