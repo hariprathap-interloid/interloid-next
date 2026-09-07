@@ -78,48 +78,218 @@ export const HUE: Record<
   },
 };
 
+/* Extended 2026-09-08 for /services (SERVICES-REFERENCE.md §3): each entry
+   gained the deep-dive fields the explorer panel renders. `head`/`accent` is
+   the per-capability two-tone imperative headline — the reference's best move
+   (name the pain or the outcome, never the service). `deliver` is "what lands
+   in your repo": three concrete artifacts, not adjectives. Everything stated
+   as fact is on HANDOFF §7's allowed list or describes the offering itself. */
 export const SERVICES = [
   {
     k: "code",
     name: "Product engineering",
     hue: "brand",
+    head: "Ship the roadmap,",
+    accent: "not the status report.",
     body: "Web and mobile products built to be handed over — typed, tested, documented, and deployed on infrastructure you control.",
+    deliver: [
+      "A typed, tested codebase in your GitHub organisation from the first commit.",
+      "CI on every push and a deploy any engineer on your team can trigger.",
+      "Documentation written for the team that inherits it — because they will.",
+    ],
     tags: ["React / Next.js", "TypeScript", "Node / Python", "Postgres"],
   },
   {
     k: "chart",
     name: "Data & analytics",
     hue: "teal",
+    head: "Trust the number",
+    accent: "on the dashboard.",
     body: "Pipelines, warehouses and dashboards that answer the question you actually asked, with the lineage to prove the number.",
+    deliver: [
+      "Pipelines with lineage, so a figure can be traced back to the row it came from.",
+      "Metrics defined once, centrally — the same answer in every report.",
+      "Data-quality checks that fail loudly in CI, not quietly in a meeting.",
+    ],
     tags: ["Pipelines", "Warehousing", "Dashboards", "Data quality"],
   },
   {
     k: "cloud",
     name: "Cloud & DevOps",
     hue: "light",
+    head: "Your accounts, your keys —",
+    accent: "and runbooks your team can follow.",
     body: "Provisioned as code in your own cloud accounts. CI that runs on every push and a deploy any engineer on your team can trigger.",
+    deliver: [
+      "Terraform in your account, reviewed like application code and planned in CI.",
+      "A rollback that is one documented command, rehearsed before it is needed.",
+      "Observability your team reads without us — built with them, not for them.",
+    ],
     tags: ["AWS", "Terraform", "CI/CD", "Observability"],
   },
   {
     k: "sparkle",
     name: "AI integration",
     hue: "indigo",
+    head: "AI that survives",
+    accent: "contact with review.",
     body: "LLM features wired into real workflows — with evaluation, guardrails and a cost model, not a demo that impresses once.",
+    deliver: [
+      "Retrieval over your own documents and data, with an evaluation harness so “does it work?” has a measured answer.",
+      "Guardrails and moderation on inputs and outputs, agreed before launch.",
+      "A cost ceiling per feature, decided up front rather than discovered on an invoice.",
+    ],
     tags: ["Retrieval", "Evaluation", "Guardrails", "Cost control"],
   },
   {
     k: "users",
     name: "Team augmentation",
     hue: "accent",
+    head: "Senior engineers,",
+    accent: "inside your team.",
     body: "Senior engineers embedded in your team and your standups. Same people throughout, 30-day notice either way.",
+    deliver: [
+      "Engineers with 8–12 years each, named in the proposal — the people you meet are the people you get.",
+      "Work inside your repo, your board and your review process — not a parallel track.",
+      "A clean exit: 30-day notice either way, and nothing of yours in our hands.",
+    ],
     tags: ["Embedded", "Senior only", "Your process", "30-day notice"],
   },
 ] as const satisfies readonly {
   k: string;
   name: string;
   hue: Hue;
+  head: string;
+  accent: string;
   body: string;
+  deliver: readonly string[];
   tags: readonly string[];
+}[];
+
+/* ==========================================================================
+   /services — added 2026-09-08 (SERVICES-REFERENCE.md).
+   ==========================================================================
+   The reference (four conversedatasolutions service pages, read with
+   Playwright) is: two-tone hero → one deep section per capability on
+   alternating grounds → a "4-week sprint" conversion ledger → one CTA. What
+   is NOT copied: its invented proof ("100+ enterprises", partner logos,
+   fictional example agents) and its Microsoft-stack catalogue.
+
+   The page serves TWO buyers, split explicitly because the reference never
+   does: clients who want a product built from scratch, and clients who want
+   senior engineers joining their team on contract. ENGAGEMENT_MODES is that
+   split; every term in it is on HANDOFF §7's allowed list.
+   ========================================================================== */
+
+/* The hero's fact strip — same device as CAREER_FACTS. All four are allowed
+   claims, so no placeholders here. */
+export const SERVICES_FACTS = [
+  {
+    k: "doc",
+    label: "48-hour proposal",
+    body: "Scope and price in writing",
+  },
+  {
+    k: "monitor-play",
+    label: "Weekly working demo",
+    body: "Software you can click, not slides",
+  },
+  {
+    k: "key-round",
+    label: "100% yours",
+    body: "Code, IP and accounts throughout",
+  },
+  {
+    k: "split",
+    label: "30-day notice",
+    body: "Leaving must cost you nothing",
+  },
+] as const satisfies readonly { k: string; label: string; body: string }[];
+
+/* ==========================================================================
+   SOUND FAMILIAR — CLAUDE.md §7.2's four problem→answer pairs, landed on the
+   page they were always destined for. Copy is prototype2-archive/index.html's
+   `#problems` section near-verbatim; `service` names the SERVICES entry the
+   answer points at, so the link label derives from the data.
+   ========================================================================== */
+export const SERVICE_PROBLEMS = [
+  {
+    q: "We keep planning features we never ship.",
+    a: "A small senior team takes one defined slice of your roadmap and ships it in weeks — then the next slice. Momentum is the deliverable: you see a working demo every week, not a status report.",
+    service: "code",
+  },
+  {
+    q: "Every release breaks something else.",
+    a: "That's an architecture problem wearing a testing costume. We stabilise the foundations — boring architecture, tests that gate deploys, observability that pages a human before your customers notice.",
+    service: "cloud",
+  },
+  {
+    q: "We need AI in the product — but every demo dies in review.",
+    a: "Demos die because nobody can prove they work. We build AI the other way round: start from the workflow, add retrieval and guardrails, and wrap it in an evaluation harness so “does it work?” has a measured answer.",
+    service: "sparkle",
+  },
+  {
+    q: "Hiring senior engineers is taking quarters, not weeks.",
+    a: "Embed ours. Senior engineers join your standups, your repo and your review process — and leave with 30 days' notice when you've hired. No bench, no juniors billed as seniors.",
+    service: "users",
+  },
+] as const satisfies readonly { q: string; a: string; service: string }[];
+
+/* ==========================================================================
+   ENGAGEMENT MODES — the two ways to hire us, made explicit. This replaces
+   the reference's "4-week sprint" ledger as the conversion section, built
+   ONLY from verified commitments: consult, 48h proposal, weekly demos,
+   $25k–$90k, 8–12 weeks, ownership, senior-only, no junior swap, 30-day
+   notice, 30-day support. Do not add a term that is not on that list.
+   ========================================================================== */
+export const ENGAGEMENT_MODES = [
+  {
+    key: "build",
+    k: "rocket",
+    hue: "brand",
+    label: "Build from scratch",
+    title: "We build it, you own it",
+    who: "You have a product to ship and nobody free to ship it. We take it from a written scope to production — in your accounts, on your repos.",
+    terms: [
+      "A fixed price or transparent hourly rate, in writing within 48 hours of the first call.",
+      "A focused first version in 8–12 weeks; larger platforms run 14–20.",
+      "A working demo every week from week one — progress you can click.",
+      "100% code and IP ownership, in your GitHub org and cloud accounts throughout.",
+      "30 days of post-launch support included; a retainer only if you want one.",
+    ],
+    figure: "$25k–$90k",
+    caption: "typical full build",
+    cta: "Scope your build",
+  },
+  {
+    key: "embed",
+    k: "users",
+    hue: "accent",
+    label: "Join your team",
+    title: "Our seniors, your standups",
+    who: "You have a team and a roadmap moving slower than the market. Our engineers work inside your repo and your rituals on contract — not alongside them.",
+    terms: [
+      "Senior engineers with 8–12 years each, named in the proposal.",
+      "No juniors substituted after signing — the people you meet are the people you get.",
+      "Your repo, your board, your standups and your review process.",
+      "Deliberate overlap with US and UK business hours, async by default.",
+      "30-day notice either way — step out cleanly once you've hired.",
+    ],
+    figure: "Monthly",
+    caption: "per engineer, transparent",
+    cta: "Add senior capacity",
+  },
+] as const satisfies readonly {
+  key: string;
+  k: string;
+  hue: Hue;
+  label: string;
+  title: string;
+  who: string;
+  terms: readonly string[];
+  figure: string;
+  caption: string;
+  cta: string;
 }[];
 
 export const STACK = [
@@ -494,7 +664,13 @@ export const WEEK = [
 
 /* Open on the page, not in an accordion — the archive's own note. Hiding the
    awkward questions behind a click is the behaviour the section is arguing
-   against. */
+   against.
+
+   Extended 2026-09-08 after diffing against home's FAQ (user request): the
+   timeline and the exit questions were answered there and not here. Both
+   answers below restate only HANDOFF §7 allowed claims (8–12 / 14–20 weeks,
+   ownership throughout, 30 days support). The archive's four keep their
+   order; the two new ones follow. */
 export const ANSWERS = [
   {
     q: "Where are you actually based?",
@@ -512,467 +688,16 @@ export const ANSWERS = [
     q: "What does it cost?",
     a: "A fixed price or a transparent hourly rate, in writing within 48 hours of the first call. If budget and scope do not line up, you hear it on that call — and if the honest number is smaller than you planned to spend, you hear that too.",
   },
-] as const;
-
-/* ==========================================================================
-   /careers — added 2026-09-07.
-   ==========================================================================
-   Built after reading conversedatasolutions.com/careers with Playwright. That
-   page is: hero → three core values → a photo bento → a flat list of four
-   openings → "don't see the perfect fit". None of that structure is copied.
-   Two of its moves are deliberately NOT reproduced:
-
-     · the photo bento ("Life at …"). We have no photographs of a team, and
-       HANDOFF §7 P1 is explicit that we do not launch with invented people.
-       Stock faces on a careers page are the exact failure the review calls
-       "asking for trust while showing no proof".
-     · "Our Core Values" as three abstractions (Innovation / Collaboration /
-       Integrity). Those are unfalsifiable and every firm publishes them.
-
-   What replaces them is this site's own argument turned inward. The client
-   pages promise transparency, senior-only staffing and no surprises; a
-   candidate reading this page should recognise the same terms pointed at
-   them — OFFER is the commitment grid, PATH is the process section, and
-   FIT_YES/FIT_NO is "we tell you when to walk away" addressed to applicants.
-
-   ⚠ CLAIM STATUS. Everything about the hiring PROCESS, the COMPENSATION and
-   whether these roles are open today is unverified — none of it is on
-   HANDOFF §7's allowed list, because that list was written about client
-   commitments. Every such string is rendered with data-placeholder by its
-   component. Do not un-flag them without the user confirming the real hiring
-   practice; a careers page that overstates its own process is the same
-   fabricated-proof problem as a fake testimonial, one audience over.
-   ========================================================================== */
-
-/* The hero's four facts. Three of them ARE on the allowed list (senior-only,
-   8–12 years, no juniors after signing, named in the proposal) — they are the
-   client promises restated for a candidate, not new claims. `ph` marks the
-   one that is not. */
-export const CAREER_FACTS = [
   {
-    k: "user-check",
-    label: "Senior only",
-    body: "No junior bench, no shadow team",
-    ph: null,
+    q: "How long until we launch?",
+    a: "A focused first version is typically 8–12 weeks; larger platforms run 14–20. You see a working demo every week from the first sprint, so the date is something you watch converge — not something you take on faith.",
   },
   {
-    k: "clock",
-    label: "US & UK overlap",
-    body: "Async by default, one live window",
-    ph: null,
-  },
-  {
-    k: "handshake",
-    label: "Named, not pooled",
-    body: "You appear in the client's proposal",
-    ph: null,
-  },
-  {
-    k: "layers",
-    label: "One project at a time",
-    body: "You are not split across three accounts",
-    ph: "confirm staffing policy",
-  },
-] as const satisfies readonly {
-  k: string;
-  label: string;
-  body: string;
-  ph: string | null;
-}[];
-
-/* ==========================================================================
-   OFFER — the candidate-facing commitment grid.
-
-   Same idea as BENTO on the client side, and the parallel is the point: the
-   answer to "why work here" is the same sentence as "why hire us", which is
-   the only version of that answer a senior engineer believes.
-
-   SIX tiles, not seven: this grid is a plain three-column layout with no wide
-   slot, so the count only has to divide by 3. Do not port BENTO's wide-tile
-   arithmetic here — it is a different grid.
-   ========================================================================== */
-export const OFFER = [
-  {
-    k: "code",
-    hue: "brand",
-    title: "You write production code in week one",
-    body: "There is no bench, no ramp-up project and no internal-tooling purgatory. Your first pull request goes into a client repository in your first week.",
-    ph: null,
-  },
-  {
-    k: "monitor-play",
-    hue: "accent",
-    title: "You demo your own work",
-    body: "Every Friday the client sees the software, presented by the person who built it. No manager translating your week into a slide.",
-    ph: null,
-  },
-  {
-    k: "users",
-    hue: "light",
-    title: "Peers, not a pyramid",
-    body: "Engineers here have 8–12 years each. Your code is reviewed by somebody who has shipped the same thing before, and you review theirs.",
-    ph: null,
-  },
-  {
-    k: "search",
-    hue: "teal",
-    title: "You talk to the client directly",
-    body: "Scope questions go to the person who asked for the feature. Nobody relays requirements to you second-hand, and nobody relays your estimate back.",
-    ph: null,
-  },
-  {
-    k: "layers",
-    hue: "indigo",
-    title: "Depth over utilisation",
-    body: "One project at a time. We would rather bill fewer hours than have you context-switching across three accounts before lunch.",
-    ph: "confirm staffing policy before launch",
-  },
-  {
-    k: "zap",
-    hue: "accent",
-    title: "A budget for getting better",
-    body: "An annual allowance for machines, conferences, courses and books — yours to spend without writing a business case for it.",
-    ph: "confirm the learning budget exists, and its amount",
-  },
-] as const satisfies readonly {
-  k: string;
-  hue: Hue;
-  title: string;
-  body: string;
-  ph: string | null;
-}[];
-
-/* ==========================================================================
-   ROLES.
-
-   Six, and the four the user named are the first four: React, Ruby on Rails,
-   Python, Node. The last two (React Native, Platform) are already in STACK
-   above, so they add a discipline to filter by without inventing a capability
-   the site does not otherwise claim.
-
-   `disciplines` is an ARRAY on purpose — Node is genuinely both Backend and
-   Platform, and forcing one tag would make the filter lie. The filter chips
-   are derived from these values in Roles.tsx; adding a role with a new
-   discipline adds a chip, with no second list to keep in sync.
-
-   `pay` is a RANGE, AND IT IS UNVERIFIED. It is here because a posted band is
-   the single thing that most reduces wasted screening on both sides — but a
-   wrong number is worse than none, so every card renders it under
-   data-placeholder until the user confirms the real bands.
-   ========================================================================== */
-export const ROLE_DISCIPLINES = [
-  "Frontend",
-  "Backend",
-  "Data & AI",
-  "Platform",
-  "Mobile",
-] as const;
-
-export type Discipline = (typeof ROLE_DISCIPLINES)[number];
-
-export const ROLES = [
-  {
-    id: "senior-react-engineer",
-    title: "Senior React Engineer",
-    hue: "brand",
-    disciplines: ["Frontend"],
-    seniority: "6+ years",
-    type: "Full-time",
-    mode: "Remote (India) · Gobi desk optional",
-    pay: "₹28–42L / year",
-    summary:
-      "Own the front end of a client product end to end — the component library, the data layer, the accessibility, and the Friday demo that shows it working.",
-    ship: [
-      "A typed component library the client's own team can extend after we leave.",
-      "Server components and streaming where they earn their complexity, plain pages where they do not.",
-      "An accessibility and performance budget that fails the build, not a report nobody reads.",
-    ],
-    look: [
-      "You have shipped a React application and then maintained it — you have paid for your own architectural decisions at least once.",
-      "TypeScript in strict mode is how you already work, not a migration you are considering.",
-      "You can explain a rendering choice to a non-engineer without using the word “hydration”.",
-    ],
-    stack: ["React", "Next.js", "TypeScript", "Tailwind", "Playwright"],
-  },
-  {
-    id: "senior-rails-engineer",
-    title: "Senior Ruby on Rails Engineer",
-    hue: "accent",
-    disciplines: ["Backend"],
-    seniority: "6+ years",
-    type: "Full-time",
-    mode: "Remote (India) · Gobi desk optional",
-    pay: "₹28–42L / year",
-    summary:
-      "Take Rails applications that grew faster than their design and make them boring again — without a rewrite nobody funded.",
-    ship: [
-      "A monolith that stays a monolith, with the seams drawn where the domain actually splits.",
-      "Background work that is idempotent and observable, so a retry is a non-event.",
-      "Query budgets and N+1 detection in CI, because performance regressions arrive one commit at a time.",
-    ],
-    look: [
-      "You have carried a Rails app across at least one major upgrade and lived with the result.",
-      "You reach for Postgres before you reach for a new service.",
-      "You write the test that would have caught it, not the test that covers the line.",
-    ],
-    stack: ["Ruby on Rails", "PostgreSQL", "Sidekiq", "RSpec", "Docker"],
-  },
-  {
-    id: "senior-python-engineer",
-    title: "Senior Python Engineer",
-    hue: "teal",
-    disciplines: ["Backend", "Data & AI"],
-    seniority: "6+ years",
-    type: "Full-time",
-    mode: "Remote (India) · Gobi desk optional",
-    pay: "₹30–45L / year",
-    summary:
-      "Build the pipelines, and the model-backed features on top of them, with evaluation, cost ceilings and lineage — not a notebook that impressed once.",
-    ship: [
-      "Pipelines with lineage, so the number on a dashboard can be traced back to the row it came from.",
-      "Retrieval and evaluation harnesses that can tell a prompt change from a regression.",
-      "A cost model per feature, agreed before it ships rather than discovered on an invoice.",
-    ],
-    look: [
-      "You have put a model-backed feature in front of real users and kept it working.",
-      "You treat data quality as a test suite, not a dashboard.",
-      "You are comfortable saying that a problem does not need an LLM.",
-    ],
-    stack: ["Python", "FastAPI", "PostgreSQL", "dbt", "Airflow"],
-  },
-  {
-    id: "senior-node-engineer",
-    title: "Senior Node.js Engineer",
-    hue: "indigo",
-    disciplines: ["Backend", "Platform"],
-    seniority: "6+ years",
-    type: "Full-time",
-    mode: "Remote (India) · Gobi desk optional",
-    pay: "₹28–42L / year",
-    summary:
-      "Design the APIs everything else in the product leans on — and the unglamorous operational work that keeps them up at 3am without you.",
-    ship: [
-      "Typed, versioned APIs with a contract the client's other vendors can build against.",
-      "Structured logs, traces and alerts that page a human only when a human is required.",
-      "Migrations that run forward and back, rehearsed against a copy of production.",
-    ],
-    look: [
-      "You have run Node in production and debugged it there, not only locally.",
-      "You know where the event loop hurts, and you have measured it rather than read about it.",
-      "You would rather delete a service than add one.",
-    ],
-    stack: ["Node.js", "TypeScript", "GraphQL", "PostgreSQL", "AWS"],
-  },
-  {
-    id: "senior-react-native-engineer",
-    title: "Senior React Native Engineer",
-    hue: "light",
-    disciplines: ["Mobile", "Frontend"],
-    seniority: "5+ years",
-    type: "Full-time",
-    mode: "Remote (India) · Gobi desk optional",
-    pay: "₹26–40L / year",
-    summary:
-      "Ship to both stores from one codebase, including the parts that are never one codebase: permissions, push, release trains and store review.",
-    ship: [
-      "A release pipeline the client can run themselves, signing and store submission included.",
-      "Offline-first behaviour designed on purpose rather than discovered in the field.",
-      "Native modules where the bridge is the wrong answer, and only there.",
-    ],
-    look: [
-      "You have taken an app through App Store and Play review, rejections included.",
-      "You can read a native stack trace without flinching.",
-      "You have opinions about over-the-air updates and can defend them.",
-    ],
-    stack: ["React Native", "TypeScript", "Expo", "Fastlane", "Detox"],
-  },
-  {
-    id: "platform-engineer",
-    title: "Platform / DevOps Engineer",
-    hue: "brand",
-    disciplines: ["Platform"],
-    seniority: "6+ years",
-    type: "Full-time",
-    mode: "Remote (India) · Gobi desk optional",
-    pay: "₹30–45L / year",
-    summary:
-      "Provision everything as code in the client's own cloud accounts, then hand over a deploy that any engineer on their team can trigger without you.",
-    ship: [
-      "Terraform in the client's account, reviewed like application code and planned in CI.",
-      "A pipeline that runs on every push, and a rollback that is one documented command.",
-      "Observability the client's team reads on their own, because it was built with them.",
-    ],
-    look: [
-      "You have handed infrastructure over to another team and watched them operate it.",
-      "You write runbooks that a tired person can follow.",
-      "You treat a manual console change as an incident, not a shortcut.",
-    ],
-    stack: ["AWS", "Terraform", "Kubernetes", "GitHub Actions", "Grafana"],
-  },
-] as const satisfies readonly {
-  id: string;
-  title: string;
-  hue: Hue;
-  disciplines: readonly Discipline[];
-  seniority: string;
-  type: string;
-  mode: string;
-  pay: string;
-  summary: string;
-  ship: readonly string[];
-  look: readonly string[];
-  stack: readonly string[];
-}[];
-
-/* ==========================================================================
-   PATH — how we hire.
-
-   Deliberately the same SHAPE as STEPS on the home page: numbered, with a
-   time chip carrying the commitment. A candidate who has read the client-side
-   process should notice the rhyme.
-
-   PATH_NO is the counter-list — the three things we say we do NOT do. It is
-   the most attractive part of the section precisely because it is falsifiable,
-   which is also why it is placeholder until confirmed. Publishing "no unpaid
-   take-home" and then sending one is the single worst thing this page could do
-   to the firm's reputation with engineers.
-   ========================================================================== */
-export const PATH = [
-  {
-    k: "doc",
-    n: "01",
-    title: "You apply, we read it",
-    when: "Reply in 3 days",
-    body: "A CV or a GitHub handle is enough — no cover letter, no portal account, no forty-field form. Every applicant gets a written answer, including a no.",
-  },
-  {
-    k: "phone",
-    n: "02",
-    title: "A conversation, not a screen",
-    when: "45 minutes",
-    body: "With an engineer, not a recruiter. We talk about something you have actually built and where it hurt. Half the time is yours to interrogate us.",
-  },
-  {
-    k: "code",
-    n: "03",
-    title: "Real code, in your own time",
-    when: "3 hours, paid",
-    body: "A small change to a real-shaped codebase, then a session where we pair on extending it. No algorithm whiteboard, and nothing you cannot invoice.",
-  },
-  {
-    k: "handshake",
-    n: "04",
-    title: "Offer, in writing",
-    when: "48 hours",
-    body: "Number, level, project and start date in one document — the same 48-hour rule we give clients. Ask us anything before you sign; we would rather you did.",
+    q: "What happens if we want to leave?",
+    a: "You take everything, because you had everything all along — code, infrastructure, documentation and credentials live in your accounts throughout. Nothing is licensed back to you, every build includes 30 days of post-launch support, and leaving takes one conversation.",
   },
 ] as const;
 
-export const PATH_NO = [
-  "No algorithm whiteboards",
-  "No unpaid take-home projects",
-  "No eight-round interview loops",
-  "No ghosting — every applicant hears back",
-] as const;
-
-/* ==========================================================================
-   FIRST_90 — "your first 90 days".
-
-   The section almost nobody writes, and the one a senior candidate most wants
-   to read. It is also the most concrete thing this page can promise, which is
-   exactly why it is flagged: it describes an onboarding that has to exist.
-   ========================================================================== */
-export const FIRST_90 = [
-  {
-    tag: "Week 1",
-    title: "Commit, do not observe",
-    body: "Laptop, accounts and repository access on day one. You ship something small and real in the first week — we would rather fix a genuine mistake than watch you read documentation for a month.",
-  },
-  {
-    tag: "Weeks 2–6",
-    title: "Own a surface",
-    body: "One area of one client product becomes yours: the decisions, the reviews, and the Friday demo. You present it to the client yourself from the first demo you are on.",
-  },
-  {
-    tag: "Weeks 7–12",
-    title: "Shape the work",
-    body: "You start writing the estimates and scoping the next milestone, not only executing it. By the end of the quarter your name is on the proposal for what comes next.",
-  },
-] as const;
-
-/* Two honest lists. The client-side promise is "we tell you when to walk
-   away"; this is that promise pointed at applicants, and it is the reason the
-   page does not need a values section. */
-export const FIT_YES = [
-  "You would rather delete code than defend it.",
-  "You are happiest when somebody can see the thing working, not read about it.",
-  "You have shipped something you still maintain, and it taught you something.",
-  "You can disagree with a client's request and still be useful in the same meeting.",
-  "You write things down, because you have been on the receiving end of a handover.",
-] as const;
-
-export const FIT_NO = [
-  "You want a large team to sit behind. There is not one — the room is small on purpose.",
-  "You want a ticket queue and a finished spec. You will be asked what we should build, not only how.",
-  "You want to specialise in exactly one framework forever. Client work will move you.",
-  "You dislike having your work seen weekly, unfinished, by the person paying for it.",
-] as const;
-
-/* Grouped, rather than a marquee: home's StackMarquee is a client-facing
-   impression of breadth, but a candidate reads a stack list to answer "which
-   of these would I touch", and grouping is what answers that. */
-export const CAREER_STACK = [
-  {
-    group: "Ship",
-    note: "What the user touches",
-    items: ["TypeScript", "React", "Next.js", "React Native", "Tailwind"],
-  },
-  {
-    group: "Serve",
-    note: "What answers it",
-    items: ["Node.js", "Python", "Ruby on Rails", "GraphQL", "PostgreSQL"],
-  },
-  {
-    group: "Run",
-    note: "Where it lives",
-    items: ["AWS", "Terraform", "Docker", "Kubernetes", "GitHub Actions"],
-  },
-  {
-    group: "Work",
-    note: "How we talk",
-    items: ["GitHub", "Slack / Teams", "Linear", "Figma", "Notion"],
-  },
-] as const;
-
-/* Candidate-side FAQ. Kept separate from FAQ above: same shape, different
-   audience, and merging them would put "what does a project cost" next to
-   "do you hire interns". */
-export const CAREER_FAQ = [
-  {
-    q: "Is this remote, or do I have to move to Gobichettipalayam?",
-    a: "Remote within India, with the office in Gobichettipalayam, Tamil Nadu open to anyone who wants a desk. What is not flexible is the overlap window: clients are in the US and UK, so there is one scheduled live hour every working day, and the Friday demo is fixed.",
-  },
-  {
-    q: "You say senior only. What counts as senior?",
-    a: "Not years on their own. It is whether you have owned something in production long enough to have been wrong about it and to have fixed it. Somebody with five years of that is senior here; somebody with twelve years of greenfield handoffs may not be.",
-  },
-  {
-    q: "Will I be on one project or several?",
-    a: "One at a time. Work rotates when a project ends, not weekly — you are named in a client's proposal, and your staying on it is part of what they are buying.",
-  },
-  {
-    q: "What happens if there is no client project for my stack?",
-    a: "You are paid the same, and you work on internal tooling, an upgrade, or the open source we depend on. Nobody is put on an unpaid bench and nobody is asked to sell.",
-  },
-  {
-    q: "Do you hire juniors or interns?",
-    a: "Not onto client projects — clients are told explicitly that no juniors are substituted after signing, and that has to stay true. When there is a mentored path that does not break that promise, it will be posted here first.",
-  },
-  {
-    q: "I do not match every line of a role. Should I still apply?",
-    a: "Yes. The requirement lists describe the work; they are not a checklist to score yourself against. Tell us which part you have not done and how you would approach it — that answer is the one we actually read.",
-  },
-] as const;
 
 /* The proof quote on /why-choose-us. A DIFFERENT quote from PULL_QUOTE on
    home, and deliberately so — the archive picks one that argues the page's
@@ -984,3 +709,365 @@ export const WHY_QUOTE = {
   role: "CTO, Placeholder Co",
   link: { label: "See the work behind the words", href: "/#work" },
 } as const;
+
+/* ==========================================================================
+   /careers — added 2026-09-07, REWRITTEN 2026-09-08.
+   ==========================================================================
+   The first version described senior, remote, market-rate hiring. The user
+   corrected it on 2026-09-08 and the correction changes the whole page, not
+   its numbers: the vacancies are for FRESHERS, on site in Gobichettipalayam,
+   with a six-month training period and a two-year agreement. Senior hiring is
+   not open at all right now.
+
+   The senior set is NOT deleted — see SENIOR_ROLES below. It is parked,
+   exported and unrendered, because "not open now" is a different statement
+   from "never existed" and the page says so out loud.
+
+   ── SHORTER, ON REQUEST ───────────────────────────────────────────────────
+   Nine sections became six. What went, and why it could go:
+     · CandidateOffer (six commitment tiles) → folded into PROGRAMME. A
+       fresher's first question is what the terms are, not what the culture is.
+     · CareerStack (four grouped stack cards) → folded into the role cards as
+       TECH ICONS, which is what the user asked for and costs a fifth of the
+       height.
+     · FirstNinety → became PROGRAMME's timeline. Same rail, different content:
+       the six months that matter here are the training, not the first 90 days.
+   The role filter went too. Four roles do not need one.
+
+   ⚠ CLAIM STATUS — HARDER THAN THE FIRST VERSION. Every term below came from
+   the user verbally and none of it is on HANDOFF §7's allowed-claims list.
+   Two carry more than the usual placeholder risk:
+
+     · TWELVE-HOUR DAYS. Flagged to the user on 2026-09-08: the Tamil Nadu
+       Shops & Establishments Act caps daily hours well below this, so
+       publishing it is a legal exposure as well as a recruiting one. Built as
+       instructed, marked, and easy to reword — the string is in TERMS and
+       appears nowhere else.
+     · ₹10,000 / MONTH and the TWO-YEAR AGREEMENT. Both are the kind of term a
+       candidate screenshots. They must match the actual offer letter before
+       this page is public.
+   ========================================================================== */
+
+/* The terms, in one place. Every component that states a term reads it from
+   here, so correcting the training hours or the stipend is a one-line edit and
+   cannot leave a stale copy behind on another section. */
+export const TERMS = {
+  location: "Gobichettipalayam, Tamil Nadu",
+  mode: "On site, full time",
+  who: "Freshers and up to 1 year of experience",
+  training: "6 months",
+  trainingHours: "12 hours a day",
+  stipend: "₹10,000 / month",
+  stipendPeriod: "fixed for the first year",
+  agreement: "2 years",
+} as const;
+
+/* The hero strip. Four facts, and they are the four that decide whether
+   somebody keeps reading — location, who it is for, what the training is, and
+   the money. Nothing softened: a candidate who finds out about the hours on
+   call four has been wasted, and so have we. */
+export const CAREER_FACTS = [
+  {
+    k: "layers",
+    label: "On site only",
+    body: TERMS.location,
+    ph: null,
+  },
+  {
+    k: "user-check",
+    label: "Freshers welcome",
+    body: "0–1 year. No prior job needed",
+    ph: null,
+  },
+  {
+    k: "clock",
+    label: "6-month training",
+    body: `${TERMS.trainingHours} through training`,
+    ph: "P1: confirm the training hours are lawful and correctly worded",
+  },
+  {
+    k: "receipt",
+    label: TERMS.stipend,
+    body: `Fixed for year one · ${TERMS.agreement} agreement`,
+    ph: "P1: confirm stipend and agreement against the offer letter",
+  },
+] as const satisfies readonly {
+  k: string;
+  label: string;
+  body: string;
+  ph: string | null;
+}[];
+
+/* ==========================================================================
+   PROGRAMME — the terms as a timeline.
+
+   This replaces both the commitment grid and the "first 90 days" block. For a
+   senior hire the interesting question is what the company promises; for a
+   fresher on a two-year agreement it is what the two years actually look like,
+   in order. Three phases, and the honest one is first.
+   ========================================================================== */
+export const PROGRAMME = [
+  {
+    tag: "Months 1–6",
+    title: "Training",
+    body: `Twelve-hour days, on site, learning one stack properly — fundamentals, the codebase, code review, and how a real client project runs. It is the hardest part and we are not going to pretend otherwise.`,
+    ph: "P1: confirm the training hours are lawful and correctly worded",
+  },
+  {
+    tag: "Months 7–12",
+    title: "Real work, supervised",
+    body: `You move onto a client project with a senior engineer reviewing everything you write. Your stipend is ${TERMS.stipend}, fixed across the whole first year.`,
+    ph: "P1: confirm stipend against the offer letter",
+  },
+  {
+    tag: "Year 2",
+    title: "On the team",
+    body: "You own features, you attend the client demo, and you are reviewed on the same terms as everybody else. The agreement runs two years in total; what happens at the end of it is a conversation, not a clause.",
+    ph: "P1: confirm the second-year salary and what confirmation means",
+  },
+] as const satisfies readonly {
+  tag: string;
+  title: string;
+  body: string;
+  ph: string | null;
+}[];
+
+/* Four short lines under the timeline. Deliberately the plain, unexciting
+   facts — this is the block a parent reads. */
+export const PROGRAMME_META = [
+  { k: "check", label: "Full time, on site", ph: null },
+  { k: "check", label: `${TERMS.training} of training`, ph: null },
+  {
+    k: "check",
+    label: `${TERMS.stipend}, ${TERMS.stipendPeriod}`,
+    ph: "P1: confirm stipend",
+  },
+  {
+    k: "check",
+    label: `${TERMS.agreement} agreement`,
+    ph: "P1: confirm agreement term",
+  },
+] as const;
+
+/* ==========================================================================
+   ROLES — trainee, four of them.
+
+   `tech` holds TechIcon keys, not display strings: the user asked for the
+   technologies to read as icons rather than as another row of word chips.
+   Every key must exist in TechIcon.tsx or the mark silently does not render —
+   the icon list is the contract between these two files.
+
+   No `pay` field any more. Compensation is identical across all four roles and
+   lives in TERMS, so repeating it per card would be four places to correct
+   instead of one.
+   ========================================================================== */
+export const ROLES = [
+  {
+    id: "trainee-react",
+    title: "React Developer — Trainee",
+    hue: "brand",
+    track: "Frontend",
+    tech: ["react", "typescript", "tailwind", "git"],
+    summary:
+      "Build the screens people actually use. You will learn components, state and accessibility on a real client product rather than on a to-do app.",
+    look: [
+      "You have built something in JavaScript, even a small one, and can walk us through it.",
+      "You can read an error message to the end before asking.",
+    ],
+  },
+  {
+    id: "trainee-rails",
+    title: "Ruby on Rails Developer — Trainee",
+    hue: "accent",
+    track: "Backend",
+    tech: ["ruby", "postgres", "git", "docker"],
+    summary:
+      "Learn the framework that made most of the web's conventions. Models, migrations, background jobs, and why the boring answer is usually right.",
+    look: [
+      "You are comfortable with the command line, or willing to be within a week.",
+      "You would rather understand one thing properly than four things partly.",
+    ],
+  },
+  {
+    id: "trainee-python",
+    title: "Python Developer — Trainee",
+    hue: "teal",
+    track: "Backend · Data",
+    tech: ["python", "postgres", "git", "docker"],
+    summary:
+      "APIs, data pipelines and the model-backed features on top of them. The stack where a careful, methodical person gets good fastest.",
+    look: [
+      "You have written Python outside a classroom exercise.",
+      "You check the number before you report it.",
+    ],
+  },
+  {
+    id: "trainee-node",
+    title: "Node.js Developer — Trainee",
+    hue: "indigo",
+    track: "Backend",
+    tech: ["node", "typescript", "postgres", "git"],
+    summary:
+      "The server side of the products the React trainees build. Routes, databases, authentication, and what happens when two requests arrive at once.",
+    look: [
+      "You know what an HTTP request is well enough to explain it to a friend.",
+      "You are not put off by something being hard for the first fortnight.",
+    ],
+  },
+] as const satisfies readonly {
+  id: string;
+  title: string;
+  hue: Hue;
+  track: string;
+  tech: readonly string[];
+  summary: string;
+  look: readonly string[];
+}[];
+
+/* ==========================================================================
+   SENIOR_ROLES — PARKED, NOT DELETED. 2026-09-08.
+
+   "For seniors the vacancy is not available for now, so keep it somewhere
+   reusable." This is that place. Nothing imports it today; the careers page
+   states in one line that senior hiring is closed, which is the honest version
+   of the same fact and costs two sentences instead of six cards.
+
+   To reopen: import SENIOR_ROLES in Roles.tsx and render it as a second group.
+   The shape is intentionally UNCHANGED from the 2026-09-07 version — same
+   fields, same copy — so nothing has to be rewritten to bring it back. The
+   salary bands were never confirmed and were data-placeholder then; they still
+   are, and must stay flagged if this is ever rendered.
+   ========================================================================== */
+export const SENIOR_ROLES = [
+  {
+    id: "senior-react-engineer",
+    title: "Senior React Engineer",
+    hue: "brand",
+    disciplines: ["Frontend"],
+    seniority: "6+ years",
+    tech: ["react", "typescript", "tailwind", "git"],
+    pay: "₹28–42L / year",
+    summary:
+      "Own the front end of a client product end to end — the component library, the data layer, the accessibility, and the Friday demo that shows it working.",
+  },
+  {
+    id: "senior-rails-engineer",
+    title: "Senior Ruby on Rails Engineer",
+    hue: "accent",
+    disciplines: ["Backend"],
+    seniority: "6+ years",
+    tech: ["ruby", "postgres", "docker", "git"],
+    pay: "₹28–42L / year",
+    summary:
+      "Take Rails applications that grew faster than their design and make them boring again — without a rewrite nobody funded.",
+  },
+  {
+    id: "senior-python-engineer",
+    title: "Senior Python Engineer",
+    hue: "teal",
+    disciplines: ["Backend", "Data & AI"],
+    seniority: "6+ years",
+    tech: ["python", "postgres", "docker", "git"],
+    pay: "₹30–45L / year",
+    summary:
+      "Build the pipelines, and the model-backed features on top of them, with evaluation, cost ceilings and lineage — not a notebook that impressed once.",
+  },
+  {
+    id: "senior-node-engineer",
+    title: "Senior Node.js Engineer",
+    hue: "indigo",
+    disciplines: ["Backend", "Platform"],
+    seniority: "6+ years",
+    tech: ["node", "typescript", "postgres", "git"],
+    pay: "₹28–42L / year",
+    summary:
+      "Design the APIs everything else in the product leans on — and the unglamorous operational work that keeps them up at 3am without you.",
+  },
+] as const;
+
+/* ==========================================================================
+   PATH — how we hire. Three steps, down from four.
+
+   The paid three-hour exercise from the senior version is gone: it does not
+   make sense for somebody with no professional experience, and paying for a
+   fresher's test would have been a claim we cannot verify either. What is left
+   is what a fresher can actually be assessed on — a conversation and a small
+   piece of real work, in the office, because the job is in the office.
+   ========================================================================== */
+export const PATH = [
+  {
+    k: "doc",
+    n: "01",
+    title: "Send anything that shows you code",
+    when: "Reply in 3 days",
+    body: "A CV, a GitHub link, a college project, a screenshot of something you built. No cover letter and no application portal. Everyone gets an answer, including a no.",
+  },
+  {
+    k: "phone",
+    n: "02",
+    title: "A conversation, with an engineer",
+    when: "45 minutes",
+    body: "Not a quiz. We talk about something you have made and how you went about it, and you get to ask us what the two years are really like.",
+  },
+  {
+    k: "handshake",
+    n: "03",
+    title: "A day with us, then an offer",
+    when: "In writing",
+    body: "You spend a day in the office on a small real task, so you see the room and the hours before you commit. The offer states the stipend, the training and the agreement in full.",
+  },
+] as const;
+
+/* The counter-list. Shorter than the senior version and every line is
+   something a fresher in this market is genuinely afraid of. */
+export const PATH_NO = [
+  "No training fee, ever — we pay you, not the other way round",
+  "No certificate-course upsell",
+  "No ghosting — everybody hears back",
+] as const;
+
+/* Two honest lists. On this page they carry more weight than they did on the
+   senior version: somebody signing a two-year agreement at twenty-two should
+   be told plainly what they are signing up for. */
+export const FIT_YES = [
+  "You want to be taught properly, and you will do the hours it takes.",
+  "You can get to Gobichettipalayam every working day.",
+  "You would rather learn one stack deeply than sample four.",
+  "You take a code review as help rather than as criticism.",
+] as const;
+
+export const FIT_NO = [
+  "You need remote or hybrid. This role is on site, every day — there is no version of it that is not.",
+  "You cannot commit two years. The training only makes sense to us if you stay to use it.",
+  "You want a market salary in year one. It is ₹10,000 a month, fixed, and we would rather you knew now.",
+  "You are looking for a senior role. We are not hiring seniors at the moment.",
+] as const;
+
+/* Candidate FAQ. Every question here is one that would otherwise be asked on
+   a call, and three of them are the awkward ones. */
+export const CAREER_FAQ = [
+  {
+    q: "Is there any remote or hybrid option?",
+    a: "No. Every role on this page is on site in Gobichettipalayam, Tamil Nadu, five days a week. Training in particular does not work remotely — most of what you learn in the first six months comes from somebody turning their screen towards you.",
+  },
+  {
+    q: "I am a fresher with no work experience. Can I apply?",
+    a: "Yes — that is who these roles are for. Up to about a year of experience is fine too. What we look for is something you have actually built, however small, and the ability to talk about how you built it.",
+  },
+  {
+    q: "What exactly are the hours during training?",
+    a: "Twelve hours a day for the first six months. It is a real commitment and it is the reason people come out of it employable, but you should decide about it now rather than in month two.",
+  },
+  {
+    q: "What is the salary?",
+    a: "₹10,000 a month, fixed for the first year, with the agreement running two years in total. Everything after the first year is set out in the offer letter and we will go through it with you before you sign anything.",
+  },
+  {
+    q: "Do I have to pay for the training?",
+    a: "No. Nothing, at any stage. We pay you a stipend from day one, there is no fee, no deposit and no course to buy. If anybody ever asks you for money in our name, it is not us.",
+  },
+  {
+    q: "Do you have openings for experienced or senior engineers?",
+    a: "Not at the moment. When senior hiring opens it will be posted on this page first — send us a note and we will tell you when it does rather than keep a role listed that does not exist.",
+  },
+] as const;

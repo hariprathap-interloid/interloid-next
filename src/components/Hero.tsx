@@ -133,8 +133,8 @@ export default function Hero() {
       </div>
 
       <a
-        href="#services"
-        aria-label="Scroll to what we build"
+        href="#advantage"
+        aria-label="Scroll to why Interloid"
         className="scroll-cue absolute bottom-8 left-1/2 z-20 hidden size-11 -translate-x-1/2 place-items-center rounded-full border border-border bg-card/70 text-muted-foreground shadow-sm backdrop-blur-sm transition-colors hover:border-primary hover:text-primary min-[900px]:grid"
       >
         <svg

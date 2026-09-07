@@ -74,7 +74,11 @@ export default function Clauses() {
           /* DS L4 (§1.3): the sheet is the page's hero object, so it carries
              the feature-panel elevation — big radius, hairline ring, one deep
              soft shadow — instead of a card's shadow-sm. */
-          className="mx-auto max-w-[56rem] overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_30px_80px_-15px_rgba(0,0,0,0.1)] ring-1 ring-foreground/5"
+          /* Full container width (user, 2026-09-08) — the 56rem cap left the
+             sheet floating in a 7xl section. The prose measure below still
+             caps itself, so the width goes to breathing room, not line
+             length. */
+          className="overflow-hidden rounded-[2rem] border border-border bg-card shadow-[0_30px_80px_-15px_rgba(0,0,0,0.1)] ring-1 ring-foreground/5"
         >
           <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border bg-secondary px-6 py-6 sm:px-8 md:px-12">
             <h3 className="text-[13px] font-bold uppercase tracking-[0.14em] text-foreground">
@@ -115,9 +119,10 @@ export default function Clauses() {
                 <h4 className="mb-2.5 font-display text-xl font-bold leading-[1.35] tracking-[-0.02em] text-foreground">
                   {c.title}
                 </h4>
-                {/* 34rem is `.clause p`'s cap. Without it the measure runs the
-                    full column and stops being readable. */}
-                <p className="max-w-[34rem] leading-[1.7] text-muted-foreground">
+                {/* The archive caps `.clause p` at 34rem; the full-width sheet
+                    loosens that to 2xl — still a readable measure, without a
+                    hard cliff of empty column at 7xl. */}
+                <p className="max-w-2xl leading-[1.7] text-muted-foreground">
                   {c.body}
                 </p>
               </div>

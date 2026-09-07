@@ -17,8 +17,10 @@ import {
    removed, so the placeholder toggle still counts it (§7 P1). */
 const LINKS = [
   { href: "/#home", label: "Home" },
-  { href: "/#services", label: "Services" },
-  { href: "/#stack", label: "Stack" },
+  /* Both sections moved off home to /services 2026-09-08; Stack keeps its
+     fragment because StackMarquee kept `id="stack"` on the new page. */
+  { href: "/services", label: "Services" },
+  { href: "/services#stack", label: "Stack" },
   { href: "/why-choose-us", label: "Commitments" },
   { href: "/#process", label: "Process" },
   { href: "/#work", label: "Work" },

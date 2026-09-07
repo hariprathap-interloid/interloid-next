@@ -1,48 +1,45 @@
 import Icon from "./Icon";
-import { CAREER_FACTS } from "@/content/site";
+import { CAREER_FACTS, TERMS } from "@/content/site";
 
 /* /careers hero.
 
-   Same skeleton as /why-choose-us' hero — bg-secondary, two blurred orbs,
-   badge → H1 → lead — so the two sub-pages read as one site. Two things are
-   deliberately different, and both are the page doing a job the other pages
-   do not have:
+   Same skeleton as /why-choose-us' — bg-secondary, blurred orbs, badge → H1 →
+   lead — so the sub-pages read as one site.
 
-     1. TWO buttons. Every other hero on this site has one, because a client
-        has one next action (book the call). A candidate has two genuinely
-        different ones: read the roles, or read how the hiring works — and a
-        senior engineer very often wants the second first. The second button
-        is a plain link, not a second filled button; DS §9 allows exactly one
-        primary per view.
+   ── REWRITTEN 2026-09-08 ─────────────────────────────────────────────────
+   The senior version sold autonomy to people who already have options. These
+   roles are the opposite offer: no experience required, and a real cost in
+   hours and years. So the hero stops selling and starts disclosing — the four
+   facts under it are location, who it is for, the training, and the money,
+   which are the four things that decide whether the rest of the page is worth
+   anybody's time.
 
-     2. The FACT STRIP under the buttons. This is prototype 1's `.cta__meta`
-        idea moved to the top of the page: the four objections a senior
-        candidate has before they will read a role list at all. Three of the
-        four are on HANDOFF §7's allowed list already; the fourth carries its
-        own data-placeholder from site.ts.
+   ONE BUTTON NOW, not two. The senior version had a second ("how the hiring
+   works") because a senior engineer often wants the process before the roles.
+   A fresher wants the roles. DS §9 allows one primary per view and this page
+   has one thing to do.
 
-   NOT here, on purpose: a headcount ("30+ engineers"), a Glassdoor score, or
-   a photo of a team. We have none of those and inventing them is the exact
-   failure the review names. */
+   `data-placeholder` on two of the four facts comes from site.ts, not from
+   here — the hours and the money are the unconfirmed ones. */
 export default function CareersHero() {
   return (
     <section
       id="careers-top"
-      className="relative overflow-hidden bg-secondary pb-28 pt-40"
+      className="relative overflow-hidden bg-secondary pb-24 pt-40"
     >
-      {/* Dot grid, radially masked so it fades before the section edge rather
-          than tiling into a hard cut — same reasoning as Faq's backdrop, and
-          the same `var(--border)` rather than a literal so it survives dark. */}
+      {/* Radially masked so the grid fades before the section edge instead of
+          tiling into a hard cut. `var(--border)`, not a literal, so the dots
+          survive the dark theme (where the token is white at 10%). */}
       <div
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(var(--border)_1.5px,transparent_1.5px)] bg-[size:26px_26px] [-webkit-mask-image:radial-gradient(ellipse_70%_60%_at_50%_35%,#000_10%,transparent_100%)] [mask-image:radial-gradient(ellipse_70%_60%_at_50%_35%,#000_10%,transparent_100%)]"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute -top-24 right-0 size-[560px] translate-x-1/4 rounded-full bg-brand/15 blur-[120px]"
+        className="pointer-events-none absolute -top-24 right-0 size-[520px] translate-x-1/4 rounded-full bg-brand/15 blur-[120px]"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute bottom-0 left-0 size-[420px] -translate-x-1/3 translate-y-1/3 rounded-full bg-accent/15 blur-[120px]"
+        className="pointer-events-none absolute bottom-0 left-0 size-[400px] -translate-x-1/3 translate-y-1/3 rounded-full bg-accent/15 blur-[120px]"
         aria-hidden="true"
       />
 
@@ -55,13 +52,7 @@ export default function CareersHero() {
             <span className="text-accent-strong">
               <Icon name="users" className="size-4" />
             </span>
-            <span className="text-muted-foreground">
-              Careers at Interloid
-            </span>
-            {/* The live dot is a status light, not decoration: it says the
-                list below is current. It is placeholder-flagged with the
-                roles themselves — if nothing is actually open, this dot is a
-                lie before a single role is read. */}
+            <span className="text-muted-foreground">Careers at Interloid</span>
             <span
               className="ml-1 flex items-center gap-1.5 rounded-full bg-teal-600/10 px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] text-teal-600"
               data-placeholder="P1: confirm roles are open before publishing"
@@ -70,7 +61,7 @@ export default function CareersHero() {
                 className="size-1.5 rounded-full bg-teal-600"
                 aria-hidden="true"
               />
-              6 open
+              4 trainee roles
             </span>
           </div>
 
@@ -79,9 +70,9 @@ export default function CareersHero() {
             style={{ "--delay": "100ms" } as React.CSSProperties}
             className="font-display text-4xl font-medium leading-[1.1] tracking-[-0.025em] text-foreground md:text-5xl lg:text-[3.5rem]"
           >
-            We hire the same way{" "}
+            Learn to build software{" "}
             <span className="bg-gradient-to-r from-brand to-accent bg-clip-text text-transparent">
-              we ship.
+              on real projects.
             </span>
           </h1>
 
@@ -90,44 +81,36 @@ export default function CareersHero() {
             style={{ "--delay": "200ms" } as React.CSSProperties}
             className="mt-6 max-w-2xl text-lg leading-[1.5] text-muted-foreground"
           >
-            In the open, on a clock, with the number written down before you
-            commit to anything. This page tells you what the work is, what the
-            process costs you in hours, and who should not apply — before you
-            spend an evening on a CV.
+            Four trainee roles for freshers, on site in {TERMS.location}. Six
+            months of training, then real client work — and every term of it is
+            on this page rather than in a conversation you have to get to first.
           </p>
 
           <div
             data-reveal
             style={{ "--delay": "300ms" } as React.CSSProperties}
-            className="mt-10 flex flex-wrap items-center gap-4"
+            className="mt-10"
           >
             <a
               href="#openings"
               className="group inline-flex h-14 items-center gap-2 rounded-full bg-primary px-8 text-[17px] font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-brand-light hover:shadow-primary/40 active:scale-95"
             >
-              See the six open roles
+              See the four roles
               <span className="transition-transform group-hover:translate-x-1">
                 <Icon name="arrow" className="size-5" />
               </span>
             </a>
-            <a
-              href="#hiring"
-              className="inline-flex h-14 items-center gap-2 rounded-full border border-border bg-card px-8 text-[17px] font-semibold text-foreground shadow-sm transition-all hover:border-accent/40 hover:shadow-md active:scale-95"
-            >
-              <Icon name="clock" className="size-5 text-accent-strong" />
-              How the hiring works
-            </a>
           </div>
         </div>
 
-        {/* The strip spans the full width rather than the copy column: it is a
-            band of facts under the fold-line, not part of the paragraph. */}
-        <ul className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Full width, not the copy column: a band of facts under the fold
+            line, not part of the paragraph. */}
+        <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {CAREER_FACTS.map((f, i) => (
             <li
               key={f.label}
               data-reveal
-              style={{ "--delay": `${400 + i * 80}ms` } as React.CSSProperties}
+              style={{ "--delay": `${380 + i * 70}ms` } as React.CSSProperties}
               className="h-full"
             >
               <div

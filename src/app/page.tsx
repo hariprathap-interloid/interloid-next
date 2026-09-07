@@ -8,14 +8,16 @@ import PlaceholderToggle from "@/components/PlaceholderToggle";
 import Process from "@/components/Process";
 import PullQuote from "@/components/PullQuote";
 import Reveal from "@/components/Reveal";
-import Services from "@/components/Services";
-import StackMarquee from "@/components/StackMarquee";
 import Testimonials from "@/components/Testimonials";
 import Work from "@/components/Work";
 
-/* The full page, section order per PROTOTYPE3-BRIEF §2's ledger.
-   Only Nav, Services, Advantage, HeroStage, Reveal and PlaceholderToggle are
-   Client Components; everything else ships as HTML with no JavaScript. */
+/* The full page, section order per PROTOTYPE3-BRIEF §2's ledger, MINUS two
+   sections moved to /services on 2026-09-08 at the user's request: "What we
+   build" (Services, now ServiceExplorer there) and "Technologies we work in"
+   (StackMarquee, rendered there unchanged). Home now runs Hero straight into
+   Why Interloid.
+   Only Nav, Advantage, HeroStage, Reveal and PlaceholderToggle are Client
+   Components; everything else ships as HTML with no JavaScript. */
 export default function Home() {
   return (
     <>
@@ -29,8 +31,6 @@ export default function Home() {
       <Nav />
       <main id="main">
         <Hero />
-        <Services />
-        <StackMarquee />
         <Advantage />
         <Process />
         <Work />

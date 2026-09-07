@@ -20,8 +20,11 @@ import { WHY_HERO } from "@/content/site";
    agreement" is the archive's `tlink--down` — a plain link whose arrow points
    at the very next section, so it stays typographic, not a competing pill. */
 export default function WhyHero() {
+  /* min-h-svh + items-center is DS §7.3's inner-page hero: the first cut was
+     padding-sized and sat shallow on tall monitors (user, 2026-09-08). svh,
+     not vh — mobile browser chrome. */
   return (
-    <section className="relative overflow-hidden bg-secondary pb-28 pt-40">
+    <section className="relative flex min-h-svh items-center overflow-hidden bg-secondary pb-24 pt-32">
       <div
         className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:32px_32px] [-webkit-mask-image:radial-gradient(ellipse_70%_60%_at_40%_35%,#000_10%,transparent_100%)] [mask-image:radial-gradient(ellipse_70%_60%_at_40%_35%,#000_10%,transparent_100%)]"
         aria-hidden="true"
@@ -31,14 +34,17 @@ export default function WhyHero() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-6">
         <div className="max-w-3xl">
           <div
             data-reveal
             className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium leading-[1.5] shadow-sm"
           >
+            {/* shield, not doc — "The commitments" badge two sections down
+                already uses doc, and two identical badge icons in one
+                viewport read as a copy-paste (user, 2026-09-08). */}
             <span className="text-accent-strong">
-              <Icon name="doc" className="size-4" />
+              <Icon name="shield" className="size-4" />
             </span>
             <span className="text-muted-foreground">{WHY_HERO.eyebrow}</span>
           </div>

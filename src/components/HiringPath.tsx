@@ -2,7 +2,15 @@ import Icon from "./Icon";
 import SectionHeading from "./SectionHeading";
 import { PATH, PATH_NO } from "@/content/site";
 
-/* "How we hire" — the same four-step shape as Process.tsx, on purpose.
+/* "How we hire" — the same numbered-step shape as Process.tsx, on purpose.
+
+   ── SHORTENED 2026-09-08 ──────────────────────────────────────────────────
+   Four steps became THREE. The paid three-hour code exercise is gone: it does
+   not make sense for somebody with no professional experience, and "paid" was
+   a claim we could not verify either. What replaced it is a day in the office
+   on a small real task — which is also the honest thing to offer for a role
+   whose defining feature is that you have to be in that office every day.
+   The grid is lg:grid-cols-3 to match.
 
    A candidate who has read /#process should recognise the rhyme: numbered
    steps, a time chip carrying the commitment rather than a schedule, and the
@@ -12,25 +20,25 @@ import { PATH, PATH_NO } from "@/content/site";
    It does NOT reuse Process.tsx. That component's whole design is
    ProcessPath — a connector measured from the live `data-node` rects, with a
    comet and waypoint lighting. Reusing it would mean either inheriting a
-   client component and a scroll-driven canvas for four static cards, or
+   client component and a scroll-driven canvas for three static cards, or
    parameterising it into something neither page can be measured against. The
    shared thing here is the vocabulary, not the machinery.
 
-   THE COUNTER-LIST IS THE POINT OF THE SECTION. "No whiteboards, no unpaid
-   take-home, no eight rounds, no ghosting" is the only part of any hiring
-   page a senior engineer actually stops for, because it is the only part that
-   can be falsified by a single bad experience.
+   THE COUNTER-LIST IS THE POINT OF THE SECTION, and on the fresher version it
+   matters more than it did on the senior one. "No training fee, ever" is the
+   single most reassuring line available to somebody applying to their first
+   job in a market where paid-training scams are common — and the most damaging
+   to be caught contradicting.
 
    ⚠ Which is exactly why every timing and every promise here is
-   data-placeholder. Publishing "3 hours, paid" and then sending a weekend
-   take-home is worse for the firm than publishing nothing — it is the
-   fabricated-proof failure from HANDOFF §7, aimed at the audience most likely
-   to write about it in public. */
+   data-placeholder. Publishing "no training fee, ever" and then charging one
+   is worse for the firm than publishing nothing — it is the fabricated-proof
+   failure from HANDOFF §7, aimed at the readers least able to absorb it. */
 export default function HiringPath() {
   return (
     <section
       id="hiring"
-      className="relative overflow-hidden border-t border-border bg-secondary py-32"
+      className="relative overflow-hidden border-t border-border bg-secondary py-28"
     >
       <div
         className="pointer-events-none absolute right-0 top-0 size-[520px] translate-x-1/3 -translate-y-1/3 rounded-full bg-accent/10 blur-[120px]"
@@ -40,14 +48,14 @@ export default function HiringPath() {
         <SectionHeading
           eyebrow="How we hire"
           icon="clock"
-          accent="two weeks, end to end."
-          lead="Four conversations, one of them paid, and a written answer at every stage. If we are going to say no, you hear it early enough to spend the evening on something else."
+          accent="no exam hall."
+          lead="A written answer at every stage, including a no. You will have seen the office and met the people before you are asked to decide anything."
         >
-          Four steps,
+          Three steps,
         </SectionHeading>
 
         <ol
-          className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
+          className="grid gap-6 md:grid-cols-3"
           data-placeholder="P1: confirm the real interview process and timings"
         >
           {PATH.map((s, i) => (
@@ -100,7 +108,7 @@ export default function HiringPath() {
         >
           <div
             className="relative overflow-hidden rounded-[1.5rem] bg-ink px-8 py-8 shadow-[0_25px_50px_-12px_rgba(15,23,43,.28)]"
-            data-placeholder="P1: confirm each of these four is actually true"
+            data-placeholder="P1: confirm each of these three is actually true"
           >
             <div
               className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,var(--tw-gradient-stops))] from-brand/35 via-ink to-ink"
@@ -108,9 +116,12 @@ export default function HiringPath() {
             />
             <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <p className="max-w-xs font-display text-lg font-bold leading-[1.4] text-white">
-                And four things that will never happen to you here.
+                And three things that will never happen to you here.
               </p>
-              <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-2">
+              {/* THREE items, so NOT sm:grid-cols-2 — that leaves a ragged 2+1
+                  with a hole where the fourth used to be. A single column beside
+                  the heading reads as a list, which is what it is. */}
+              <ul className="grid gap-y-3">
                 {PATH_NO.map((n) => (
                   <li
                     key={n}

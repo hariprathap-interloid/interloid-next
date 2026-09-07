@@ -1,70 +1,77 @@
 import type { Metadata } from "next";
-import CandidateOffer from "@/components/CandidateOffer";
 import CareerFaq from "@/components/CareerFaq";
-import CareerStack from "@/components/CareerStack";
 import CareersHero from "@/components/CareersHero";
 import CtaAnchor from "@/components/CtaAnchor";
-import FirstNinety from "@/components/FirstNinety";
 import FitCheck from "@/components/FitCheck";
 import Footer from "@/components/Footer";
 import HiringPath from "@/components/HiringPath";
 import Nav from "@/components/Nav";
+import Programme from "@/components/Programme";
 import Reveal from "@/components/Reveal";
 import Roles from "@/components/Roles";
 
 export const metadata: Metadata = {
-  title: "Careers — senior engineers, hired in the open | Interloid",
+  title: "Careers — trainee developer roles for freshers | Interloid",
   description:
-    "Open roles at Interloid for senior React, Ruby on Rails, Python, Node.js, React Native and platform engineers. The whole job description, the hiring process and the salary band on one page.",
+    "Four on-site trainee developer roles in Gobichettipalayam for freshers: React, Ruby on Rails, Python and Node.js. Six months of training, then real client work. Every term on one page.",
 };
 
 /* ==========================================================================
-   /careers — built 2026-09-07.
+   /careers — built 2026-09-07, REBUILT 2026-09-08.
    ==========================================================================
-   This closes half of HANDOFF §7's P1 "About/Careers pages are linked but do
-   not exist". Careers is the half that can be built honestly right now:
-   /about cannot, because it needs real people and the review is explicit that
-   we do not launch with invented ones. Nothing on this page claims a person
-   exists.
+   The first version was senior, remote, market-rate hiring. The user corrected
+   the facts on 2026-09-08 and the correction changed the page rather than its
+   numbers: these are FRESHER roles, ON SITE, with a six-month training period
+   and a two-year agreement. Senior hiring is closed.
+
+   It also got shorter, on request. Nine sections became six:
+
+     CareersHero  the offer stated, plus the four facts that decide whether
+                  the rest of the page is worth anybody's time
+     Programme    the two years in order — replaces the commitment grid, the
+                  stack grid AND the first-90-days block
+     Roles        four trainee roles, stack shown as ICONS, one Apply each
+     HiringPath   three steps, plus what will never happen to you
+     FitCheck     who should not apply, with the terms named plainly
+     CareerFaq    the awkward questions, before the first call
+     CtaAnchor    the open application
+
+   `CandidateOffer`, `CareerStack` and `FirstNinety` were deleted rather than
+   left unrendered — their content lives in Programme and in the role cards
+   now, and a dead component is a trap for whoever reads this next. What was
+   NOT deleted is the senior role data: it is parked in site.ts as
+   SENIOR_ROLES, exported and unrendered, with a note on how to bring it back.
+   Roles.tsx states in one line that senior hiring is closed, which is worth
+   more than silence — a senior reader who finds only trainee roles otherwise
+   concludes we do not employ seniors, contradicting every client page.
 
    ── HOW IT RELATES TO THE REFERENCE ──────────────────────────────────────
    conversedatasolutions.com/careers was read with Playwright before any of
-   this was written. Its structure — hero, three core values, a photo bento,
-   a flat list of four openings, a "don't see the perfect fit" slab — is
-   documented in site.ts's careers banner along with the two parts we
-   deliberately do not reproduce (the invented photography and the
-   unfalsifiable values triad). No copy, class or layout is taken from it.
-
-   What this page does instead is turn this site's own client-facing argument
-   inward, section by section:
-
-     CareersHero    the promise, plus the four facts that decide whether a
-                    senior engineer keeps reading at all
-     CandidateOffer the commitment grid — /why-choose-us for applicants
-     CareerStack    the tools, grouped by layer rather than scrolled past
-     Roles          six roles with the WHOLE description on the page, filtered
-                    by discipline, nothing behind a form
-     HiringPath     the process section, pointed at hiring, with the
-                    counter-list of what we will not do to you
-     FirstNinety    the section nobody writes: what months one to three are
-     FitCheck       "we tell you when to walk away", addressed to candidates
-     CareerFaq      the awkward questions, before the first call
-     CtaAnchor      the open application
+   this was written; its structure, and the two parts we deliberately do not
+   reproduce (the invented photography, the unfalsifiable values triad), are
+   recorded in site.ts's careers banner. No copy, class or layout is taken
+   from it, and the rewrite has moved this page further from it still.
 
    ── SECTION GROUNDS ALTERNATE ────────────────────────────────────────────
-   secondary → background → secondary → background → secondary → background →
-   secondary → background, then the CTA's light band. Each section owns its
-   own ground and its own `border-t`; changing one here means changing it in
-   the component, not wrapping it.
+   secondary → background → background → secondary → secondary → background,
+   then the CTA's light band. Programme and Roles share `background` on
+   purpose: they are one argument (here are the terms, here are the ways in)
+   and a band change between them would read as a subject change. Same for
+   HiringPath and FitCheck on `secondary`. Each section owns its own ground
+   and its own `border-t`, so the rhythm is changed in the component.
 
-   ⚠ CLAIM STATUS — READ BEFORE PUBLISHING. The roles, the salary bands, the
-   interview timings, the "four things that will never happen", the learning
-   budget and the 90-day onboarding are ALL unverified and all carry
-   data-placeholder. HANDOFF §7's allowed-claims list covers client
-   commitments; it says nothing about how this company hires, so none of it
-   transfers. `npm run verify` counts these. A careers page that overstates
-   its own process is the same fabricated-proof failure as a fake
-   testimonial — aimed at the audience most likely to publish the correction.
+   ⚠ CLAIM STATUS — READ BEFORE PUBLISHING. Everything about the terms is
+   unverified and flagged: the twelve-hour training days, the ₹10,000 monthly
+   stipend, the two-year agreement, the three-day reply, "no training fee", and
+   whether these four roles are open at all. HANDOFF §7's allowed-claims list
+   covers CLIENT commitments; none of it transfers to employment terms.
+
+   Two carry more than the usual risk and were flagged to the user on
+   2026-09-08: the twelve-hour day is a Shops & Establishments Act exposure as
+   well as a recruiting one, and the stipend plus the agreement are the terms a
+   candidate screenshots. They must match the real offer letter, word for word,
+   before this page is public. Every one of them reads from TERMS in site.ts,
+   so correcting one is a single edit and cannot leave a stale copy behind.
    ========================================================================== */
 export default function Careers() {
   return (
@@ -79,11 +86,9 @@ export default function Careers() {
       <Nav />
       <main id="main">
         <CareersHero />
-        <CandidateOffer />
-        <CareerStack />
+        <Programme />
         <Roles />
         <HiringPath />
-        <FirstNinety />
         <FitCheck />
         <CareerFaq />
 
@@ -92,20 +97,20 @@ export default function Careers() {
             a second component (see CtaAnchor's note).
 
             `id="apply"`, not "contact": the nav and footer both point at
-            `/#contact` on HOME, and a duplicate id here would make those
-            links ambiguous depending on which page you were on. */}
+            `/#contact` on HOME, and a duplicate id here would make those links
+            ambiguous depending on which page you were on. */}
         <CtaAnchor
           id="apply"
-          eyebrow="Open application"
-          headline="None of the six"
-          accent="is quite you?"
-          lead="Send the thing you are proudest of having built and one line on what you want to do next. If there is nothing for you now we will say so — and we will say when there might be."
-          cta="Send an open application"
-          href="mailto:hello@interloid.com?subject=Open%20application"
+          eyebrow="Still reading?"
+          headline="Send us something"
+          accent="you have built."
+          lead="A college project, a half-finished app, a script that automates something small. It does not have to be good — it has to be yours, and you have to be able to talk about how you made it."
+          cta="Apply for a trainee role"
+          href="mailto:hello@interloid.com?subject=Trainee%20application"
           meta={[
-            "A written answer either way",
+            "No application fee, ever",
             "No portal, no account",
-            "Read by an engineer",
+            "Everybody hears back",
           ]}
         />
       </main>

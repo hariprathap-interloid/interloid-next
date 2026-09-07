@@ -1,18 +1,27 @@
-/* Ad-hoc harness for /careers, 2026-09-07. Same discipline as .verify.mjs:
-   measure, do not look. Checks the three things that can silently break on
-   this page and would not show in a screenshot:
+/* Harness for /careers. Written 2026-09-07, rewritten 2026-09-08 with the
+   page. Same discipline as .verify.mjs: measure, do not look.
 
-     1. every [data-reveal] actually reaches `is-in` (the filter must not be
-        able to strand a card at opacity 0)
-     2. the discipline filter hides and re-shows the right rows, and re-shown
-        rows are still visible (opacity 1) — the Reveal-vs-React-className bug
-     3. the role disclosure expands, and a collapsed panel is out of the tab
-        order
+   The page is now server-rendered end to end — the role filter and the role
+   disclosure are gone, and with them the two failure modes the first version
+   of this file existed to catch. What replaces them is worth more on this
+   version anyway, because the page is now a set of TERMS and the real risk is
+   a stale or self-contradicting one:
 
-   Plus the placeholder count and full-page shots in both themes. */
+     1. every [data-reveal] reaches `is-in`
+     2. every term stated on the page agrees with TERMS in site.ts — the
+        stipend, the training length, the hours and the agreement appear in
+        several sections and must never disagree
+     3. every tech icon a role asks for actually renders, with an accessible
+        name (an icon-only chip that fails to draw is invisible, not obviously
+        broken)
+     4. senior content is PARKED, not published
+     5. placeholder count, heading outline, overflow, shots in both themes
+
+   Usage: node .careers.mjs [outDir] [baseUrl] */
 import { chromium } from "playwright";
 
 const OUT = process.argv[2] || ".";
+const BASE = process.argv[3] || "http://localhost:3100";
 const b = await chromium.launch();
 const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
 const fail = [];
@@ -21,15 +30,14 @@ const ok = (cond, msg) => {
   if (!cond) fail.push(msg);
 };
 
-await p.goto("http://localhost:3100/careers", { waitUntil: "networkidle" });
+await p.goto(`${BASE}/careers`, { waitUntil: "networkidle" });
 
 /* --- 1. reveals ---------------------------------------------------------- */
 /* `behavior: "instant"` is load-bearing. globals.css sets
-   `html { scroll-behavior: smooth }`, so a plain window.scrollTo ANIMATES —
-   a 60ms step never arrives at its target, the sweep glides through a
-   fraction of the page, and the observer legitimately never sees most of it.
-   First run of this file reported 17/61 reveals for exactly that reason.
-   That is a harness artifact, not a page defect. */
+   `html { scroll-behavior: smooth }`, so a plain window.scrollTo ANIMATES — a
+   60ms step never arrives at its target and the observer legitimately never
+   sees most of the page. The first run of this file reported 17/61 for exactly
+   that reason. Harness artifact, not a page defect. */
 await p.evaluate(async () => {
   const h = document.documentElement.scrollHeight;
   for (let y = 0; y < h; y += 400) {
@@ -39,85 +47,90 @@ await p.evaluate(async () => {
   window.scrollTo({ top: 0, behavior: "instant" });
 });
 await p.waitForTimeout(1200);
-const reveals = await p.evaluate(() => {
+const rev = await p.evaluate(() => {
   const all = [...document.querySelectorAll("[data-reveal]")];
-  const cold = all.filter((e) => !e.classList.contains("is-in"));
-  return { total: all.length, cold: cold.length };
+  return {
+    total: all.length,
+    cold: all.filter((e) => !e.classList.contains("is-in")).length,
+  };
 });
-ok(reveals.cold === 0, `reveals fired: ${reveals.total - reveals.cold}/${reveals.total}`);
+ok(rev.cold === 0, `reveals fired: ${rev.total - rev.cold}/${rev.total}`);
 
-/* --- 2. filter ----------------------------------------------------------- */
-const ROW = "#openings > div > ul > li";
-const roleCount = await p.locator(ROW).count();
-ok(roleCount === 6, `six roles rendered (${roleCount})`);
-
-await p.getByRole("button", { name: "Platform", exact: true }).click();
-await p.waitForTimeout(200);
-const shownPlatform = await p.evaluate(() =>
-  [...document.querySelectorAll("#openings > div > ul > li h3")]
-    .filter((h) => h.offsetParent !== null)
-    .map((h) => h.textContent.trim()),
+/* --- 2. the terms agree with themselves ---------------------------------- */
+/* THE CHECK THIS FILE EXISTS FOR NOW. Each of these comes from TERMS in
+   site.ts and is rendered by two or three different components. A page that
+   says "6 months" in the hero and "3 months" in the programme is worse than
+   one that says neither, and nothing else on the project would catch it. */
+const body = await p.evaluate(() => document.querySelector("main").innerText);
+/* innerText is VISIBLE text only, which is the right lens for "what does a
+   reader see" — but the FAQ answers sit in collapsed panels at
+   `visibility: hidden`, so none of them appear in it. Anything asserted about
+   an answer has to read textContent instead. Costs one line and would
+   otherwise read as the page missing copy that is in fact there. */
+const all = await p.evaluate(() =>
+  document.querySelector("main").textContent.replace(/\s+/g, " "),
 );
+/* Regexes, not substrings: the page writes durations the way English does —
+   "6-month training", "Six months of training", "the first six months" — and
+   a literal "6 months" match reported 1 occurrence out of four real ones.
+   The check is that the FIGURE never disagrees, not that the wording is
+   uniform, so the pattern absorbs the spelling and the count does the work. */
+for (const [label, re, min] of [
+  ["the stipend", /₹10,000/g, 3],
+  ["the training length", /(6[- ]month|six month)/gi, 3],
+  ["the training hours", /(12[- ]hour|twelve[- ]hour)/gi, 1],
+  ["the agreement", /two[- ]year|2 years/gi, 2],
+  ["the location", /Gobichettipalayam/g, 2],
+]) {
+  const n = (body.match(re) || []).length;
+  ok(n >= min, `${label} stated ${n}× (expected at least ${min})`);
+}
+/* Nothing may OFFER remote — the senior page's language has to be gone, not
+   merely outnumbered. "hybrid" is deliberately NOT banned: the FAQ asks
+   "Is there any remote or hybrid option?" and answers no, which is the page
+   doing its job. So the assertion is on the answer, not on the word. */
+for (const banned of ["Remote (India)", "remote-first", "Remote within India"]) {
+  ok(!body.includes(banned), `no stale "${banned}"`);
+}
+ok(/on site/i.test(body), "the page says on site");
 ok(
-  shownPlatform.length === 2 &&
-    shownPlatform.includes("Senior Node.js Engineer") &&
-    shownPlatform.includes("Platform / DevOps Engineer"),
-  `Platform filter → ${JSON.stringify(shownPlatform)}`,
+  /No\. Every role on this page is on site/i.test(all),
+  "the remote question is answered no",
 );
-const live = await p.locator("#openings p[aria-live]").textContent();
-ok(/2 roles in Platform/.test(live), `live count reads "${live.trim()}"`);
 
-await p.getByRole("button", { name: "All roles", exact: true }).click();
-await p.waitForTimeout(500);
-/* THE bug this file exists for: a row hidden and re-shown must still be
-   visible, i.e. it must not have lost `is-in` to a React className rewrite. */
-const restored = await p.evaluate(() => {
-  const lis = [...document.querySelectorAll("#openings > div > ul > li")];
-  return lis
-    .map((li) => ({
-      t: li.querySelector("h3")?.textContent.trim(),
-      o: Number(getComputedStyle(li).opacity),
-      shown: li.querySelector("h3")?.offsetParent !== null,
-    }))
-    .filter((r) => !r.shown || r.o < 0.99);
+/* --- 3. tech marks render, and are named --------------------------------- */
+const icons = await p.evaluate(() => {
+  const svgs = [...document.querySelectorAll('#openings svg[role="img"]')];
+  return {
+    count: svgs.length,
+    unnamed: svgs.filter((s) => !s.getAttribute("aria-label")).length,
+    empty: svgs.filter((s) => !s.children.length).length,
+    names: [...new Set(svgs.map((s) => s.getAttribute("aria-label")))].sort(),
+  };
 });
-ok(restored.length === 0, `all six visible + opaque after re-show (${JSON.stringify(restored)})`);
+/* Four roles × four marks. A TechIcon key with no entry returns null and the
+   chip draws an empty plate — invisible rather than obviously wrong — so the
+   COUNT is checked, not just that some of them drew. */
+ok(icons.count === 16, `16 tech marks rendered (${icons.count})`);
+ok(icons.unnamed === 0, `every mark has an accessible name (${icons.unnamed} without)`);
+ok(icons.empty === 0, `every mark has geometry (${icons.empty} empty)`);
+console.log(`  marks: ${icons.names.join(", ")}`);
 
-/* --- 3. disclosure ------------------------------------------------------- */
-const btn = p.getByRole("button", { name: /Read the whole role/ }).first();
-const panel = p.locator("#role-senior-react-engineer");
-ok((await panel.evaluate((e) => e.getBoundingClientRect().height)) < 2, "panel starts collapsed");
-/* `visibility: hidden`, not merely zero height — a zero-height panel still
-   leaves its content in the accessibility tree (HANDOFF §5.4). This panel has
-   no focusable children today, so the tab-order half of that rule is moot;
-   the a11y-tree half is not, and this is what enforces it. */
-const vis = await panel.evaluate((e) => getComputedStyle(e).visibility);
-ok(vis === "hidden", `collapsed panel visibility: ${vis}`);
-await btn.click();
-await p.waitForTimeout(500);
-const h = await panel.evaluate((e) => e.getBoundingClientRect().height);
-ok(h > 200, `panel expands to ${Math.round(h)}px`);
+/* --- 4. senior content is parked, and said out loud ---------------------- */
+ok(!/L \/ year/.test(body), "no senior salary bands on the page");
 ok(
-  (await p.locator("#openings article").first().getAttribute("class")).includes("border-accent/40"),
-  "open card takes its open border",
+  /closed at the moment|not hiring seniors|Not at the moment/i.test(body),
+  "the page says senior hiring is closed",
 );
-/* The card that opened must still be visible — Faq.tsx's original defect. */
-const opacityAfter = await p
-  .locator(ROW)
-  .first()
-  .evaluate((e) => Number(getComputedStyle(e).opacity));
-ok(opacityAfter > 0.99, `opened card opacity ${opacityAfter}`);
-await btn.click();
-await p.waitForTimeout(400);
 
-/* --- 4. placeholders + headings ------------------------------------------ */
+/* --- 5. inventory -------------------------------------------------------- */
 const ph = await p.evaluate(() =>
   [...document.querySelectorAll("[data-placeholder]")].map((e) =>
     e.getAttribute("data-placeholder"),
   ),
 );
 console.log(`\nplaceholders on /careers: ${ph.length}`);
-ph.forEach((x) => console.log("  · " + x));
+[...new Set(ph)].forEach((x) => console.log("  · " + x));
 
 const heads = await p.evaluate(() =>
   [...document.querySelectorAll("main h1, main h2")].map(
@@ -128,7 +141,19 @@ ok(heads.filter((h) => h.startsWith("H1")).length === 1, "exactly one H1");
 console.log("\noutline:");
 heads.forEach((h) => console.log("  " + h));
 
-/* --- 5. shots ------------------------------------------------------------ */
+/* --- 6. no horizontal overflow ------------------------------------------- */
+for (const w of [390, 768, 1024, 1440, 1920]) {
+  await p.setViewportSize({ width: w, height: 900 });
+  await p.waitForTimeout(250);
+  const o = await p.evaluate(() => ({
+    doc: document.documentElement.scrollWidth,
+    win: window.innerWidth,
+  }));
+  ok(o.doc <= o.win, `no h-overflow at ${w} (scrollWidth ${o.doc})`);
+}
+await p.setViewportSize({ width: 1440, height: 900 });
+
+/* --- 7. shots ------------------------------------------------------------ */
 for (const theme of ["light", "dark"]) {
   await p.evaluate((t) => {
     document.documentElement.classList.toggle("dark", t === "dark");

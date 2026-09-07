@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
 import PullQuote from "@/components/PullQuote";
 import Reveal from "@/components/Reveal";
+import SoundFamiliar from "@/components/SoundFamiliar";
 import WeekStrip from "@/components/WeekStrip";
 import WhyHero from "@/components/WhyHero";
 import { BENTO, COMMITMENTS_EXTRA, WHY_QUOTE } from "@/content/site";
@@ -59,6 +60,14 @@ export default function WhyChooseUs() {
       <Nav />
       <main id="main">
         <WhyHero />
+
+        {/* The archive's "Act one — the problem" (user, 2026-09-08). It sits
+            between the hero and the agreement so the page argues problem →
+            commitment. No `capabilitiesHref`: the answers would link into the
+            /services explorer, and that route is not in the app right now —
+            see the component's note. */}
+        <SoundFamiliar />
+
         <Clauses />
         <WeekStrip />
 
