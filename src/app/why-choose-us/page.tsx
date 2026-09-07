@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
+import Answers from "@/components/Answers";
+import Clauses from "@/components/Clauses";
 import CommitmentTile from "@/components/CommitmentTile";
+import CtaAnchor from "@/components/CtaAnchor";
 import Footer from "@/components/Footer";
 import Icon from "@/components/Icon";
 import Nav from "@/components/Nav";
 import Reveal from "@/components/Reveal";
+import WeekStrip from "@/components/WeekStrip";
 import { BENTO, COMMITMENTS_EXTRA } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -19,11 +23,26 @@ export const metadata: Metadata = {
    now-empty COMMITMENTS_EXTRA, kept so the split can be re-made without
    touching this file). It is still linked from the nav and the footer.
 
+   ── PORTED FROM prototype2-archive/why-choose-us.html, 2026-09-07 ─────────
+   The page was the commitment grid and nothing else. It now carries the
+   archive's full argument, rebuilt on this project's tokens rather than its
+   CSS: the working agreement (Clauses), a normal week (WeekStrip), the
+   straight answers (Answers), and the dark slab to close on.
+
+   Every `kicker` in the archive ("Why Interloid", "The commitments", "Direct,
+   by default", "No sales call required") is a BADGE here, on request — which
+   also means each block opens the way every block on the home page opens, so
+   the two pages read as one site rather than two prototypes.
+
+   The closing slab is the home CTA component with different words, not a
+   second slab. Everything it needs is a prop and every prop defaults to home's
+   copy — see CtaAnchor's note on why it was parameterised instead of split.
+
    ⚠ HANDOFF §7 P1 is still open on this page's premise: the five commitments
    are asserted to be "carried into every engagement agreement". That must be
    VERIFIED against the real contract before launch, or the page becomes
-   fabricated proof — the review flags it explicitly. The claim line below is
-   marked data-placeholder until then. */
+   fabricated proof — the review flags it explicitly. Both claim lines (here
+   and in the agreement's foot) are marked data-placeholder until then. */
 export default function WhyChooseUs() {
   const all = [...BENTO, ...COMMITMENTS_EXTRA];
 
@@ -99,6 +118,25 @@ export default function WhyChooseUs() {
             </div>
           </div>
         </section>
+
+        <Clauses />
+        <WeekStrip />
+        <Answers />
+
+        {/* `id="contact"` would collide with nothing on this page, but the nav
+            and footer both point at `/#contact` on HOME — so this slab gets
+            its own id and the links stay unambiguous. */}
+        <CtaAnchor
+          id="hold-us"
+          eyebrow="Hold us to it"
+          headline="Hold us"
+          accent="to all of it."
+          lead={
+            "Book 30 minutes and test every clause on this page against your project. " +
+            "If the honest answer is “don’t hire us,” that is the answer you’ll get."
+          }
+          meta={["No obligation", "No sales pressure", "Written price in 48 hours"]}
+        />
       </main>
       <Footer />
     </>

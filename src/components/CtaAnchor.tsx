@@ -45,10 +45,34 @@ function particles() {
   });
 }
 
-export default function CtaAnchor() {
+/* Parameterised 2026-09-07 so /why-choose-us can close on the same slab
+   instead of a second copy of it. EVERY prop defaults to the home version, so
+   `<CtaAnchor />` renders exactly what it rendered before — that was the point
+   of doing it this way rather than extracting a shared shell: home's slab was
+   measured identical to prototype 1 property by property, and a refactor that
+   cannot change it is worth more than a tidier one that might. */
+export default function CtaAnchor({
+  id = "contact",
+  eyebrow = "Let’s start",
+  headline = "Still comparing",
+  accent = "development partners?",
+  lead = "Book 30 minutes. We’ll tell you honestly whether we’re the right fit — and if we’re not, who is.",
+  cta = "Book a free 30-min consult",
+  href = "mailto:hello@interloid.com",
+  meta = ["No obligation", "No sales pressure", "Proposal in 48 hours"],
+}: {
+  id?: string;
+  eyebrow?: string;
+  headline?: string;
+  accent?: string;
+  lead?: string;
+  cta?: string;
+  href?: string;
+  meta?: readonly string[];
+} = {}) {
   return (
     <section
-      id="contact"
+      id={id}
       /* The LIGHT BAND, not the slab. Deepened on request 2026-09-07:
          pt-8/pb-24 (32/96px, which was prototype 1's `.cta-wrap` padding to
          the pixel) -> pt-24/pb-40 (96/160px). The slab's own padding is
@@ -91,18 +115,18 @@ export default function CtaAnchor() {
                 <Icon name="star" className="size-4" />
               </span>
               <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-spark">
-                Let&rsquo;s start
+                {eyebrow}
               </span>
             </div>
 
             <h2 className="mb-5 font-display text-4xl font-medium leading-[1.1] tracking-tight text-white md:text-5xl lg:text-6xl">
-              Still comparing
+              {headline}
               <br />
               {/* `/srgb`: Tailwind v4 interpolates gradients in oklab by default,
                     which bends the midpoint of a blue->green ramp visibly. The
                     prototype's `linear-gradient(90deg, ...)` is plain sRGB. */}
                 <span className="bg-linear-to-r/srgb from-spark to-spark-end bg-clip-text text-transparent">
-                development partners?
+                {accent}
               </span>
             </h2>
 
@@ -110,8 +134,7 @@ export default function CtaAnchor() {
                 offering to name someone else is the most disarming thing on
                 the page, and it costs nothing to say. */}
             <p className="mb-10 max-w-xl text-[17px] leading-[1.7] text-ink-foreground">
-              Book 30 minutes. We&rsquo;ll tell you honestly whether we&rsquo;re
-              the right fit &mdash; and if we&rsquo;re not, who is.
+              {lead}
             </p>
 
             {/* `on-dark` swaps the focus ring for the dark-ground variant.
@@ -119,10 +142,10 @@ export default function CtaAnchor() {
                 global ring, so the ring is COMPOSED into the shadow, never
                 replacing it. */}
             <a
-              href="mailto:hello@interloid.com"
+              href={href}
               className="on-dark group inline-flex h-14 items-center gap-2 rounded-full border border-white/12 bg-ink-cta px-10 text-[17px] font-bold text-white shadow-[0_0_36px_-14px_rgba(40,157,190,.34)] transition-[background-color,box-shadow] duration-300 ease-out hover:bg-ink-cta-hover hover:shadow-[0_0_46px_-14px_rgba(40,157,190,.52)] active:scale-95"
             >
-              Book a free 30-min consult
+              {cta}
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -141,7 +164,7 @@ export default function CtaAnchor() {
             {/* prototype 1's `.cta__meta` — three objection-removers under
                 the button, where the hesitation actually happens. */}
             <ul className="mt-10 flex flex-wrap justify-center gap-6">
-              {["No obligation", "No sales pressure", "Proposal in 48 hours"].map(
+              {meta.map(
                 (m) => (
                   <li
                     key={m}

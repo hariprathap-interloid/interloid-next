@@ -384,3 +384,118 @@ export const PULL_QUOTE = {
   name: "Placeholder Name",
   role: "Head of Product, Placeholder Co",
 };
+
+/* ==========================================================================
+   /why-choose-us — ported from prototype2-archive/why-choose-us.html
+   ==========================================================================
+   Three blocks the Next page did not have: the working agreement, a normal
+   week, and the straight answers. Copy is verbatim from the archive; only the
+   presentation was rebuilt on this project's tokens.
+
+   ⚠ CLAUSES CARRIES HANDOFF §7's P1 AND IT IS THE WHOLE POINT OF THE PAGE.
+   The document asserts these five clauses are "carried into every engagement
+   agreement". If the real contract does not say so, this is not a wording
+   problem — it is fabricated proof on the one page whose entire argument is
+   "don't take our word for it". The footer line is data-placeholder until
+   somebody reads the actual contract. Do not un-flag it to tidy the page up.
+   ========================================================================== */
+
+export const CLAUSES = [
+  {
+    n: "01",
+    label: "Ownership",
+    title: "Everything is yours from the first commit",
+    body: "Work happens in your GitHub organisation and your cloud accounts. Code, infrastructure, credentials and documentation are yours throughout — there is no handover ceremony at the end because there is nothing of yours in our hands.",
+    figure: "100%",
+    caption: "code & IP, yours",
+  },
+  {
+    n: "02",
+    label: "People",
+    title: "The engineers you meet are the engineers you get",
+    body: "The proposal names the individuals on your project. They are the people on your discovery call, and later in your standups. Any change of personnel goes through you, in writing, before it happens.",
+    figure: "Named",
+    caption: "in the proposal",
+  },
+  {
+    n: "03",
+    label: "Price",
+    title: "The number comes before the work",
+    body: "A fixed price or a transparent hourly rate, in writing within 48 hours of the first call. Scope changes are quoted and approved before work continues — nothing is billed that you haven't approved in advance.",
+    figure: "48 hrs",
+    caption: "to a written price",
+  },
+  {
+    n: "04",
+    label: "Visibility",
+    title: "You watch progress — you don't request updates",
+    body: "A working demo every week, plus standing access to the repository and the sprint board. A bad week surfaces in that week's demo — never in a month-end surprise.",
+    figure: "Weekly",
+    caption: "working demo",
+  },
+  {
+    n: "05",
+    label: "Exit",
+    title: "Leaving must cost you nothing",
+    body: "Because everything already lives in your accounts, walking away takes one conversation — there is nothing to migrate, export or unwind. Every build includes 30 days of post-launch support; a retainer after that is an option, never a dependency.",
+    figure: "30 days",
+    caption: "support included",
+  },
+] as const;
+
+/* `hi` marks Friday. The demo is the ceremony the whole week is built around,
+   so it is the one card that is not neutral. */
+export const WEEK = [
+  {
+    tag: "Monday",
+    title: "Standup, in your channel",
+    body: "The week's plan lands in your Slack or Teams — written by the engineers, not summarised by a manager.",
+    hi: false,
+  },
+  {
+    tag: "Tue – Wed",
+    title: "PRs into your repo",
+    body: "Reviews in the open. Your team can comment, question and learn from every change as it happens.",
+    hi: false,
+  },
+  {
+    tag: "Thursday",
+    title: "Blockers, raised early",
+    body: "Anything at risk for the demo is flagged now — with options, not excuses.",
+    hi: false,
+  },
+  {
+    tag: "Friday",
+    title: "The working demo",
+    body: "Software you can click, plus a short written summary. The ceremony the whole week is built around.",
+    hi: true,
+  },
+  {
+    tag: "Anytime",
+    title: "A direct line",
+    body: "Questions go to the engineer doing the work, in your timezone overlap. No relay, no ticket queue.",
+    hi: false,
+  },
+] as const;
+
+/* Open on the page, not in an accordion — the archive's own note. Hiding the
+   awkward questions behind a click is the behaviour the section is arguing
+   against. */
+export const ANSWERS = [
+  {
+    q: "Where are you actually based?",
+    a: "Gobichettipalayam, Tamil Nadu, India — and we keep deliberate overlap with US and UK business hours for standups, demos and anything urgent. Async by default, with a scheduled live window every working day.",
+  },
+  {
+    q: "Who actually writes the code?",
+    a: "Senior engineers, named in your proposal. The people on your discovery call are the people in your repo — there's no swap to a junior bench after signature, because we don't have one.",
+  },
+  {
+    q: "We already have a team. Does that work?",
+    a: "It's most of what we do. Our engineers work inside your repo and your rituals, not alongside them — and step out with 30 days' notice once you've hired.",
+  },
+  {
+    q: "What does it cost?",
+    a: "A fixed price or a transparent hourly rate, in writing within 48 hours of the first call. If budget and scope do not line up, you hear it on that call — and if the honest number is smaller than you planned to spend, you hear that too.",
+  },
+] as const;
