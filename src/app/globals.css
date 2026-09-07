@@ -58,6 +58,15 @@
   --secondary-foreground: oklch(0.4751 0.1249 253.47);
   --muted: oklch(0.9683 0.0069 247.9); /* #f1f5f9 */
   --muted-foreground: oklch(0.5542 0.0460 257.53); /* #62748e body copy   */
+  /* Body copy that has to survive something drawn UNDER it. --muted-foreground
+     is #62748e, which measures 4.69:1 on the commitment tile's hover ground —
+     0.19 over AA, no headroom for the cursor wash (see CommitmentTile.tsx §2
+     and spotlight-lab.html). This is slate-600, 7.5:1, which leaves room to
+     spend. A token and not a `dark:` utility on the element: NOTHING in this
+     app uses Tailwind's `dark:` variant, because dark is a `.dark` CLASS here
+     and v4's `dark:` defaults to prefers-color-scheme — the utility would
+     silently never fire. Themed values go through tokens, always. */
+  --muted-strong: oklch(0.4461 0.0263 256.8); /* #45556c slate-600 */
   --border: oklch(0.9288 0.0126 255.51); /* #e2e8f0 */
   /* Faint DISPLAY text (the stack marquee, inactive selector arrows). This used
      to borrow --border, which works on light only: in dark --border is white at
@@ -100,6 +109,7 @@
   --secondary-foreground: oklch(0.9842 0.0034 247.86);
   --muted: oklch(0.2795 0.0368 260.03);
   --muted-foreground: oklch(0.7107 0.0351 256.79);
+  --muted-strong: oklch(0.8686 0.0216 252.51); /* #cad5e2 slate-300 */
   --border: oklch(1 0 0 / 10%);
   --faint: oklch(0.34 0.03 260); /* opaque: alpha reads as nothing on ink */
   --hairline: oklch(1 0 0 / 6%);
@@ -155,6 +165,7 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-muted-strong: var(--muted-strong);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);

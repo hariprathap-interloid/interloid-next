@@ -121,13 +121,62 @@ export const STACK = [
   "GraphQL",
 ];
 
+/* ==========================================================================
+   COMMITMENTS — the "Why Interloid" tiles.
+
+   Rebuilt 2026-09-07 from prototype 1's `why` array (script.js), which is the
+   design reference for this section. The three-tile home split of 2026-09-06
+   is reverted: the home section now carries the full set of SEVEN, and
+   /why-choose-us renders the same list rather than a longer one.
+
+   THE COUNT IS LOAD-BEARING. Three columns, and every row must fill.
+   7 tiles = 5 singles + 2 double-width = 9 slots = three full rows:
+
+       [ wide (0) .......... ][ 1 ]
+       [ 2 ][ 3 ][ 4 ]
+       [ 5 ][ wide (6) .......... ]
+
+   The wide tiles are the FIRST and LAST entries, and Advantage derives that
+   from the array length — do not hard-code indices there. Changing the count
+   changes the arithmetic: at 5 tiles it is one wide (2+1+1+1+1 = 6 = two
+   rows), at 7 it is two. Any other count leaves a visible hole.
+
+   Every claim is on HANDOFF §7's allowed list. */
 export const BENTO = [
   {
-    k: "clock",
+    k: "lock",
     hue: "brand",
-    span: "lg:col-span-2",
-    title: "A written proposal in 48 hours",
-    body: "Scope, price, and a delivery date in writing two working days after the consult. If we can’t commit to it, we tell you then — not three weeks in.",
+    span: "",
+    title: "You own 100% of the code",
+    body: "Every repo, every credential, every architecture decision transfers to you. No proprietary framework, no licence, no hostage situation. It’s in the contract, not just on this page.",
+  },
+  {
+    k: "wallet",
+    hue: "indigo",
+    span: "",
+    title: "Fixed price or transparent hourly",
+    body: "You know the number before we start. Scope changes are quoted, never surprise-invoiced.",
+  },
+  {
+    k: "users",
+    hue: "light",
+    span: "",
+    title: "Senior engineers only",
+    body: "The people on your call are the people writing the code. No bait-and-switch to juniors after signing.",
+  },
+  {
+    k: "handshake",
+    hue: "teal",
+    span: "",
+    title: "We tell you when to walk away",
+    body: "If your project doesn’t need us, or needs someone else, we say so on the first call.",
+  },
+  {
+    k: "zap",
+    hue: "accent",
+    span: "",
+    title: "Small team, direct line",
+    body: "You talk to the engineer building your feature — not an account manager relaying messages to a pod.",
   },
   {
     k: "repeat",
@@ -137,27 +186,24 @@ export const BENTO = [
     body: "Not a status report. Software you can click, every week, from week one.",
   },
   {
-    k: "key",
-    hue: "indigo",
-    span: "",
-    title: "You own 100% of the code",
-    body: "Your repos, your cloud accounts, your IP — from the first commit, not at handover.",
-  },
-  {
     k: "shield",
     hue: "teal",
     span: "",
     title: "30 days of post-launch support",
     body: "Included. We stay on after go-live, because that is when real usage finds things.",
   },
-  {
-    k: "doc",
-    hue: "light",
-    span: "",
-    title: "30-day notice, either direction",
-    body: "No lock-in, no minimum term. If it isn’t working, you leave with everything.",
-  },
 ] as const satisfies readonly {
+  k: string;
+  hue: Hue;
+  span: string;
+  title: string;
+  body: string;
+}[];
+
+/* Kept as an empty-by-design alias: the two commitments that were split out on
+   2026-09-06 are back in BENTO above, and /why-choose-us imports this so the
+   split can be re-made later without touching that page again. */
+export const COMMITMENTS_EXTRA = [] as const satisfies readonly {
   k: string;
   hue: Hue;
   span: string;

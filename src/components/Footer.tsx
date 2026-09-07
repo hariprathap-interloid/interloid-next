@@ -12,10 +12,10 @@ const SERVICE_LINKS = [
 ];
 
 const COMPANY_LINKS = [
-  { href: "#advantage", label: "Why Interloid" },
-  { href: "#process", label: "How we work" },
-  { href: "#work", label: "Selected work" },
-  { href: "#contact", label: "Contact" },
+  { href: "/why-choose-us", label: "Why Interloid" },
+  { href: "/#process", label: "How we work" },
+  { href: "/#work", label: "Selected work" },
+  { href: "/#contact", label: "Contact" },
   { href: "/about", label: "About us", placeholder: "page not built yet" },
   { href: "/careers", label: "Careers", placeholder: "page not built yet" },
 ];
@@ -60,7 +60,7 @@ export default function Footer() {
             <ul className="space-y-4 text-sm">
               {SERVICE_LINKS.map((l) => (
                 <li key={l}>
-                  <a href="#services" className="transition-colors hover:text-white">
+                  <a href="/#services" className="transition-colors hover:text-white">
                     {l}
                   </a>
                 </li>

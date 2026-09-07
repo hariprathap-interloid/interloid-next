@@ -16,12 +16,12 @@ import {
    data-placeholder rather than removed, so the placeholder toggle still
    counts them (§7 P1). */
 const LINKS = [
-  { href: "#home", label: "Home" },
-  { href: "#services", label: "Services" },
-  { href: "#stack", label: "Stack" },
-  { href: "#advantage", label: "Why us" },
-  { href: "#process", label: "Process" },
-  { href: "#work", label: "Work" },
+  { href: "/#home", label: "Home" },
+  { href: "/#services", label: "Services" },
+  { href: "/#stack", label: "Stack" },
+  { href: "/why-choose-us", label: "Why us" },
+  { href: "/#process", label: "Process" },
+  { href: "/#work", label: "Work" },
   { href: "/about", label: "About us", placeholder: "page not built yet" },
   { href: "/careers", label: "Careers", placeholder: "page not built yet" },
 ] as const;
@@ -91,15 +91,17 @@ export default function Nav() {
      a fractional threshold of a shrunken root at 400% zoom, and every section
      here is taller than the strip. */
   useEffect(() => {
+    /* Links are "/#id" now so they work from any page; the scrollspy only
+       cares about the fragment, and only on a page that actually has it. */
     const targets = LINKS.map((l) =>
-      l.href.startsWith("#") ? document.querySelector(l.href) : null,
+      l.href.includes("#") ? document.querySelector("#" + l.href.split("#")[1]) : null,
     ).filter(Boolean) as Element[];
     if (!targets.length) return;
 
     const spy = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
-          if (e.isIntersecting) setCurrent(`#${e.target.id}`);
+          if (e.isIntersecting) setCurrent(`/#${e.target.id}`);
         });
       },
       { threshold: 0, rootMargin: "-45% 0px -50% 0px" },
@@ -170,7 +172,7 @@ export default function Nav() {
           }`}
         >
           <a
-            href="#home"
+            href="/"
             className="flex shrink-0 items-center gap-2.5 rounded-full"
             aria-label="Interloid home"
           >
@@ -255,8 +257,10 @@ export default function Nav() {
               </svg>
             </button>
 
+            {/* "/#contact", not "#contact": a bare fragment is a no-op on any
+                page without that section, i.e. everything except home. */}
             <a
-              href="#contact"
+              href="/#contact"
               className="hidden rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-brand-light hover:shadow-primary/40 active:scale-95 xl:inline-flex"
             >
               Let&apos;s talk
@@ -330,7 +334,7 @@ export default function Nav() {
             </a>
           ))}
           <a
-            href="#contact"
+            href="/#contact"
             onClick={() => setOpen(false)}
             className="mt-4 inline-flex h-12 items-center justify-center rounded-full bg-primary px-6 text-base font-medium text-primary-foreground shadow-lg shadow-primary/25"
           >
