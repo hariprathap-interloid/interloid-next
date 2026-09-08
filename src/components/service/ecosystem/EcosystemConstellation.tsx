@@ -16,9 +16,11 @@ import {
   CLOSED_SERVICE_FACTOR,
   SERVICE_ANGLES,
   SERVICE_RADII,
+  STAGE,
   fan,
   polar,
   polarUnits,
+  type Point,
 } from "./geometry";
 import { useEcosystem } from "./useEcosystem";
 
@@ -135,10 +137,33 @@ const OPEN_R = 186;
 
 /* Level 2. Index 0 is the OUTER radius and it is given to the groups nearest
    the service's own axis — see note 5, this is not `groupIndex % 2`. */
-const L2_RADII = [316, 262] as const;
+const L2_RADII = [298, 246] as const;
 
-/* Level 3, alternating on a RUNNING counter — see note 2. 424 is RINGS[3]. */
-const L3_RADII = [424, 478] as const;
+/* Level 3, measured from its GROUP CENTRE and not from the stage centre.
+
+   The inner ring has to clear the WIDEST group node, and that is not the
+   100px disc the circle treatment uses (52 units of radius): in pill mode the
+   node is a lozenge, and "Node.js ecosystem" is roughly 78 units of
+   half-width. Add 25 for the mark plate and 96 was not enough — measured, as
+   two overlaps on Backend and Cloud. 118 clears it.
+
+   The outer ring is then capped by the stage: level 2 sits at 298, so
+   298 + 164 + 25 = 487 of the 500 available. That is what L2_RADII was pulled
+   in for; the two numbers cannot be chosen separately.
+
+   Two rings, alternating on a running counter, so consecutive marks in a fan
+   are separated radially as well as angularly and a tight fan still has air
+   in it. */
+const MARK_RADII = [118, 164] as const;
+
+/* How wide a group's fan opens, by item count. It has to grow with the count
+   or a six-item group overlaps itself, and it has to stop growing or the
+   outermost marks swing round beside the group instead of out from it — at
+   ±60° a mark is level with its own pill and the edge reads as pointing
+   nowhere. Adjacent group centres are ~218 units apart, which is what keeps
+   two neighbouring fans of this radius clear of each other. */
+const MARK_SPREAD_STEP = 40;
+const MARK_SPREAD_MAX = 120;
 
 /* The angle the open branch owns. The five retreated services sit inside
    r=178, and nothing of the branch exists inside r=258, so the branch may
@@ -153,13 +178,36 @@ const FILL = 0.82;
    edge stops so it does not run under the plate. */
 const MARK_STOP = 28;
 
-type Mark = { tech: Tech; angle: number; radius: number };
+type Mark = {
+  tech: Tech;
+  /** Absolute, in stage units. Level 3 is positioned relative to its group,
+      so a polar pair measured from the stage centre no longer describes it. */
+  at: Point;
+  /** Bearing out of the group centre, so an edge can stop short of the
+      plate along the line it actually travels. */
+  bearing: number;
+};
 type BranchGroup = {
   label: string;
   angle: number;
   radius: number;
+  /** The group centre in stage units — one source for the pill, its marks
+      and every edge that touches either. */
+  at: Point;
   marks: Mark[];
 };
+
+/** `r` units from `from`, at `deg`. The local counterpart of polarUnits, for
+    everything that hangs off a node rather than off the stage centre. */
+function offset(from: Point, r: number, deg: number): Point {
+  const rad = (deg * Math.PI) / 180;
+  return { x: from.x + r * Math.cos(rad), y: from.y + r * Math.sin(rad) };
+}
+
+/** Stage units → the percentage pair the absolutely-positioned nodes take. */
+function unitsToPct(p: Point): Point {
+  return { x: (p.x / STAGE) * 100, y: (p.y / STAGE) * 100 };
+}
 
 /** The whole open-state layout for one service, in one place, so the nodes
     and the edges that join them can never be computed from two different
@@ -174,12 +222,6 @@ function branchLayout(cap: Capability, serviceAngle: number): BranchGroup[] {
   let seq = 0;
   return cap.stack.map((g, gi) => {
     const centre = serviceAngle - SECTOR_D / 2 + slice * (gi + 0.5);
-    const angles = fan(centre, g.items.length, slice * FILL);
-    const marks = g.items.map((t, ti) => {
-      const radius = L3_RADII[seq % 2];
-      seq += 1;
-      return { tech: t, angle: angles[ti], radius };
-    });
     /* The pill sits exactly inward of the marks it labels. Any other
        arrangement is uninterpretable — a pill leaning over the neighbouring
        group's plates is what the reader will believe.
@@ -190,12 +232,31 @@ function branchLayout(cap: Capability, serviceAngle: number): BranchGroup[] {
        back to 262, and so on. Note 5 is why. `Math.round` is there because
        (gi - mid) is a half-integer for an even group count. */
     const band = Math.floor(Math.round(Math.abs(gi - (n - 1) / 2) * 2) / 2);
-    return {
-      label: g.group,
-      angle: centre,
-      radius: L2_RADII[band % 2],
-      marks,
-    };
+    const radius = L2_RADII[band % 2];
+    const at = polarUnits(radius, centre);
+
+    /* The fan opens around the group's OWN outward bearing, which is what
+       makes the cluster read as belonging to it. The running counter for the
+       two radii spans every mark of the service, not just this group: the
+       pair that straddles a gutter is the tightest pair on the map, and this
+       is what guarantees those two land on different rings. */
+    const spread = Math.min(
+      MARK_SPREAD_MAX,
+      MARK_SPREAD_STEP * (g.items.length - 1),
+    );
+    const angles = fan(centre, g.items.length, spread);
+    const marks = g.items.map((t, ti) => {
+      const bearing = angles[ti];
+      const m = {
+        tech: t,
+        at: offset(at, MARK_RADII[seq % 2], bearing),
+        bearing,
+      };
+      seq += 1;
+      return m;
+    });
+
+    return { label: g.group, angle: centre, radius, at, marks };
   });
 }
 
@@ -230,22 +291,27 @@ function branchEdges(groups: BranchGroup[], serviceAngle: number) {
       y1: hub.y,
       x2: gin.x,
       y2: gin.y,
-      d: 200 + gi * 70,
+      d: 250 + gi * 55,
       depth: 1,
     });
 
-    /* 3 — group → technology. Every edge of a cluster leaves the SAME point
-       just outside its pill, which is what makes four scattered plates read
-       as one group: the fan itself is the grouping cue. */
-    const gout = polarUnits(g.radius + 18, g.angle);
+    /* 3 — group → technology. Every edge leaves the group's CENTRE and fans
+       out to its own mark, so the cluster reads as one node with children
+       rather than as a pill with a spray beside it. The inner end is hidden
+       under the group node itself — the Links SVG is painted before the
+       nodes — which is the same trick the service→group edges use.
+
+       Each stops MARK_STOP short along ITS OWN bearing, not along a shared
+       radius: with the marks placed relative to the group there is no single
+       direction the whole fan travels in. */
     g.marks.forEach((m, ti) => {
-      const mp = polarUnits(m.radius - MARK_STOP, m.angle);
+      const mp = offset(m.at, -MARK_STOP, m.bearing);
       edges.push({
-        x1: gout.x,
-        y1: gout.y,
+        x1: g.at.x,
+        y1: g.at.y,
         x2: mp.x,
         y2: mp.y,
-        d: 360 + gi * 70 + ti * 40,
+        d: 400 + gi * 55 + ti * 28,
         depth: 2,
       });
     });
@@ -341,7 +407,11 @@ export default function EcosystemConstellation({
         className="eco-stage relative mx-auto hidden aspect-square w-full max-w-[960px] lg:block"
         {...eco.stageProps}
       >
-        <Backdrop nodes={points} activeIndex={eco.active} />
+        <Backdrop
+          nodes={points}
+          activeIndex={eco.active}
+          engaged={eco.engaged}
+        />
 
         {/* ---- the edges ------------------------------------------------
             Painted BEFORE the core and the nodes, so every line ends under
@@ -412,18 +482,23 @@ export default function EcosystemConstellation({
                     <GroupPill
                       label={g.label}
                       hue={c.hue}
-                      /* Just after its own edge has started drawing. */
-                      delay={open ? 260 + gi * 70 : 0}
+                      /* BEFORE its own edge, not after. The edge used to
+                          lead by 60ms and the reader saw a line pointing at
+                          nothing; a connector should arrive at something
+                          that is already there. Same inversion at level 3,
+                          and the whole stagger is tighter so the branch still
+                          settles inside a second. */
+                      delay={open ? 180 + gi * 55 : 0}
                       style={{ left: `${gp.x}%`, top: `${gp.y}%` }}
                     />
                     {g.marks.map((m, ti) => {
-                      const mp = polar(m.radius, m.angle);
+                      const mp = unitsToPct(m.at);
                       return (
                         <MarkNode
                           key={`${g.label}-${m.tech.name}`}
                           tech={m.tech}
                           hue={c.hue}
-                          delay={open ? 430 + gi * 70 + ti * 40 : 0}
+                          delay={open ? 330 + gi * 55 + ti * 28 : 0}
                           style={{ left: `${mp.x}%`, top: `${mp.y}%` }}
                         />
                       );

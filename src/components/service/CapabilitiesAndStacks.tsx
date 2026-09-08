@@ -28,18 +28,19 @@ export default function CapabilitiesAndStacks() {
   return (
     <>
       <CapabilityShowcase onStackLink={setStackTab} />
-      {/* The three-level ecosystem map. All three variants live side by side
-          on /preview; change `variant` here to switch which one ships.
-          "branch" is the unanimous pick of the design, frontend and
-          accessibility review panels - it is the only one that can show every
-          technology NAME without a hover, and the only one whose nodes do not
-          move when a selection is made. */}
-      {/* `flow={false}`: branch has no level-2 or level-3 EDGES — its subtree
-          is a list, not a diagram — so the only lines are the six short core
-          spokes and beads on them read as decoration rather than as flow.
-          Every layout with real depth keeps them; compare on
-          /service-variants. */}
-      <EcosystemSection variant="branch" flow={false} />
+      {/* The three-level ecosystem map.
+
+          CHOSEN 2026-09-08: "Connected constellation" with circle group
+          nodes. Every level is a node joined to its parent by a drawn edge,
+          which is the only arrangement where the hierarchy reads without a
+          caption — and the only one with real edges at all three depths, so
+          it is also the only one the travelling flow means anything on.
+
+          `branch` held this slot before it and is still in the tree: it is
+          the only layout that shows every technology NAME without a hover and
+          the only one whose nodes never move, and it is one string away.
+          Every design is switchable side by side on /service-variants. */}
+      <EcosystemSection variant="constellation-circle" />
       {/* <TechStacks active={stackTab} onChange={setStackTab} /> */}
     </>
   );

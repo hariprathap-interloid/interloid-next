@@ -106,7 +106,16 @@ ok("capabilities · every diagram has an accessible name", (await page.locator("
 await page.evaluate(() => document.getElementById("technologies").scrollIntoView({ behavior: "instant", block: "start" }));
 await page.waitForTimeout(500);
 ok("tech · six service tabs", (await page.locator("#technologies [role=tab]").count()) === 6);
-ok("tech · one panel visible, the rest hidden", (await page.locator("#technologies [role=tabpanel]:not(.hidden)").count()) === 1);
+/* `data-open`, not `.hidden`: the constellation's panels are
+   `display: contents` wrappers around nodes scattered across the stage, so
+   there is no box to hide — the open one is marked instead.
+
+   AT REST NONE IS OPEN, and that is the layout, not a bug: the wheel shows
+   six services and nothing else until one is asked for. The predecessor
+   (`branch`) always had a default branch showing, which is where "exactly
+   one" came from. What must hold at rest is that never more than one is
+   open; exactly one is asserted after the hover below. */
+ok("tech · at most one panel open at rest", (await page.locator('#technologies [role=tabpanel][data-open="true"]').count()) <= 1);
 const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u;
 ok("tech · no emoji anywhere in the section", !EMOJI.test(await page.locator("#technologies").innerText()));
 /* The six-tab stack list was replaced by the three-level ecosystem map on
@@ -119,20 +128,21 @@ await page.waitForTimeout(500);
 /* park the pointer in the stage so the resting cycle stops and boxes settle */
 await page.locator("#technologies .eco-stage").hover({ position: { x: 4, y: 4 } });
 await page.waitForTimeout(350);
-await page.hover("#branch-svc-2");
+await page.hover("#constellation-circle-svc-2");
 await page.waitForTimeout(450);
-const openPanel = page.locator("#branch-panel-2");
+const openPanel = page.locator("#constellation-circle-panel-2");
 ok("eco · hovering a service opens its branch", (await openPanel.innerText()).includes("PostgreSQL"));
+ok("eco · exactly one panel open once hovered", (await page.locator('#technologies [role=tabpanel][data-open="true"]').count()) === 1);
 /* toLowerCase: the group labels render through `uppercase`, and innerText
    returns the RENDERED casing - the same trap that bit the capability panel
    check earlier. */
 ok("eco · the branch names its groups", (await openPanel.innerText()).toLowerCase().includes("node.js ecosystem"));
-ok("eco · roving tabindex", (await page.getAttribute("#branch-svc-2", "tabindex")) === "0" && (await page.getAttribute("#branch-svc-0", "tabindex")) === "-1");
-await page.focus("#branch-svc-2");
+ok("eco · roving tabindex", (await page.getAttribute("#constellation-circle-svc-2", "tabindex")) === "0" && (await page.getAttribute("#constellation-circle-svc-0", "tabindex")) === "-1");
+await page.focus("#constellation-circle-svc-2");
 await page.keyboard.press("ArrowRight");
 await page.waitForTimeout(400);
-ok("eco · arrow keys move between services", (await page.getAttribute("#branch-svc-3", "aria-selected")) === "true");
-const logos = await page.locator("#technologies [role=tabpanel]:not(.hidden) img").count();
+ok("eco · arrow keys move between services", (await page.getAttribute("#constellation-circle-svc-3", "aria-selected")) === "true");
+const logos = await page.locator('#technologies [role=tabpanel][data-open="true"] img').count();
 ok(`eco · brand marks render (${logos} in the open branch)`, logos >= 8);
 const broken = await page.evaluate(() =>
   [...document.querySelectorAll("#technologies img")].filter((i) => i.complete && i.naturalWidth === 0).length,

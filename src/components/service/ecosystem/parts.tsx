@@ -29,10 +29,15 @@ import { polarUnits, RINGS, STAGE, trim } from "./geometry";
 export function Backdrop({
   nodes,
   activeIndex,
+  engaged = false,
 }: {
   /** One entry per service: where its connector ends. */
   nodes: { x: number; y: number }[];
   activeIndex: number;
+  /** Is a service open? At rest all six spokes flow; once one is open the
+      other five stop, so the only thing moving is the chain the reader
+      asked for. See the note on the bead pass below. */
+  engaged?: boolean;
 }) {
   const c = STAGE / 2;
   return (
@@ -75,18 +80,26 @@ export function Backdrop({
         />
       ))}
 
-      {/* THE IDLE FLOW, and the reason it is not conditional. Every service
-          spoke carries beads whether or not anything is hovered, so the map
-          is alive the moment it scrolls in — a diagram that only moves under
-          a pointer looks broken to a reader who has not touched it yet, and
-          is invisible on the pages that show six variants at once.
+      {/* THE FLOW, and where it starts.
+
+          AT REST all six spokes carry beads, so the map is alive the moment
+          it scrolls in — a diagram that only moves under a pointer looks
+          broken to a reader who has not touched it yet.
+
+          ONCE A SERVICE IS OPEN only its own spoke does. Six streams plus an
+          opened branch is six streams too many: the reader has just asked a
+          question and the answer should be the only thing moving, running out
+          of the core, through the service, into its groups and marks. The
+          five idle spokes going at the same time made the branch one more
+          animation among seven rather than the subject.
 
           A second pass, after the lines, so a bead is never painted under the
-          edge it rides. Every Backdrop variant gets this for free, including
-          `branch`, which ships on /services and has no other edges. */}
-      {nodes.map((n, i) => (
-        <DotEdge key={`bead${i}`} x1={c} y1={c} x2={n.x} y2={n.y} />
-      ))}
+          edge it rides. Every Backdrop variant gets this for free. */}
+      {nodes.map((n, i) =>
+        engaged && i !== activeIndex ? null : (
+          <DotEdge key={`bead${i}`} x1={c} y1={c} x2={n.x} y2={n.y} />
+        ),
+      )}
     </svg>
   );
 }
@@ -185,9 +198,16 @@ export function Links({
    reveals - see `.eco-dot` in globals.css, which owns the flow. This owns
    what one of them LOOKS like, and it is a RING, not a solid dot:
 
-     glow   17px of accent at 28%, blurred - the light around the bead
-     ring    9px of brand               - the ink value, unblurred
-     hole  3.5px of the page background - punches the middle back out
+     glow   12px of accent at 15%, blurred - the light around the bead
+     ring  6.5px of brand                 - the ink value, unblurred
+     hole  2.5px of the page background   - punches the middle back out
+
+   CALMED, twice over. The first sizing (17/9/3.5 with the glow at 28% and an
+   8px blur) read as the brightest thing on the stage: a bead is an annotation
+   on an edge and it was out-weighing the nodes the edges join. The rule is
+   that the bead must be smaller than the smallest thing it travels between -
+   a 48px mark plate is 25 units of half-width, and 12 units of bead is half
+   of that.
 
    Painted widest first, each layer over the middle of the one before it, so
    three strokes on one geometry make a donut. That is the reference's own
@@ -207,9 +227,9 @@ export function Links({
    `d` for paths, or the four coordinates for a straight line - the variants
    draw both kinds and neither should have to know how the bead is built. */
 const DOT_LAYERS = [
-  { w: 17, cls: "stroke-accent eco-dot-glow", op: 0.28 },
-  { w: 9, cls: "stroke-brand", op: 1 },
-  { w: 3.5, cls: "stroke-background", op: 1 },
+  { w: 12, cls: "stroke-accent eco-dot-glow", op: 0.15 },
+  { w: 6.5, cls: "stroke-brand", op: 1 },
+  { w: 2.5, cls: "stroke-background", op: 1 },
 ];
 
 export function DotEdge({

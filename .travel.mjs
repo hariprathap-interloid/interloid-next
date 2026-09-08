@@ -21,8 +21,8 @@ const p = await b.newPage({ viewport: { width: 1600, height: 1200 } });
 await p.goto(BASE + "/service-variants", { waitUntil: "networkidle" });
 await p.waitForTimeout(900);
 await reveal(p);
-/* past the 0.9s reveal delay on `.eco-train` */
-await p.waitForTimeout(1200);
+/* past the 1.15s + 0.4s entrance on `.eco-train` */
+await p.waitForTimeout(2100);
 
 const VARIANTS = ["constellation-circle", "constellation", "tree", "dendrogram", "columns"];
 

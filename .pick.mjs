@@ -18,10 +18,12 @@ export async function pick(page, variant, { fresh = false } = {}) {
   }
   await page.click(`[data-choice="${layout}"]`);
   await page.click(`[data-choice="${circle ? "circle" : "pill"}"]`);
-  /* the swapped-in Map mounts, measures (columns reads its own layout) and
-     settles its transitions */
+  /* The swapped-in Map mounts, measures (columns reads its own layout) and
+     settles. 1800 because the beads now animate IN at 1.15s + 0.4s — they
+     wait for the diagram to finish arriving — so anything that reads them
+     has to be past that. See `.eco-train` in globals.css. */
   await page.waitForSelector(`#preview-${variant} .eco-stage`);
-  await page.waitForTimeout(700);
+  await page.waitForTimeout(1800);
 }
 
 /** Scroll the whole page once so Reveal.tsx fires. The [data-reveal] wrapper

@@ -41,11 +41,6 @@ export type EcosystemDesign = {
   /** A KNOWN defect. Stated, never hidden — a design cannot be chosen well
       against a description that leaves out the thing that is wrong with it. */
   caveat?: string;
-  /** Travelling beads. Carried per design rather than fixed for the page,
-      because this page's claim is that each renders in the chrome it would
-      really ship in — and `branch` really ships still. A preview that flows
-      where production does not is a preview of something else. */
-  flow?: boolean;
 };
 
 /* ── ONE RADIO GROUP ───────────────────────────────────────────────────────
@@ -140,6 +135,13 @@ export default function EcosystemSwitcher({
 }) {
   const [layout, setLayout] = useState<EcosystemLayout>(designs[0].layout);
   const [shape, setShape] = useState<"pill" | "circle">("circle");
+  /* A CONTROL, not a per-design constant. It was the latter for one pass and
+     that was wrong: whether a design is better with the flow or without it is
+     exactly the question this page exists to answer, so it cannot be decided
+     in the catalogue on the design's behalf. It survives a design change on
+     purpose — comparing two layouts is only fair if the beads are the same on
+     both. */
+  const [dots, setDots] = useState<"with" | "without">("with");
 
   /* NOT the concatenation gotcha: this builds a VARIANT KEY, not a class
      name. `EcosystemVariant` is a template-literal type, so the compiler
@@ -175,6 +177,16 @@ export default function EcosystemSwitcher({
             options={[
               { v: "circle" as const, name: "Circle" },
               { v: "pill" as const, name: "Pill" },
+            ]}
+          />
+          <Choice
+            name="dots"
+            label="Flow"
+            value={dots}
+            onChange={setDots}
+            options={[
+              { v: "with" as const, name: "With dots" },
+              { v: "without" as const, name: "Without dots" },
             ]}
           />
         </div>
@@ -216,7 +228,7 @@ export default function EcosystemSwitcher({
         idPrefix={variant}
         heading={false}
         id={`preview-${variant}`}
-        flow={design.flow ?? true}
+        flow={dots === "with"}
       />
     </div>
   );

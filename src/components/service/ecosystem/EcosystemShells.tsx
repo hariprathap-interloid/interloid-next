@@ -111,7 +111,11 @@ export default function EcosystemShells({
         className="eco-stage relative mx-auto hidden aspect-square w-full max-w-[860px] lg:block"
         {...eco.stageProps}
       >
-        <Backdrop nodes={points} activeIndex={eco.active} />
+        <Backdrop
+          nodes={points}
+          activeIndex={eco.active}
+          engaged={eco.engaged}
+        />
         <Core />
 
         {/* `absolute inset-0`, NOT `contents` - see EcosystemBranch's note. */}

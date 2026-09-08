@@ -62,7 +62,11 @@ export default function EcosystemBloom({
         className="eco-stage relative mx-auto hidden aspect-square w-full max-w-[860px] lg:block"
         {...eco.stageProps}
       >
-        <Backdrop nodes={points} activeIndex={eco.active} />
+        <Backdrop
+          nodes={points}
+          activeIndex={eco.active}
+          engaged={eco.engaged}
+        />
         <Core />
 
         {/* ---- level 1 ------------------------------------------------- */}

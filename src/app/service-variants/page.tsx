@@ -47,9 +47,8 @@ const DESIGNS: EcosystemDesign[] = [
     name: "Branch tree",
     best: "Ships on /services today. The only layout that shows every technology's NAME without a hover, and the only one whose nodes do not move when a selection is made — so nothing can slide under a resting pointer.",
     cost: "Half diagram, half panel. The wheel stops being the whole story and becomes a picker, which gives up the ecosystem feeling the reference has.",
-    flow: false,
     caveat:
-      "It has no level-2 or level-3 edges — its subtree is a list — so there is nothing for the beads to travel along. It ships with flow={false} for that reason, and this preview is still for the same reason.",
+      "It has no level-2 or level-3 edges — its subtree is a list — so there is nothing for the beads to travel along. Turn the flow on here and all it can do is decorate the six short core spokes, which is why it would ship with flow={false}.",
   },
   {
     layout: "tree",

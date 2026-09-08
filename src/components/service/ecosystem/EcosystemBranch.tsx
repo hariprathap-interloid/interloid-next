@@ -58,7 +58,11 @@ export default function EcosystemBranch({
             puts the inner services 75.7px from centre - inside the core. The
             wheel needs room before it needs elegance. */}
         <div className="relative aspect-square lg:col-span-6">
-          <Backdrop nodes={points} activeIndex={eco.active} />
+          <Backdrop
+          nodes={points}
+          activeIndex={eco.active}
+          engaged={eco.engaged}
+        />
           <Core />
           {/* `absolute inset-0`, NOT `contents`. A role on a
               display:contents element is a known accessibility-tree hazard -

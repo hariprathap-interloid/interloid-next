@@ -6,6 +6,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
+import { pick, reveal } from "./.pick.mjs";
 const HERE = process.env.SHOTS || dirname(fileURLToPath(import.meta.url));
 const BASE = process.env.BASE || "http://localhost:3000";
 
@@ -14,7 +15,9 @@ const ok = (n, c) => { console.log((c ? "PASS  " : "FAIL  ") + n); if (!c) fails
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1600, height: 1150 } });
-await page.goto(BASE + "/circle-preview", { waitUntil: "networkidle" });
+/* /circle-preview is gone — the circle treatment is the "Level 2" control on
+   /service-variants, which is the same `.eco-circles` wrapper class. */
+await page.goto(BASE + "/service-variants", { waitUntil: "networkidle" });
 await page.waitForTimeout(800);
 await page.evaluate(async () => {
   for (let y = 0; y < document.body.scrollHeight; y += 500) {
@@ -43,6 +46,7 @@ const spill = await page.evaluate(() =>
 ok(`no group label overflows its circle (${spill.length}) ${spill.join(", ")}`, spill.length === 0);
 
 for (const v of ["constellation", "tree", "dendrogram", "columns", "bloom"]) {
+  await pick(page, v, { fresh: true });
   const stage = `#preview-${v} .eco-stage`;
   if (!(await page.locator(stage).count())) { ok(`${v} · present`, false); continue; }
   await page.locator(stage).hover({ position: { x: 4, y: 4 } });

@@ -255,7 +255,11 @@ export default function EcosystemMagnify({
         className="eco-stage relative mx-auto hidden aspect-square w-full max-w-[940px] lg:block"
         {...eco.stageProps}
       >
-        <Backdrop nodes={points} activeIndex={eco.active} />
+        <Backdrop
+          nodes={points}
+          activeIndex={eco.active}
+          engaged={eco.engaged}
+        />
 
         {/* ---- the core, demoted ---------------------------------------
             Wrapped rather than restyled: Core is shared and frozen, and it

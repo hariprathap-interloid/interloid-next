@@ -160,7 +160,7 @@ export function ModeSwitch({
             aria-controls={panelId}
             tabIndex={on ? 0 : -1}
             onClick={() => setMode(m.key)}
-            className={`group flex items-start gap-3.5 rounded-[1.25rem] border p-5 text-left transition-[background-color,border-color,box-shadow,transform] duration-300 ${
+            className={`group flex flex-col items-start gap-3.5 rounded-[1.25rem] border p-5 text-left transition-[background-color,border-color,box-shadow,transform] duration-300 ${
               on
                 ? "border-accent/40 bg-card shadow-[0_18px_44px_-18px_rgba(31,93,160,.35)] ring-1 ring-accent/10"
                 : "border-border bg-card/60 hover:-translate-y-0.5 hover:border-accent/30 hover:bg-card hover:shadow-md"

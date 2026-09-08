@@ -41,7 +41,7 @@ const stops = await p.$$eval('[role="radiogroup"]', (gs) =>
   gs.map((g) => [...g.querySelectorAll('[role="radio"]')]
     .filter((r) => r.tabIndex === 0).length));
 ok(`roving tabindex — one stop per group (${stops.join()})`,
-   stops.length === 2 && stops.every((n) => n === 1));
+   stops.length === 3 && stops.every((n) => n === 1));
 
 /* ---- arrow keys move the selection ------------------------------------ */
 await p.click('[data-choice="constellation"]');
@@ -78,15 +78,34 @@ for (const v of ["constellation-circle", "tree", "columns", "shells", "branch"])
   ok(`${v} · connectors are drawn, not left at zero length`, r.drawn === true);
 }
 
-/* ---- /services ships still, every variant here flows except branch ----- */
-await pick(p, "branch");
-const branchBeads = await p.$$eval(".eco-train",
+/* ---- the flow control, which is what decides this now ------------------
+   It used to be a per-design constant and `branch` was pinned still. That was
+   wrong: whether a design is better with the beads or without them is the
+   question this page exists to answer, so it cannot be answered in the
+   catalogue on the design's behalf. The control is authoritative and survives
+   a design change, because comparing two layouts is only fair if the beads
+   are the same on both. */
+const beads = () => p.$$eval(".eco-train",
   (gs) => gs.filter((g) => getComputedStyle(g).display !== "none").length);
-ok(`branch is still here too (${branchBeads} trains visible)`, branchBeads === 0);
+
 await pick(p, "constellation-circle");
-const conBeads = await p.$$eval(".eco-train",
-  (gs) => gs.filter((g) => getComputedStyle(g).display !== "none").length);
-ok(`constellation still flows (${conBeads} trains)`, conBeads >= 6);
+await p.click('[data-choice="with"]');
+await p.waitForTimeout(1800);
+const on = await beads();
+ok(`with dots — the flow runs (${on} trains)`, on >= 6);
+
+await p.click('[data-choice="without"]');
+await p.waitForTimeout(700);
+const off = await beads();
+ok(`without dots — the flow is gone (${off} trains)`, off === 0);
+
+/* and the choice holds across a design change, or the comparison is not one */
+await pick(p, "tree");
+ok(`without dots survives a design change (${await beads()} trains)`,
+   (await beads()) === 0);
+await p.click('[data-choice="with"]');
+await p.waitForTimeout(1800);
+ok(`with dots comes back (${await beads()} trains)`, (await beads()) >= 6);
 
 /* ---- the control pins ------------------------------------------------- */
 await pick(p, "tree");

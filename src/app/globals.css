@@ -616,18 +616,36 @@ html {
   animation: eco-travel 0.8s linear infinite;
 }
 
-/* Held back until the section scrolls in, exactly like `.eco-line`: the
-   connectors draw themselves outward on reveal, and dots riding a line that
-   has not been drawn yet is the wrong order. The delay clears the 1.1s
-   draw-on. Opacity lives on this wrapper and not on `.eco-dot`, because each
-   layer of the bead already carries its own. */
+/* THE BEADS ARRIVE LAST, and it has to be an ANIMATION.
+
+   A transition needs a change to fire. These <g>s MOUNT when a branch opens —
+   already inside an `.is-in` wrapper — so a transition never ran and they
+   rendered at full opacity immediately: beads on edges that had not been
+   drawn, beside nodes that had not appeared. An animation runs on mount,
+   which is the only way to hold something back that arrives already correct.
+
+   1.15s clears both openings, and they are deliberately the same number:
+   `.eco-line`'s draw on scroll-in takes 1.1s, and a branch's last mark plate
+   lands at ~0.9s with its edge drawn by ~1.2s. The flow is the last thing to
+   appear either way, which is the right order — it annotates a diagram, so
+   the diagram has to exist first.
+
+   Opacity lives on this wrapper and not on `.eco-dot`, because each layer of
+   the bead already carries its own. */
+@keyframes eco-train-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 .eco-train {
   opacity: 0;
-  transition: opacity 0.45s ease-out;
 }
 [data-reveal].is-in .eco-train {
-  opacity: 1;
-  transition-delay: 0.9s;
+  /* `both`: opacity 0 through the delay, and held at 1 afterwards. */
+  animation: eco-train-in 0.4s ease-out 1.15s both;
 }
 
 /* THE GLOW. A blur on the widest layer only. The ring underneath it has to

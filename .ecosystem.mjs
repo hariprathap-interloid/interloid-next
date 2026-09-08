@@ -5,6 +5,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
+import { pick, reveal } from "./.pick.mjs";
 const HERE = process.env.SHOTS || dirname(fileURLToPath(import.meta.url));
 const BASE = process.env.BASE || "http://localhost:3000";
 
@@ -13,16 +14,11 @@ const ok = (n, c) => { console.log((c ? "PASS  " : "FAIL  ") + n); if (!c) fails
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1600, height: 1100 } });
-await page.goto(BASE + "/preview", { waitUntil: "networkidle" });
+/* /preview is gone — /service-variants shows every layout through one
+   control now, and the ids it renders are the same `#preview-{variant}`. */
+await page.goto(BASE + "/service-variants", { waitUntil: "networkidle" });
 await page.waitForTimeout(800);
-await page.evaluate(async () => {
-  for (let y = 0; y < document.body.scrollHeight; y += 500) {
-    window.scrollTo({ top: y, behavior: "instant" });
-    await new Promise((r) => setTimeout(r, 90));
-  }
-  window.scrollTo({ top: 0, behavior: "instant" });
-});
-await page.waitForTimeout(900);
+await reveal(page);
 
 const SERVICES = ["Web Development", "Mobile App Development", "Backend Development & APIs",
   "Cloud Infrastructure & DevOps", "AI Integration & Automation", "Staff Augmentation"];
@@ -86,8 +82,9 @@ const overlaps = (prefix) =>
    legitimately has.
 
    The conclusion is that a layout which rearranges itself is incompatible
-   with a hover-driven model, which is the model the user chose. It stays on
-   /preview to be looked at; run it explicitly with VARIANTS=shells. */
+   with a hover-driven model, which is the model the user chose. It is still
+   selectable on /service-variants; run it here explicitly with
+   VARIANTS=shells. */
 const VARIANTS = (
   process.env.VARIANTS ||
   "branch,constellation,bloom,magnify,tree,dendrogram,columns"
@@ -95,6 +92,10 @@ const VARIANTS = (
 
 for (const variant of VARIANTS) {
   console.log(`\n--- ${variant} ---`);
+  /* `fresh` so the resting-state checks read a RESTING diagram: the previous
+     variant ended on a hover, and a shape-only switch keeps the Map — and
+     its open service — mounted. */
+  await pick(page, variant, { fresh: true });
   const stage = `#preview-${variant} .eco-stage`;
   ok(`${variant} · stage renders`, (await page.locator(stage).count()) === 1);
   ok(`${variant} · six service tabs`, (await page.locator(`${stage} [role=tab]`).count()) === 6);
@@ -144,6 +145,26 @@ for (const variant of VARIANTS) {
     });
     return hits;
   }, variant);
+  /* IN BOUNDS. Level 3 hangs off its GROUP now, so its distance from the
+     stage centre is L2_RADII + MARK_RADII and the two can no longer be chosen
+     independently — raise the mark ring to clear a wide pill and the outer
+     marks walk off the edge of the stage instead. Nothing clips them (the
+     stage has no overflow, deliberately: that would kill sticky), so a mark
+     past the edge overlaps the page rather than disappearing, which is
+     harder to notice and worse. */
+  const outside = await page.evaluate((p) => {
+    const stage = document.querySelector(`#preview-${p} .eco-stage`);
+    if (!stage) return -1;
+    const s = stage.getBoundingClientRect();
+    return [...stage.querySelectorAll(".eco-grow")]
+      .filter((n) => getComputedStyle(n).opacity !== "0")
+      .filter((n) => {
+        const r = n.getBoundingClientRect();
+        return r.left < s.left || r.right > s.right || r.top < s.top || r.bottom > s.bottom;
+      }).length;
+  }, variant);
+  ok(`${variant} · every open node is inside the stage (${outside} out)`, outside === 0);
+
   ok(`${variant} · nothing overlaps the core (${coreHit})`, coreHit === 0);
 
   /* keyboard: focus the first tab, arrow through */
@@ -190,12 +211,13 @@ for (const variant of VARIANTS) {
 
 /* mobile fallback */
 await page.setViewportSize({ width: 390, height: 900 });
-await page.goto(BASE + "/preview", { waitUntil: "networkidle" });
+await page.goto(BASE + "/service-variants", { waitUntil: "networkidle" });
 await page.waitForTimeout(600);
 const stageVisible = await page.evaluate(() =>
   [...document.querySelectorAll(".eco-stage")].filter((s) => getComputedStyle(s).display !== "none").length);
 ok(`mobile · no radial stage at 390 (${stageVisible} visible)`, stageVisible === 0);
-const listItems = await page.locator("#preview-bloom ul li").count();
+/* whichever design is mounted — the page shows one at a time now */
+const listItems = await page.locator("section[id^=preview-] ul li").count();
 ok(`mobile · list fallback renders (${listItems} rows)`, listItems > 6);
 const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
 ok("mobile · no horizontal overflow", !overflow);
@@ -204,7 +226,7 @@ await page.screenshot({ path: join(HERE, "eco-mobile.png") });
 /* reduced motion: the cycle must be off */
 const rm = await browser.newContext({ viewport: { width: 1600, height: 1100 }, reducedMotion: "reduce" });
 const rp = await rm.newPage();
-await rp.goto(BASE + "/preview", { waitUntil: "networkidle" });
+await rp.goto(BASE + "/service-variants", { waitUntil: "networkidle" });
 await rp.waitForTimeout(700);
 const animating = await rp.evaluate(() =>
   [...document.querySelectorAll(".eco-node")].filter((n) => getComputedStyle(n).animationName !== "none").length);
