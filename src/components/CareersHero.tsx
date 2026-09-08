@@ -93,34 +93,55 @@ export default function CareersHero() {
           >
             <a
               href="#openings"
-              className="group inline-flex h-14 items-center gap-2 rounded-full bg-primary px-8 text-[17px] font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-brand-light hover:shadow-primary/40 active:scale-95"
+              /* No arrow slide, and no `transition-all`. See Roles.tsx's
+                 hover banner: nothing on this page moves on hover, because a
+                 hover-triggered translate on the hovered element flickers at
+                 its own edge — and naming the two properties that actually
+                 change is self-documenting where `all` never is. */
+              className="inline-flex h-14 items-center gap-2 rounded-full bg-primary px-8 text-[17px] font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-[background-color,box-shadow] duration-300 hover:bg-brand-light hover:shadow-primary/40 active:scale-95"
             >
               See the four roles
-              <span className="transition-transform group-hover:translate-x-1">
-                <Icon name="arrow" className="size-5" />
-              </span>
+              <Icon name="arrow" className="size-5" />
             </a>
           </div>
         </div>
 
-        {/* Full width, not the copy column: a band of facts under the fold
-            line, not part of the paragraph. */}
-        <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {CAREER_FACTS.map((f, i) => (
-            <li
-              key={f.label}
-              data-reveal
-              style={{ "--delay": `${380 + i * 70}ms` } as React.CSSProperties}
-              className="h-full"
-            >
-              <div
-                className="flex h-full items-start gap-3 rounded-[1.25rem] border border-border bg-card/80 p-5 shadow-sm backdrop-blur-sm"
+        {/* ── THE TERMS BAND (refactored 2026-09-08) ────────────────────
+            Was four separate cards in a `sm:grid-cols-2 lg:grid-cols-4`. Three
+            of the four bodies are one line and the fourth ("Fixed for year one
+            · 2 years agreement") is two, so the row rendered visibly ragged —
+            one card taller than its neighbours with a gap under the other
+            three. `h-full` would have equalised the boxes and just moved the
+            empty space inside them.
+
+            It is now ONE panel divided into four cells, which removes the
+            problem rather than hiding it: inside a shared object a cell with
+            more text is a cell with more text, not a card that failed to line
+            up. It also gives the page's most important content — the four
+            facts a candidate decides on — a single confident shape instead of
+            four floating chips.
+
+            FLEX, NOT GRID, and that is load-bearing. `divide-x` keys off DOM
+            order, so on a two-column grid it would draw a rule down the left
+            of the third cell — which sits in column ONE. A 1-D flex that
+            switches from column to row has no such case: the rule is always
+            between neighbours. */}
+        <div
+          data-reveal
+          style={{ "--delay": "380ms" } as React.CSSProperties}
+          className="mt-14"
+        >
+          <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-[1.5rem] border border-border bg-card/80 shadow-sm backdrop-blur-sm md:flex-row md:divide-x md:divide-y-0">
+            {CAREER_FACTS.map((f) => (
+              <li
+                key={f.label}
+                className="flex flex-1 items-start gap-3 p-6"
                 {...(f.ph ? { "data-placeholder": f.ph } : {})}
               >
                 <span className="mt-0.5 grid size-9 shrink-0 place-items-center rounded-xl bg-brand/10 text-brand ring-1 ring-brand/15">
                   <Icon name={f.k} className="size-[18px]" />
                 </span>
-                <span>
+                <span className="min-w-0">
                   <span className="block font-display text-[15px] font-bold leading-[1.4] tracking-[-0.015em] text-foreground">
                     {f.label}
                   </span>
@@ -128,10 +149,10 @@ export default function CareersHero() {
                     {f.body}
                   </span>
                 </span>
-              </div>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );

@@ -3,6 +3,34 @@ import SectionHeading from "./SectionHeading";
 import TechLogo from "./service/TechLogo";
 import { HUE, ROLES, TERMS } from "@/content/site";
 
+/* ── HOVER: COLOUR, ELEVATION AND A WIPE — NEVER GEOMETRY ─────────────────
+   Every card on this page had `hover:-translate-y-1`, and that was a
+   regression against a rule this codebase had already paid for. WorkCard.tsx
+   documents it: a translate on the hovered element moves its own hit box out
+   from under a pointer resting near the edge, so `:hover` drops, so it moves
+   back, so the pointer is inside again — it oscillates at frame rate for as
+   long as the cursor sits in the band the movement crosses. Any translate or
+   scale on the hovered element re-enters that loop at whatever its new edge
+   is; so do padding, margin and size.
+
+   There is a second, quieter reason it looked wrong. Tailwind v4 compiles
+   `-translate-y-*` to the standalone `translate` property, NOT to `transform`
+   — so `transition-[border-color,box-shadow,transform]` was transitioning a
+   property that never changed, and the movement SNAPPED while the colour and
+   the shadow eased behind it.
+
+   The replacement vocabulary, used identically by every card on /careers:
+
+     · border   border-border → border-accent/40
+     · shadow   shadow-sm → shadow-lg          (a shadow is not hit-tested)
+     · aura     the corner glow fades 0 → 100
+     · wipe     a 3px brand→accent bar grows across the top edge
+
+   The wipe is the new signature and it is the only animated GEOMETRY here —
+   deliberately on an absolutely-positioned child, whose width cannot alter the
+   card's own bounds, so it cannot re-enter the flicker loop. It needs
+   `overflow-hidden` on the card, or it squares off the top corners. */
+
 /* ==========================================================================
    OPEN ROLES — four trainee positions.
 
@@ -71,7 +99,11 @@ export default function Roles() {
                 style={{ "--delay": `${i * 80}ms` } as React.CSSProperties}
                 className="h-full"
               >
-                <article className="group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-border bg-card p-8 shadow-sm transition-[border-color,box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:border-accent/30 hover:shadow-lg">
+                <article className="group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-border bg-card p-8 shadow-sm transition-[border-color,box-shadow] duration-300 ease-out hover:border-accent/40 hover:shadow-lg">
+                  <span
+                    className="pointer-events-none absolute left-0 top-0 h-[3px] w-0 bg-gradient-to-r from-brand to-accent transition-[width] duration-500 ease-out group-hover:w-full"
+                    aria-hidden="true"
+                  />
                   {/* Whole class string out of HUE — never `bg-${hue}/10`
                       (CLAUDE.md gotcha 1: a concatenated class is dropped
                       silently by the compiled build). */}
@@ -125,12 +157,14 @@ export default function Roles() {
                       href={`mailto:hello@interloid.com?subject=${encodeURIComponent(
                         `Application — ${r.title}`,
                       )}`}
-                      className="group/btn inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-brand-light active:scale-95"
+                      /* No arrow slide. `group-hover:translate-x-1` is the
+                         same hover-geometry rule one level down, and with the
+                         cards' lift gone it was the only thing still moving on
+                         the page. Background and shadow carry the state. */
+                      className="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-[background-color,box-shadow] duration-300 hover:bg-brand-light hover:shadow-primary/40 active:scale-95"
                     >
                       Apply
-                      <span className="transition-transform group-hover/btn:translate-x-1">
-                        <Icon name="arrow" className="size-4" />
-                      </span>
+                      <Icon name="arrow" className="size-4" />
                     </a>
                   </div>
                 </article>

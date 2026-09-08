@@ -14,19 +14,18 @@ export const metadata: Metadata = {
 };
 
 /* ==========================================================================
-   /preview — the three ecosystem layouts, one after another, to choose from.
+   /preview — every ecosystem layout, one after another, to choose from.
    ==========================================================================
-   All three are REAL components with the REAL data, not mockups: whichever
-   wins is already built and only needs its name passed to EcosystemSection on
-   /services. The losing two can then be deleted along with the `variant` prop.
+   They are all REAL components on the REAL data, not mockups: whichever wins
+   is already built and only needs its name passed to EcosystemSection on
+   /services. The losers can then be deleted along with the `variant` prop.
 
-   Each gets its own `idPrefix` because all three mount on this page at once
-   and they would otherwise share element ids — three tablists all claiming
+   Each gets its own `idPrefix` because they all mount on this page at once
+   and would otherwise share element ids — eight tablists all claiming
    `#svc-0` is invalid HTML and breaks every aria-controls on the page.
 
-   This page is not linked from the nav. It exists to be looked at and then
-   removed; delete the route with the two losing variants.
-   ========================================================================== */
+   This page is not linked from the nav and is noindex. It exists to be looked
+   at and then removed; delete the route along with the losing variants. */
 export default function Preview() {
   return (
     <>
@@ -39,7 +38,7 @@ export default function Preview() {
               Internal preview · not linked, not indexed
             </p>
             <h1 className="max-w-3xl font-display text-4xl font-medium leading-[1.1] tracking-[-0.025em] text-foreground md:text-5xl">
-              Three ecosystem layouts,{" "}
+              Eight ecosystem layouts,{" "}
               <span className="bg-gradient-to-r from-brand to-accent bg-clip-text text-transparent">
                 same data, same styling.
               </span>
@@ -70,9 +69,19 @@ export default function Preview() {
             note: "Closest to the reference. The wheel never moves; the neighbours recede and the open branch borrows their angle. Level 3 sits on an outer arc with no edges — the thing the constellation variant fixes.",
           },
           {
+            v: "magnify" as const,
+            title: "E · Magnify",
+            note: "Hovering a service turns it into a circle larger than the Interloid core, and the three levels connect out of it. The map zooms its attention without changing the page.",
+          },
+          {
             v: "tree" as const,
             title: "F · Tech tree",
             note: "Your tree references. Trunk = Interloid, branches = the six services, twigs = the groups, leaves = every technology mark. Nothing is hidden: the whole stack is visible at once.",
+          },
+          {
+            v: "dendrogram" as const,
+            title: "G · Great circle",
+            note: "A radial dendrogram — all 6 services, 20 groups and 62 marks on concentric arcs simultaneously, each wedge sized by how much it actually contains. Completeness is the promise; the risk is density.",
           },
           {
             v: "columns" as const,

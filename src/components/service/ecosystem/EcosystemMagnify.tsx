@@ -148,7 +148,12 @@ const CORE_SCALE = 0.72;
     longest pill is ~196px wide and adjacent pills can be 26° apart, which is
     177px of centre-to-centre at one radius. The 26px radial stagger is what
     turns that into a clean read. */
-const PILL_RADII = [367, 395] as const; // units = 345 / 371px
+/* Pulled in from [367, 395]. A pill is ~140px wide and its own first mark
+   sits almost radially outward of it, so the two boxes are near-concentric
+   and a 68-unit gap was not enough - measured, "Node.js ecosystem" over
+   "NestJS" and "Ruby ecosystem" over "Ruby". 100 units of gap at the outer
+   lane clears the widest pill. */
+const PILL_RADII = [335, 363] as const; // units = 315 / 341px
 /** Level 3. 435px + an 18px plate = 453px, 17px inside the 470px stage. */
 const MARK_RADIUS = 463; // units = 435px
 
@@ -218,7 +223,13 @@ export default function EcosystemMagnify({
      slide under a stationary pointer and steal the selection. Passing the
      guard would cost the 640ms pointer-events lockout on the other five for
      no benefit. */
-  const eco = useEcosystem(idPrefix);
+  /* `true`: this variant MOVES its service nodes when a branch opens, so a
+     node can slide under a resting pointer and fire a mouseenter that steals
+     the selection - including one the keyboard just made. Measured: arrowing
+     off a node reverted the selection whenever the mouse was left inside the
+     stage. The guard ignores a hover that arrived with no pointer movement.
+     See the hook banner. */
+  const eco = useEcosystem(idPrefix, true);
   const activeCap = CAPABILITIES[eco.active];
   const activeTechCount = activeCap.stack.reduce((n, g) => n + g.items.length, 0);
 

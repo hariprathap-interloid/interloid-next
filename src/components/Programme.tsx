@@ -12,22 +12,56 @@ import { PROGRAMME, PROGRAMME_META } from "@/content/site";
    it is what the two years actually contain, in sequence — so a timeline says
    more here than nine tiles did.
 
-   It keeps FirstNinety's rail, including the arithmetic that took two
-   measurements to get right:
+   ── REFACTORED 2026-09-08 ────────────────────────────────────────────────
+   The first cut centred everything and hung a hairline rail behind it. Three
+   things were wrong and the user pointed at all of them at once:
 
-     x — three columns with a 1.5rem gap, so one column is (100% - 3rem) / 3
-         and the first node (cards are lg:items-center) sits at half of that.
-         The first version used 12.5% and overhung each end node by 43px.
-     y — 1px card border + 2rem of p-8 + half of the size-14 node = 61px.
+     1. CENTRED BODY COPY. Four and five line paragraphs, ragged on both
+        edges, in three tall cards. Centred text is for a line or two; at this
+        length it is measurably harder to read and it left the cards looking
+        empty at the shoulders. Everything is left-aligned now.
+
+     2. THE RAIL WAS INVISIBLE. `h-px` at `via-accent/40` between two /10
+        stops — at 1440 that is a one-pixel line at roughly 40% alpha for a
+        third of its length. It carried the whole "this is a sequence"
+        message and could not be seen. It is now `h-0.5`, opaque at the
+        middle, and it runs between numbered nodes rather than behind
+        decorative icons.
+
+     3. NOTHING SAID *ORDER*. Three identical cards with three different
+        icons read as three parallel things. The nodes are NUMBERED now, and
+        phase one — the hard one — carries the accent the way WeekStrip marks
+        Friday, so the row has a shape instead of three equal beats.
+
+   ── THE RAIL'S GEOMETRY IS DERIVED, NOT EYEBALLED ────────────────────────
+   It has now been wrong twice from guessing, so the arithmetic is written
+   out. Nodes are LEFT-aligned inside each card (they were centred before, and
+   the insets are different):
+
+     x-start  1px card border + 2rem of p-8 + half of a size-14 node
+              = 1 + 32 + 28 = 61px from the grid's left edge.
+     x-end    the last node sits 61px into the LAST column, so the right
+              inset is one column minus 61px. A column in a 3-up grid with a
+              1.5rem gap is (100% - 3rem)/3.
+     y        the same 61px, measured down.
 
    `hidden lg:block`: stacked, the cards are already adjacent and a rail
-   through them crosses their text (HANDOFF §5.7 in miniature).
+   through them would cross their text (HANDOFF §5.7 in miniature).
 
    THE HARD PART IS FIRST, ON PURPOSE. Twelve-hour days are the single fact
-   most likely to make somebody withdraw, and the cheapest place for them to do
-   that is here rather than in month two. Every phase carries its own
+   most likely to make somebody withdraw, and the cheapest place for them to
+   do that is here rather than in month two. Every phase carries its own
    data-placeholder because none of these terms is confirmed — see site.ts's
    TERMS banner, and the note there about the working-hours exposure. */
+
+/* The little glyph beside each phase note. Presentation, so it stays here —
+   unlike the note itself, which is copy and lives in site.ts. Same reasoning
+   for the accent: phase one is highlighted by INDEX, not by a flag in the
+   content, because it is a decision about the first item. Reorder PROGRAMME
+   and the accent moves with the position rather than stranding on a phase that
+   is no longer first. */
+const NODE_ICON = ["zap", "code", "user-check"];
+
 export default function Programme() {
   return (
     <section
@@ -50,66 +84,140 @@ export default function Programme() {
 
         <div className="relative">
           <div
-            className="pointer-events-none absolute left-[calc((100%-3rem)/6)] right-[calc((100%-3rem)/6)] top-[61px] hidden h-px bg-gradient-to-r from-brand/10 via-accent/40 to-brand/10 lg:block"
+            className="pointer-events-none absolute left-[61px] right-[calc((100%-3rem)/3-61px)] top-[61px] hidden h-0.5 rounded-full bg-gradient-to-r from-accent/50 via-accent/40 to-brand/20 lg:block"
             aria-hidden="true"
           />
 
           <ol className="relative z-10 grid gap-6 lg:grid-cols-3">
-            {PROGRAMME.map((p, i) => (
-              <li
-                key={p.tag}
-                data-reveal
-                style={{ "--delay": `${i * 120}ms` } as React.CSSProperties}
-                className="h-full"
-              >
-                <div
-                  className="group flex h-full flex-col items-start rounded-[1.5rem] border border-border bg-card p-8 shadow-sm transition-[border-color,box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:border-accent/30 hover:shadow-lg lg:items-center lg:text-center"
-                  {...(p.ph ? { "data-placeholder": p.ph } : {})}
+            {PROGRAMME.map((p, i) => {
+              const lead = i === 0;
+              return (
+                <li
+                  key={p.tag}
+                  data-reveal
+                  style={{ "--delay": `${i * 120}ms` } as React.CSSProperties}
+                  className="h-full"
                 >
-                  {/* `border-4 border-card` punches the rail out behind the
-                      node — the same trick Process uses on its 80px node. */}
-                  <span className="mb-6 grid size-14 shrink-0 place-items-center rounded-full border-4 border-card bg-accent/10 text-accent-strong shadow-[0_0_0_1px_var(--border)] transition-colors duration-300 group-hover:bg-accent group-hover:text-white">
-                    <Icon
-                      name={i === 0 ? "zap" : i === 1 ? "code" : "user-check"}
-                      className="size-6"
-                    />
-                  </span>
-                  <span className="mb-3 rounded-full bg-background px-2.5 py-[3px] text-[11px] font-bold uppercase tracking-[0.08em] text-accent-strong ring-1 ring-border">
-                    {p.tag}
-                  </span>
-                  <h3 className="mb-3 font-display text-xl font-bold leading-[1.35] tracking-[-0.02em] text-foreground">
-                    {p.title}
-                  </h3>
-                  <p className="text-[15px] leading-[1.7] text-muted-strong">
-                    {p.body}
-                  </p>
-                </div>
-              </li>
-            ))}
+                  <div
+                    className={`group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border bg-card p-8 shadow-sm transition-[border-color,box-shadow] duration-300 ease-out hover:shadow-lg ${
+                      lead
+                        ? "border-accent/40 ring-1 ring-accent/10"
+                        : "border-border hover:border-accent/40"
+                    }`}
+                    {...(p.ph ? { "data-placeholder": p.ph } : {})}
+                  >
+                    <span
+                    className="pointer-events-none absolute left-0 top-0 h-[3px] w-0 bg-gradient-to-r from-brand to-accent transition-[width] duration-500 ease-out group-hover:w-full"
+                    aria-hidden="true"
+                  />
+
+                    {/* The node and the phase chip share a row, so the rail
+                        passes through the node and the label sits beside it
+                        rather than under it — which is what makes the row read
+                        left-to-right instead of as three stacked cards.
+
+                        `border-4 border-card` punches the rail out from behind
+                        the node; the same trick Process uses on its 80px one. */}
+                    <div className="mb-5 flex items-center gap-4">
+                      <span
+                        className={`grid size-14 shrink-0 place-items-center rounded-full border-4 border-card font-display text-[15px] font-bold shadow-[0_0_0_1px_var(--border)] transition-colors duration-300 ${
+                          lead
+                            ? "bg-accent text-white"
+                            : "bg-accent/10 text-accent-strong group-hover:bg-accent group-hover:text-white"
+                        }`}
+                        aria-hidden="true"
+                      >
+                        {/* The numeral IS the node — an icon here would say
+                            "category" where the whole section says "order".
+                            aria-hidden because the <ol> already numbers these
+                            for a screen reader. */}
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="flex flex-col gap-1.5">
+                        <span
+                          className={`w-fit rounded-full px-2.5 py-[3px] text-[11px] font-bold uppercase tracking-[0.08em] ring-1 ${
+                            lead
+                              ? "bg-accent/10 text-accent-strong ring-accent/25"
+                              : "bg-background text-muted-foreground ring-border"
+                          }`}
+                        >
+                          {p.tag}
+                        </span>
+                        <span className="flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground">
+                          <Icon
+                            name={NODE_ICON[i] ?? "layers"}
+                            className="size-3.5 text-accent-strong"
+                          />
+                          {p.note}
+                        </span>
+                      </span>
+                    </div>
+
+                    <h3 className="mb-3 font-display text-xl font-bold leading-[1.35] tracking-[-0.02em] text-foreground">
+                      {p.title}
+                    </h3>
+                    <p className="text-[15px] leading-[1.7] text-muted-strong">
+                      {p.body}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
           </ol>
         </div>
 
-        {/* The plain facts, on one line. This is the block a parent reads, so
-            it is unstyled to within an inch of its life on purpose — no card,
-            no gradient, just four ticks. */}
-        <ul
+        {/* ── THE SUMMARY ROW (rebuilt 2026-09-08) ─────────────────
+            It was four ticked sentences on a `bg-secondary` bar with `mt-8`,
+            and the user read it as a separate component that had drifted into
+            the section. Both halves of that were true:
+
+              GROUND. Every other object in this section is `bg-card` on a
+              `bg-background` section. The strip was the only `bg-secondary`
+              thing on the page outside a section ground, so it did not belong
+              to the card group visually. It now takes the cards' exact
+              surface — same border, same radius, same shadow — and `mt-6`,
+              the grid's own gap, so it reads as the last row of the group
+              rather than an object sitting under it.
+
+              SCANNING. A tick plus a sentence is a list: the eye has to read
+              all four to find the number it wants. Figure-over-label is read
+              in one pass, which is the entire job of a summary. It also stops
+              the strip competing with the hero band, which states the same
+              four facts as icon + label + body — context up there, recall
+              down here.
+
+            DIVIDERS, and `divide-x` is safe here for the reason it was NOT in
+            the hero: this is a 1-D flex that goes column → row, so the rule is
+            always between neighbours. On a wrapping grid it would draw down
+            the left of a cell sitting in column one. */}
+        <div
           data-reveal
           style={{ "--delay": "400ms" } as React.CSSProperties}
-          className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 rounded-[1.25rem] border border-border bg-secondary px-6 py-5"
+          className="mt-6"
         >
-          {PROGRAMME_META.map((m) => (
-            <li
-              key={m.label}
-              className="flex items-center gap-2 text-[15px] font-medium text-foreground"
-              {...(m.ph ? { "data-placeholder": m.ph } : {})}
-            >
-              <span className="text-teal-600" aria-hidden="true">
-                <Icon name={m.k} className="size-4" />
-              </span>
-              {m.label}
-            </li>
-          ))}
-        </ul>
+          <dl className="flex flex-col divide-y divide-border overflow-hidden rounded-[1.5rem] border border-border bg-card shadow-sm sm:flex-row sm:divide-x sm:divide-y-0">
+            {PROGRAMME_META.map((m) => (
+              <div
+                key={m.figure + m.label}
+                className="flex-1 px-6 py-6 text-center"
+                {...(m.ph ? { "data-placeholder": m.ph } : {})}
+              >
+                {/* <dt> is the FIGURE, <dd> the label. A description list is
+                    the right element for figure/caption pairs, and this way
+                    round is the one that reads correctly aloud: a screen
+                    reader announces the term then its definition — "6 months,
+                    of training" — where the reverse announces a caption
+                    orphaned from its number. */}
+                <dt className="font-display text-[26px] font-bold leading-none tracking-[-0.02em] text-foreground">
+                  {m.figure}
+                </dt>
+                <dd className="mt-2 text-[13px] leading-[1.5] text-muted-foreground">
+                  {m.label}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </div>
     </section>
   );

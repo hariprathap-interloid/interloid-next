@@ -14,8 +14,10 @@
      3. every tech logo a role asks for actually LOADS, with an accessible
         name — a bad filename is a 404 that draws nothing inside a plate that
         still renders, so it looks empty rather than broken
-     4. senior content is PARKED, not published
-     5. placeholder count, heading outline, overflow, shots in both themes
+     4. NOTHING on the page moves on hover — the flicker rule WorkCard.tsx
+        paid for, asserted on the rect rather than on the class list
+     5. senior content is PARKED, not published
+     6. placeholder count, heading outline, overflow, shots in both themes
 
    Usage: node .careers.mjs [outDir] [baseUrl] */
 import { chromium } from "playwright";
@@ -123,6 +125,68 @@ ok(icons.imgs === 16, `all 16 are real logo files, not monograms (${icons.imgs})
 ok(icons.broken.length === 0, `every logo file loaded (${icons.broken.join(", ") || "none broken"})`);
 ok(icons.unnamed === 0, `every logo has an accessible name (${icons.unnamed} without)`);
 console.log(`  logos: ${icons.names.join(", ")}`);
+
+/* --- 3b. hover moves NOTHING ---------------------------------------------- */
+/* The rule this page has now broken once and must not break again. WorkCard.tsx
+   documents the failure in full: a hover-triggered translate on the hovered
+   element moves its own hit box out from under a pointer resting near the edge,
+   `:hover` drops, it moves back, and it oscillates at frame rate.
+
+   So the assertion is on the BOX, not on the class list — a class check would
+   pass for `hover:p-9`, `hover:mt-1` or any other property that re-enters the
+   same loop. Hover each card, wait past the transition, and require the rect to
+   be identical to the pixel.
+
+   The second assertion is the belt to that brace: Tailwind v4 compiles
+   `-translate-y-*` and `scale-*` to the STANDALONE `translate`/`scale`
+   properties rather than to `transform`, so all three are read. */
+for (const [sel, name, idx] of [
+  ["#openings article", "role card", 0],
+  ["#programme ol li > div", "programme card", 1],
+  ["#hiring ol li > div", "hiring card", 0],
+  ["#fit .grid > div > div", "fit card", 0],
+]) {
+  const el = p.locator(sel).nth(idx);
+  await el.scrollIntoViewIfNeeded();
+  await p.waitForTimeout(250);
+  const read = () =>
+    el.evaluate((e) => {
+      const r = e.getBoundingClientRect();
+      const cs = getComputedStyle(e);
+      const bar = [...e.children].find(
+        (c) =>
+          c.tagName === "SPAN" &&
+          getComputedStyle(c).position === "absolute" &&
+          parseFloat(getComputedStyle(c).height) < 5,
+      );
+      return {
+        box: [r.x, r.y, r.width, r.height].map((n) => +n.toFixed(2)).join(","),
+        border: cs.borderTopColor,
+        shadow: cs.boxShadow,
+        geom: `${cs.translate}|${cs.scale}|${cs.transform}`,
+        wipe: bar ? +bar.getBoundingClientRect().width.toFixed(1) : null,
+      };
+    });
+
+  const rest = await read();
+  await el.hover();
+  await p.waitForTimeout(700);
+  const hot = await read();
+
+  ok(rest.box === hot.box, `${name}: box unchanged on hover (${hot.box})`);
+  ok(hot.geom === "none|none|none", `${name}: no translate/scale/transform (${hot.geom})`);
+  ok(rest.border !== hot.border, `${name}: border warms on hover`);
+  /* Compare the WHOLE shadow string. Tailwind v4 emits four zero-alpha
+     placeholder shadows before the real ones, so any prefix comparison reports
+     shadow-sm and shadow-lg as identical — which is what the first version of
+     this check did, on all four cards. */
+  ok(rest.shadow !== hot.shadow, `${name}: shadow grows on hover`);
+  ok(hot.wipe !== null && hot.wipe > 100, `${name}: top wipe drawn (${hot.wipe}px)`);
+
+  await p.mouse.move(4, 4);
+  await p.waitForTimeout(700);
+  ok((await read()).wipe === 0, `${name}: wipe retracts at rest`);
+}
 
 /* --- 4. senior content is parked, and said out loud ---------------------- */
 ok(!/L \/ year/.test(body), "no senior salary bands on the page");

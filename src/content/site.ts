@@ -595,7 +595,9 @@ export const CAREER_FACTS = [
   {
     k: "receipt",
     label: TERMS.stipend,
-    body: `Fixed for year one · ${TERMS.agreement} agreement`,
+    /* Kept to ONE line at the cell width — this was "Fixed for year one ·
+       2 years agreement", the only one of the four that wrapped. */
+    body: `Fixed year one · ${TERMS.agreement} agreement`,
     ph: "P1: confirm stipend and agreement against the offer letter",
   },
 ] as const satisfies readonly {
@@ -616,44 +618,58 @@ export const CAREER_FACTS = [
 export const PROGRAMME = [
   {
     tag: "Months 1–6",
+    note: "The hard part",
     title: "Training",
     body: `Twelve-hour days, on site, learning one stack properly — fundamentals, the codebase, code review, and how a real client project runs. It is the hardest part and we are not going to pretend otherwise.`,
     ph: "P1: confirm the training hours are lawful and correctly worded",
   },
   {
     tag: "Months 7–12",
+    note: "Supervised",
     title: "Real work, supervised",
     body: `You move onto a client project with a senior engineer reviewing everything you write. Your stipend is ${TERMS.stipend}, fixed across the whole first year.`,
     ph: "P1: confirm stipend against the offer letter",
   },
   {
     tag: "Year 2",
+    note: "Independent",
     title: "On the team",
     body: "You own features, you attend the client demo, and you are reviewed on the same terms as everybody else. The agreement runs two years in total; what happens at the end of it is a conversation, not a clause.",
     ph: "P1: confirm the second-year salary and what confirmation means",
   },
 ] as const satisfies readonly {
   tag: string;
+  /** The one-word state of this phase, beside the numbered node. It was a
+      ternary on the index inside Programme.tsx; three strings of copy do not
+      belong in a component. */
+  note: string;
   title: string;
   body: string;
   ph: string | null;
 }[];
 
-/* Four short lines under the timeline. Deliberately the plain, unexciting
-   facts — this is the block a parent reads. */
+/* The summary under the timeline. REWRITTEN AS FIGURES 2026-09-08.
+
+   It was four ticked sentences on a `bg-secondary` bar, and the user's read
+   was right on both counts: it was hard to scan, and sitting on a different
+   ground from the cards above it made it look like a separate component that
+   had drifted into the section.
+
+   A tick plus a sentence is a list — the eye has to read all four to find the
+   number it wants. Split into FIGURE + LABEL the row becomes scannable in one
+   pass, which is what a summary is for, and it stops competing with the hero
+   band above (icon + label + body, doing the job of context rather than
+   recall). The component now gives it the cards' own surface so it reads as
+   the last row of the same group. */
 export const PROGRAMME_META = [
-  { k: "check", label: "Full time, on site", ph: null },
-  { k: "check", label: `${TERMS.training} of training`, ph: null },
+  { figure: TERMS.training, label: "of training", ph: null },
   {
-    k: "check",
-    label: `${TERMS.stipend}, ${TERMS.stipendPeriod}`,
+    figure: TERMS.stipend.replace(" / month", ""),
+    label: "a month, year one",
     ph: "P1: confirm stipend",
   },
-  {
-    k: "check",
-    label: `${TERMS.agreement} agreement`,
-    ph: "P1: confirm agreement term",
-  },
+  { figure: TERMS.agreement, label: "agreement", ph: "P1: confirm agreement term" },
+  { figure: "Full time", label: "on site, five days", ph: null },
 ] as const;
 
 /* ==========================================================================
@@ -886,18 +902,61 @@ export const PATH_NO = [
 /* Two honest lists. On this page they carry more weight than they did on the
    senior version: somebody signing a two-year agreement at twenty-two should
    be told plainly what they are signing up for. */
+/* Each entry carries its own Icon.tsx glyph. A repeated tick down the column
+   said "list"; a glyph per line says WHAT the line is about, which is the
+   whole reason DS §1.2 rule 5 allows hue on icon tiles at all — it is
+   categorical, not decorative.
+
+   The pairing is also what equalises the two columns. The YES list is five
+   short lines and the NO list is four long ones; at one line of text per row
+   that is a ~3-line height difference and the shorter card bottoms out. As
+   icon ROWS the arithmetic changes to 5 × short ≈ 4 × tall, and the columns
+   land within a few pixels of each other without a magic number anywhere. */
 export const FIT_YES = [
-  "You want to be taught properly, and you will do the hours it takes.",
-  "You can get to Gobichettipalayam every working day.",
-  "You would rather learn one stack deeply than sample four.",
-  "You take a code review as help rather than as criticism.",
+  { k: "rocket", t: "You want to be taught properly, and you will do the hours it takes." },
+  { k: "layers", t: "You can get to Gobichettipalayam every working day." },
+  { k: "code", t: "You would rather learn one stack deeply than sample four." },
+  { k: "users", t: "You take a code review as help rather than as criticism." },
+  { k: "phone", t: "You ask early instead of being stuck quietly for two days." },
 ] as const;
 
+/* The closing line under each list. BOTH of them, not just the warning's —
+   they were asymmetric (only the right-hand list had one) and that asymmetry
+   was half of why the left column bottomed out ~200px short of the right in
+   the shared panel. Copy belongs here rather than inline in FitCheck.tsx
+   anyway; the component had been holding these two strings since it was
+   written, which is the thing CLAUDE.md §2 says not to do. */
+/* The two column headings. "You will do well here if…" / "You will not, if…"
+   were replaced 2026-09-08: the user could not read the pair at a glance, and
+   they were right to flag it. Three things were wrong with them —
+
+     · the second one is an ELLIPSIS OF THE FIRST. "You will not, if…" only
+       parses if you have already read and held the sentence above it, and the
+       two headings sit far apart on a wide screen.
+     · "do well here" is idiomatic. These roles are advertised to freshers in
+       Tamil Nadu, most of whom read English as a second language; an idiom is
+       the first thing to go.
+     · neither says what the reader is deciding. "This job is / is not for you"
+       names the decision in the heading, which is the whole point of the
+       section.
+
+   Kept parallel and near-identical on purpose: the pair should differ by one
+   word, so the contrast is the thing that registers rather than the wording. */
+export const FIT_TITLES = {
+  yes: "This job is for you if…",
+  no: "This job is not for you if…",
+} as const;
+
+export const FIT_NOTES = {
+  yes: "If three of these sound like you, that is enough to apply. Nobody arrives with all five.",
+  no: "None of these are character flaws — they describe a different job, and there are good ones. Deciding here costs you five minutes. Deciding in month three costs you a year.",
+} as const;
+
 export const FIT_NO = [
-  "You need remote or hybrid. This role is on site, every day — there is no version of it that is not.",
-  "You cannot commit two years. The training only makes sense to us if you stay to use it.",
-  "You want a market salary in year one. It is ₹10,000 a month, fixed, and we would rather you knew now.",
-  "You are looking for a senior role. We are not hiring seniors at the moment.",
+  { k: "layers", t: "You need remote or hybrid. This role is on site, every day — there is no version of it that is not." },
+  { k: "clock", t: "You cannot commit two years. The training only makes sense to us if you stay to use it." },
+  { k: "receipt", t: "You want a market salary in year one. It is ₹10,000 a month, fixed, and we would rather you knew now." },
+  { k: "user-check", t: "You are looking for a senior role. We are not hiring seniors at the moment." },
 ] as const;
 
 /* Candidate FAQ. Every question here is one that would otherwise be asked on

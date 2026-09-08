@@ -4,6 +4,8 @@ import EcosystemBloom from "./ecosystem/EcosystemBloom";
 import EcosystemBranch from "./ecosystem/EcosystemBranch";
 import EcosystemColumns from "./ecosystem/EcosystemColumns";
 import EcosystemConstellation from "./ecosystem/EcosystemConstellation";
+import EcosystemDendrogram from "./ecosystem/EcosystemDendrogram";
+import EcosystemMagnify from "./ecosystem/EcosystemMagnify";
 import EcosystemShells from "./ecosystem/EcosystemShells";
 import EcosystemTree from "./ecosystem/EcosystemTree";
 import { STACK_HEADING } from "@/content/service";
@@ -34,7 +36,9 @@ export type EcosystemVariant =
   | "branch"
   | "constellation"
   | "bloom"
+  | "magnify"
   | "tree"
+  | "dendrogram"
   | "columns"
   | "shells";
 
@@ -44,7 +48,9 @@ const VARIANTS = {
   branch: EcosystemBranch,
   constellation: EcosystemConstellation,
   bloom: EcosystemBloom,
+  magnify: EcosystemMagnify,
   tree: EcosystemTree,
+  dendrogram: EcosystemDendrogram,
   columns: EcosystemColumns,
   shells: EcosystemShells,
 };

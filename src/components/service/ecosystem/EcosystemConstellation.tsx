@@ -287,7 +287,13 @@ export default function EcosystemConstellation({
 }: {
   idPrefix?: string;
 }) {
-  const eco = useEcosystem(idPrefix);
+  /* `true`: this variant MOVES its service nodes when a branch opens, so a
+     node can slide under a resting pointer and fire a mouseenter that steals
+     the selection - including one the keyboard just made. Measured: arrowing
+     off a node reverted the selection whenever the mouse was left inside the
+     stage. The guard ignores a hover that arrived with no pointer movement.
+     See the hook banner. */
+  const eco = useEcosystem(idPrefix, true);
 
   /* Where each service is RIGHT NOW. At rest: its own alternating radius —
      the reference picture. Once engaged: the open one moves in to OPEN_R so

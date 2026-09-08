@@ -65,13 +65,25 @@ export default function HiringPath() {
               style={{ "--delay": `${i * 100}ms` } as React.CSSProperties}
               className="h-full"
             >
-              <div className="group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-border bg-card p-7 shadow-sm transition-[border-color,box-shadow,transform] duration-300 ease-out hover:-translate-y-1 hover:border-accent/30 hover:shadow-lg">
-                {/* The numeral is the same device as Process's — oversized,
-                    low-opacity, tucked into the corner behind the content. It
-                    is decorative here (the <ol> already numbers these for a
-                    screen reader), so it is aria-hidden. */}
+              <div className="group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-border bg-card p-7 shadow-sm transition-[border-color,box-shadow] duration-300 ease-out hover:border-accent/40 hover:shadow-lg">
                 <span
-                  className="pointer-events-none absolute -right-3 -top-4 select-none font-display text-[76px] font-bold leading-none text-brand opacity-[0.09] transition-opacity duration-500 group-hover:opacity-20"
+                    className="pointer-events-none absolute left-0 top-0 h-[3px] w-0 bg-gradient-to-r from-brand to-accent transition-[width] duration-500 ease-out group-hover:w-full"
+                    aria-hidden="true"
+                  />
+                {/* The numeral is Process's device — oversized, low-opacity,
+                    behind the content. Decorative here (the <ol> already
+                    numbers these for a screen reader), hence aria-hidden.
+
+                    ── IT WAS CLIPPED, AND THAT WAS A COPY-PASTE ────────────
+                    At `-right-3 -top-4` it sat OUTSIDE the card's box, and
+                    this card has `overflow-hidden` to round its corners — so
+                    the glyph rendered with its right edge sliced off, on all
+                    three cards. Process gets away with negative offsets
+                    because its numeral hangs off an unclipped node, not a
+                    clipped card. Positive insets keep the whole glyph inside
+                    the padding, which is the only version that reads. */}
+                <span
+                  className="pointer-events-none absolute right-5 top-3 select-none font-display text-[64px] font-bold leading-none text-brand opacity-[0.09] transition-opacity duration-500 group-hover:opacity-20"
                   aria-hidden="true"
                 >
                   {s.n}
@@ -114,20 +126,31 @@ export default function HiringPath() {
               className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,var(--tw-gradient-stops))] from-brand/35 via-ink to-ink"
               aria-hidden="true"
             />
-            <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-              <p className="max-w-xs font-display text-lg font-bold leading-[1.4] text-white">
+            {/* HEADING ABOVE, NOT BESIDE (refactored 2026-09-08). It was
+                `lg:flex-row lg:justify-between` with the heading capped at
+                `max-w-xs` and the three items in ONE column on the right —
+                which left roughly a third of a 1216px slab empty down the
+                middle, with the longest item wrapping in a narrow column at
+                the same time. Stacking the heading frees the full width for a
+                three-up row, so every item gets ~370px and fits on one or two
+                lines, and the slab has no hole in it.
+
+                Dropping from four items to three is what made the old layout
+                fail: at four they filled a 2×2 beside the heading. */}
+            <div className="relative z-10">
+              <p className="mb-6 font-display text-lg font-bold leading-[1.4] text-white">
                 And three things that will never happen to you here.
               </p>
-              {/* THREE items, so NOT sm:grid-cols-2 — that leaves a ragged 2+1
-                  with a hole where the fourth used to be. A single column beside
-                  the heading reads as a list, which is what it is. */}
-              <ul className="grid gap-y-3">
+              <ul className="grid gap-x-8 gap-y-3 sm:grid-cols-3">
                 {PATH_NO.map((n) => (
                   <li
                     key={n}
-                    className="flex items-center gap-2.5 text-[15px] text-ink-foreground"
+                    /* items-START, not items-center: the longest of the three
+                       wraps to two lines at this width and a centred tick
+                       would float against the middle of the block. */
+                    className="flex items-start gap-2.5 text-[15px] leading-[1.6] text-ink-foreground"
                   >
-                    <span className="text-spark" aria-hidden="true">
+                    <span className="mt-1 shrink-0 text-spark" aria-hidden="true">
                       <Icon name="check" className="size-4" />
                     </span>
                     {n}

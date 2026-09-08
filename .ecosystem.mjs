@@ -36,7 +36,26 @@ const overlaps = (prefix) =>
       const cs = getComputedStyle(el);
       return cs.opacity !== "0" && cs.visibility !== "hidden" && cs.display !== "none";
     };
-    const nodes = [...stage.querySelectorAll(".eco-node, .eco-grow")].filter(vis);
+    /* ROTATED ELEMENTS ARE EXCLUDED, and that is not laziness.
+       getBoundingClientRect returns an AXIS-ALIGNED box, which for a pill
+       rotated 40 degrees is far larger than the pill. The dendrogram lays its
+       group labels along radial spokes, and this test reported two "collisions"
+       there that a screenshot showed were clean separations - the boxes
+       overlapped, the ink never did. Testing rotated geometry properly needs
+       oriented-box intersection; until then these are checked visually and the
+       upright nodes, which are the ones that actually crowd, are checked here. */
+    const upright = (el) => {
+      /* A 2D matrix is matrix(a,b,c,d,e,f); `b` is the sin term, so it is
+         non-zero only under rotation or skew. Testing the string for a
+         fractional first component was wrong - it also caught anything merely
+         SCALED, e.g. the closed services at scale(0.6), which are exactly the
+         nodes most likely to crowd and most in need of checking. */
+      const m = (getComputedStyle(el).transform || "").match(/matrix\(([^)]+)\)/);
+      if (!m) return true;
+      const b = parseFloat(m[1].split(",")[1]);
+      return !Number.isFinite(b) || Math.abs(b) < 0.01;
+    };
+    const nodes = [...stage.querySelectorAll(".eco-node, .eco-grow")].filter(vis).filter(upright);
     const boxes = nodes.map((n) => {
       const b = n.getBoundingClientRect();
       /* shrink by 3px: touching edges are fine, real collision is not */
@@ -132,8 +151,16 @@ for (const variant of VARIANTS) {
   await page.waitForTimeout(300);
 
   /* level 3 really shows brand marks */
-  const imgs = await page.locator(`#preview-${variant} .eco-grow img, #preview-${variant} .eco-grow span[role=img]`).count();
-  ok(`${variant} · level-3 marks render (${imgs})`, imgs >= 8 || variant === "branch");
+  /* Count marks anywhere in the STAGE, not just inside .eco-grow. The radial
+     variants wrap each mark in .eco-grow; the tree and the columns lay theirs
+     out with their own geometry and never use that class, so keying the
+     assertion to it reported 0 marks for two variants that in fact render
+     every one of the 62. */
+  const imgs = await page.evaluate((p) => {
+    const stage = document.querySelector(`#preview-${p} .eco-stage`);
+    return stage ? stage.querySelectorAll('img, span[role=img]').length : 0;
+  }, variant);
+  ok(`${variant} · level-3 marks render (${imgs})`, imgs >= 8);
 
   /* screenshot the open worst case (Backend = index 2) */
   await page.hover(`#${variant}-svc-2`);
