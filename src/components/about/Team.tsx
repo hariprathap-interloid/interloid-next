@@ -4,56 +4,51 @@ import { HUE } from "@/content/site";
 import { TEAM, TEAM_HEADING, TEAM_OPEN } from "@/content/about";
 
 /* ==========================================================================
-   THE TEAM — photo-first portrait cards.
+   THE TEAM — promoted from the /team lab, 2026-09-08. Lab now deleted.
    ==========================================================================
-   REBUILT 2026-09-08 (third pass) on the user's correction: "the primary is
-   to show image and LinkedIn and name and role." The previous card led with
-   the ROLE because every seat is nameless today — a hierarchy chosen for the
-   placeholder era. That was backwards: the design must be chosen for the
-   FINISHED state and merely survive the placeholder one, not the reverse.
+   Chosen by the user from ten candidates: the "Badge" card, with heading
+   option "c". Anatomy, top to bottom, which is the order they asked for:
 
-   The card is now exactly the four primaries, top to bottom:
+     1. PORTRAIT   4:5, filling the card's full width
+     2. HUE SEAM   a 3px rule in the person's colour
+     3. LINKEDIN   a circular badge straddling that seam
+     4. NAME       display type, centred
+     5. ROLE       under it, in the person's hue
 
-     1. PORTRAIT   — dominant, 4:5, fills its frame
-     2. LINKEDIN   — a chip on the portrait's top-right corner
-     3. NAME       — display type, the headline of the text block
-     4. ROLE       — under the name, in the person's hue
+   ── WHAT IT IS AND IS NOT ────────────────────────────────────────────────
+   The anatomy is the reference site's (photo, badge on the seam, centred
+   caption). Everything that makes it look like anything is ours: the hue
+   system carries a colour per seat through the seam, the badge ring and the
+   role; radius, border, shadow and type all come from the tokens. Their card
+   is flat white with a grey badge and no colour at all.
 
-   `owns` (what the person is responsible for) is OFF the card face now — it
-   made the card read as a directory entry instead of a person. It stays in
-   content/about.ts because the /team lab variants and any future detail
-   surface still use it; deleting data to simplify a card is how content gets
-   re-invented later.
+   ── THE BADGE ANCHOR IS THE ONE FIDDLY BIT ──────────────────────────────
+   The photo needs `overflow-hidden` for its rounded top, so a badge that
+   overlaps the seam CANNOT live inside it. Anchoring it to the photo's height
+   would couple it to the aspect ratio; instead the caption block carries
+   `pt-8` and the badge hangs from the caption's TOP edge with
+   `-translate-y-1/2`. Change the aspect ratio and nothing moves.
 
-   ── THE NULL FIELDS STILL SWITCH EVERYTHING (unchanged contract) ─────────
-   `name`, `img`, `linkedin` — independent, all null today:
-     no img       → the portrait frame renders a hue plate with the initials
-                    (if a name exists) or the discipline glyph. The FRAME is
-                    still portrait-sized, so filling in photographs later
-                    changes pixels, not layout.
-     no name      → "Named in your proposal" stands in the name slot — the
-                    promise the People section already makes.
-     no linkedin  → no chip. Never a dead link, never a disabled-looking
-                    button that invites a click.
+   ── THE THREE NULL FIELDS ARE STILL THE WHOLE CONTRACT ──────────────────
+   `name`, `img`, `linkedin` in content/about.ts, independent:
+     img       every seat currently has committed PLACEHOLDER art
+               (`/team/ph-*.svg`) — abstract silhouettes, plainly not people.
+               Swap in the real photograph and nothing else changes.
+     name      null renders "Named in your proposal" — the promise the People
+               section makes two sections above.
+     linkedin  null renders the person's discipline glyph on the badge disc
+               instead of a link. Never a dead anchor, and the seam keeps its
+               rhythm either way.
 
-   ⚠ Photographs must be OF THESE PEOPLE, WITH PERMISSION — not stock, not
-   scraped. A stock portrait under a real colleague's job title is worse than
-   no photograph, and the colleague is the first person who will notice.
+   ⚠ PHOTOGRAPHS MUST BE OF THESE PEOPLE, WITH PERMISSION. Not stock, not
+   scraped. `.about.mjs` enforces the only rule a harness can: until real
+   photos land, every image here must be `ph-*.svg`, so adding a real-looking
+   one is a deliberate act that has to update that check too.
 
-   HOVER — colour and light only, nothing moves (WorkCard.tsx): the portrait
-   wash clears, the hue bar's fill completes inside its FIXED 5px track (the
-   flex-child version of that bar grew the card 2px on hover and the harness
-   caught it — do not regress it), border warms, shadow grows. */
-
-function initials(name: string) {
-  const parts = name.trim().split(/\s+/);
-  return (
-    parts.length > 1
-      ? parts[0][0] + parts[parts.length - 1][0]
-      : name.slice(0, 2)
-  ).toUpperCase();
-}
-
+   HOVER — colour and elevation only, nothing moves (WorkCard.tsx): the
+   photo's wash clears, border warms, shadow grows. The hue seam is a FIXED
+   height; an earlier version grew it and made the card 2px taller on hover,
+   which the harness caught. */
 export default function Team() {
   return (
     <section
@@ -80,7 +75,7 @@ export default function Team() {
         </SectionHeading>
 
         <ul
-          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
           data-placeholder="P1: confirm which of these seats exist, and add real permissioned photographs"
         >
           {TEAM.map((m, i) => {
@@ -92,98 +87,82 @@ export default function Team() {
                 style={{ "--delay": `${i * 70}ms` } as React.CSSProperties}
                 className="h-full"
               >
-                <article className="group relative flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-border bg-card shadow-sm transition-[border-color,box-shadow] duration-300 ease-out hover:border-accent/40 hover:shadow-lg">
-                  {/* ── 1. THE PORTRAIT — the card IS the photograph ────── */}
-                  <div className="relative aspect-[4/5] overflow-hidden" data-portrait>
-                    {m.img ? (
-                      <>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={`/team/${m.img}`}
-                          alt={m.name ?? m.role}
-                          loading="lazy"
-                          decoding="async"
-                          className="size-full object-cover"
-                        />
-                        <div
-                          className="absolute inset-0 bg-ink/10 transition-opacity duration-500 ease-out group-hover:opacity-0"
-                          aria-hidden="true"
-                        />
-                      </>
-                    ) : (
-                      <>
-                        <div
-                          className={`absolute inset-0 opacity-80 transition-opacity duration-500 ease-out group-hover:opacity-100 ${h.soft}`}
-                          aria-hidden="true"
-                        />
-                        <div
-                          className="pointer-events-none absolute inset-0 bg-[radial-gradient(var(--border)_1.5px,transparent_1.5px)] bg-[size:20px_20px] [-webkit-mask-image:radial-gradient(ellipse_70%_70%_at_50%_40%,#000_10%,transparent_100%)] [mask-image:radial-gradient(ellipse_70%_70%_at_50%_40%,#000_10%,transparent_100%)]"
-                          aria-hidden="true"
-                        />
-                        <div className="absolute inset-0 grid place-items-center">
-                          {m.name ? (
-                            <span
-                              className={`font-display text-[44px] font-bold tracking-[-0.02em] opacity-70 ${h.text}`}
-                              aria-hidden="true"
-                            >
-                              {initials(m.name)}
-                            </span>
-                          ) : (
-                            <span className={`opacity-30 ${h.text}`} aria-hidden="true">
-                              <Icon name={m.k} className="size-16" />
-                            </span>
-                          )}
-                        </div>
-                      </>
-                    )}
-
-                    {/* ── 2. LINKEDIN — on the portrait, top-right ──────── */}
-                    {m.linkedin && (
-                      <a
-                        href={m.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`${m.name ?? m.role} on LinkedIn`}
-                        className="absolute right-3 top-3 grid size-10 place-items-center rounded-full bg-white/95 text-[#0A66C2] shadow-md ring-1 ring-black/5 backdrop-blur-sm transition-[background-color,color] duration-300 hover:bg-[#0A66C2] hover:text-white"
-                      >
-                        <svg viewBox="0 0 24 24" fill="currentColor" className="size-[18px]" aria-hidden="true">
-                          <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3zM10 9h3.8v1.7h.05a4.2 4.2 0 0 1 3.75-2c4 0 4.75 2.6 4.75 6V21h-4v-5.3c0-1.3 0-2.9-1.8-2.9s-2.05 1.4-2.05 2.8V21h-4z" />
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-
-                  {/* The per-person hue bar. FIXED 5px track, fill grows
-                      inside it — the in-flow version changed the card's box
-                      on hover and the harness caught it. */}
-                  <div className="relative h-[5px] w-full bg-hairline" aria-hidden="true">
-                    <span
-                      className={`absolute inset-x-0 bottom-0 h-[3px] transition-[height] duration-300 ease-out group-hover:h-[5px] ${h.tile}`}
+                <article className="group flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-border bg-card shadow-sm transition-[border-color,box-shadow] duration-300 ease-out hover:border-accent/40 hover:shadow-lg">
+                  {/* 1 — the portrait */}
+                  <div className="relative overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`/team/${m.img}`}
+                      alt={m.name ?? m.role}
+                      loading="lazy"
+                      decoding="async"
+                      className="aspect-[4/5] w-full object-cover"
+                    />
+                    <div
+                      className="absolute inset-0 bg-ink/10 transition-opacity duration-500 ease-out group-hover:opacity-0"
+                      aria-hidden="true"
                     />
                   </div>
 
-                  {/* ── 3. NAME, then 4. ROLE — nothing else ────────────── */}
-                  <div className="flex flex-1 flex-col p-5">
+                  {/* 2 — the seam, in this person's hue. Fixed height. */}
+                  <div className={`h-[3px] w-full ${h.tile}`} aria-hidden="true" />
+
+                  <div className="relative flex flex-1 flex-col px-5 pb-6 pt-8 text-center">
+                    {/* 3 — the badge, hung from the caption's top edge */}
+                    <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2">
+                      {m.linkedin ? (
+                        <a
+                          href={m.linkedin}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`${m.name ?? m.role} on LinkedIn`}
+                          className={`grid size-11 place-items-center rounded-full bg-card text-[#0A66C2] shadow-md ring-2 transition-[background-color,color] duration-300 hover:bg-[#0A66C2] hover:text-white ${h.ring}`}
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            className="size-[18px]"
+                            aria-hidden="true"
+                          >
+                            <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3zM10 9h3.8v1.7h.05a4.2 4.2 0 0 1 3.75-2c4 0 4.75 2.6 4.75 6V21h-4v-5.3c0-1.3 0-2.9-1.8-2.9s-2.05 1.4-2.05 2.8V21h-4z" />
+                          </svg>
+                        </a>
+                      ) : (
+                        /* No URL yet. The disc stays so the seam keeps its
+                           rhythm, but it is not a link and does not look like
+                           one — a disabled-looking button invites a click. */
+                        <span
+                          className={`grid size-11 place-items-center rounded-full bg-card text-muted-foreground shadow-md ring-2 ${h.ring}`}
+                          aria-hidden="true"
+                        >
+                          <Icon name={m.k} className="size-5" />
+                        </span>
+                      )}
+                    </span>
+
+                    {/* 4 — name */}
                     {m.name ? (
-                      <h3 className="font-display text-lg font-bold leading-[1.3] tracking-[-0.015em] text-foreground">
+                      <h3 className="font-display text-[17px] font-bold leading-[1.3] tracking-[-0.015em] text-foreground">
                         {m.name}
                       </h3>
                     ) : (
-                      <h3 className="inline-flex items-center gap-1.5 font-display text-[15px] font-semibold leading-[1.3] text-muted-foreground">
-                        <Icon name="doc" className="size-3.5 text-accent-strong" />
+                      <h3 className="font-display text-[15px] font-semibold leading-[1.3] text-muted-foreground">
                         Named in your proposal
                       </h3>
                     )}
-                    <p className={`mt-1 text-[14px] font-semibold ${h.text}`}>{m.role}</p>
+                    {/* 5 — role */}
+                    <p className={`mt-1 text-[13px] font-semibold ${h.text}`}>
+                      {m.role}
+                    </p>
                   </div>
                 </article>
               </li>
             );
           })}
 
-          {/* The open seat — a different object: dashed, on the page ground,
-              a gap in the roster rather than an eighth colleague. Also the
-              only route from /about to /careers. */}
+          {/* The open seat — dashed and on the page ground, so it reads as a
+              gap in the roster rather than an eighth colleague. Also the only
+              route from /about to the hiring page. */}
           <li
             data-reveal
             style={{ "--delay": `${TEAM.length * 70}ms` } as React.CSSProperties}
@@ -212,7 +191,7 @@ export default function Team() {
           </li>
         </ul>
 
-        {/* The line for the team — the only copy on the site addressed to the
+        {/* The line for the team — the only copy on this site addressed to the
             people who work here rather than to the market. */}
         <p
           data-reveal

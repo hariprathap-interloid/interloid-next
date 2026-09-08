@@ -295,58 +295,20 @@ export const PEOPLE = {
    them nameless. */
 export const TEAM_HEADING = {
   eyebrow: "The team",
-  head: "Passion, hard work and",
-  accent: "a lot of collaboration.",
-  lead: "The people who write the code, take the calls and stay late on a launch night. Their names are on the work, not just in the proposal.",
+  /* Chosen from the /team lab 2026-09-08 (option "c"). It beat "Passion, hard
+     work and a lot of collaboration" for the reason this site keeps landing
+     on: the winner NAMES the adjectives and then trades them for something
+     checkable. A Friday demo in front of the client is a habit a stranger can
+     verify; passion is not. The rejected options and the lab are deleted. */
+  head: "A small team with",
+  accent: "one standard of work.",
+  lead: "Passion and hard work are claims; a Friday demo in front of the client every single week is a habit. These are the people who keep it.",
   /* The closing line is aimed at THE TEAM, not at a buyer — the user asked
      for a section that an employee feels good arriving at. It is the only
      copy on the site with that audience, so it is the only place the voice is
      allowed to be warm rather than falsifiable. */
   note: "If your face is on this page, it is because the work has your name on it. Thank you for the last release, and the one before that.",
 } as const;
-
-/* ==========================================================================
-   HEADING VARIANTS — for the /team lab, added 2026-09-08.
-   ==========================================================================
-   The user asked for the team heading to be refactored alongside the lab's
-   design variants, so the candidates live here rather than inline in the lab
-   (CLAUDE.md §2: copy never lives in a component — labs included, because the
-   winning line gets promoted into TEAM_HEADING and a string that already
-   lives in this file cannot be forgotten in that move).
-
-   Option "a" is the current production heading, so the lab can show the
-   incumbent against the challengers. When one wins: copy its fields over
-   TEAM_HEADING, delete this array, and the lab route with it. */
-export const TEAM_HEADING_VARIANTS = [
-  {
-    key: "a",
-    label: "Incumbent",
-    head: "Passion, hard work and",
-    accent: "a lot of collaboration.",
-    lead: "The people who write the code, take the calls and stay late on a launch night. Their names are on the work, not just in the proposal.",
-  },
-  {
-    key: "b",
-    label: "Credits",
-    head: "The credits,",
-    accent: "not the org chart.",
-    lead: "Software ships with names on it here. These are the people a release belongs to — the ones on your calls, in your repo, and still around after the launch.",
-  },
-  {
-    key: "c",
-    label: "Standard",
-    head: "A small team with",
-    accent: "one standard of work.",
-    lead: "Passion and hard work are claims; a Friday demo in front of the client every single week is a habit. These are the people who keep it.",
-  },
-  {
-    key: "d",
-    label: "Friday",
-    head: "The people behind",
-    accent: "every Friday demo.",
-    lead: "Collaboration here is not a value on a poster — it is seniors and trainees on one floor, one repo, and a demo the whole office stops for.",
-  },
-] as const;
 
 export type TeamMember = {
   k: string;

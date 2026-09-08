@@ -2,9 +2,20 @@
    now, so every harness that used to address `#preview-{v}` directly has to
    ask for it first. Variant names are unchanged - "tree", or
    "constellation-circle" - and split back into the two controls here. */
-export async function pick(page, variant) {
+export async function pick(page, variant, { fresh = false } = {}) {
   const circle = variant.endsWith("-circle");
   const layout = circle ? variant.slice(0, -"-circle".length) : variant;
+  if (fresh) {
+    /* CHANGING THE SHAPE ALONE DOES NOT REMOUNT THE MAP - same component,
+       only the wrapper class differs - so a service left open by an earlier
+       check is still open, and a check that wants to read the RESTING state
+       reads an open branch instead. (The persistence is right: comparing
+       pill against circle on the same open service is the point of having
+       the two controls separate.) Routing through another layout forces the
+       remount, and the selection resets with it. */
+    await page.click(`[data-choice="${layout === "tree" ? "columns" : "tree"}"]`);
+    await page.waitForTimeout(300);
+  }
   await page.click(`[data-choice="${layout}"]`);
   await page.click(`[data-choice="${circle ? "circle" : "pill"}"]`);
   /* the swapped-in Map mounts, measures (columns reads its own layout) and

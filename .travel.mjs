@@ -27,8 +27,10 @@ await p.waitForTimeout(1200);
 const VARIANTS = ["constellation-circle", "constellation", "tree", "dendrogram", "columns"];
 
 for (const v of VARIANTS) {
-  /* one diagram is mounted at a time now — ask the switcher for this one */
-  await pick(p, v);
+  /* One diagram is mounted at a time now — ask the switcher for this one,
+     `fresh` because the first check below reads the RESTING state and the
+     previous iteration ended on a hover. */
+  await pick(p, v, { fresh: true });
   const sec = `#preview-${v}`;
   if (!(await p.locator(sec).count())) { ok(`${v} · present`, false); continue; }
 
