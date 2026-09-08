@@ -62,7 +62,7 @@ export type EcosystemSelection = {
     "aria-selected": boolean;
     "aria-controls": string;
     tabIndex: 0 | -1;
-    onMouseEnter: () => void;
+    onMouseEnter: (e: React.MouseEvent) => void;
     onFocus: () => void;
     onClick: () => void;
     onKeyDown: (e: React.KeyboardEvent) => void;
@@ -70,7 +70,7 @@ export type EcosystemSelection = {
   /** Spread onto the stage wrapper. */
   stageProps: {
     onMouseLeave: () => void;
-    onPointerMove: () => void;
+    onPointerMove: (e: React.PointerEvent) => void;
     "data-pinned": "true" | undefined;
     "data-settling": "true" | undefined;
   };
@@ -106,9 +106,12 @@ export function useEcosystem(
   const [settling, setSettling] = useState(false);
   const settleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
-  /* Has the pointer actually moved since the last selection? See the note on
-     `onMouseEnter` below. */
-  const pointerMoved = useRef(false);
+  /* The live pointer position, updated by the stage's pointermove. */
+  const lastPointer = useRef<{ x: number; y: number } | null>(null);
+  /* Where the pointer was when the current selection was made. A mouseenter
+     arriving at the SAME point is the layout moving under a still cursor; one
+     arriving anywhere else is the user. See `onMouseEnter`. */
+  const pointerAt = useRef<{ x: number; y: number } | null>(null);
 
   const register = useCallback(
     (i: number) => (el: HTMLButtonElement | null) => {
@@ -122,7 +125,7 @@ export function useEcosystem(
       setActive(i);
       setEngaged(true);
       if (!guardMovingLayout) return;
-      pointerMoved.current = false;
+      pointerAt.current = lastPointer.current;
       /* While the wheel turns, the OTHER nodes stop accepting the pointer.
 
          The pointer-move gate alone was not enough: a node sliding to a stop
@@ -188,7 +191,7 @@ export function useEcosystem(
       "aria-selected": i === active,
       "aria-controls": `${idPrefix}-panel-${i}`,
       tabIndex: (i === active ? 0 : -1) as 0 | -1,
-      onMouseEnter: () => {
+      onMouseEnter: (e: React.MouseEvent) => {
         if (pinned) return;
         /* A touchscreen synthesises a mouseenter immediately before the click
            it is really delivering. Acting on it makes the first tap open a
@@ -204,18 +207,37 @@ export function useEcosystem(
 
            A first attempt ignored every hover for 700ms after a selection,
            which also ignored a user genuinely moving to the next node inside
-           that window - the harness caught it as two services that could not
-           be selected at all. This is the precise test instead: a mouseenter
-           that arrives with NO pointer movement since the last selection was
-           produced by the wheel sliding under a stationary cursor, and is the
-           only kind worth discarding. */
-        if (guardMovingLayout && !pointerMoved.current) return;
+           that window. A second compared event ORDER - had a pointermove been
+           seen since the selection - which rejected a pointer that arrived in
+           a single jump. This compares POSITION, which is the thing actually
+           being asked about: if the cursor is where it was when the selection
+           was made, the node came to it; otherwise it went to the node. */
+        if (guardMovingLayout) {
+          const at = pointerAt.current;
+          const moved =
+            !at || Math.hypot(e.clientX - at.x, e.clientY - at.y) > 2;
+          if (!moved) return;
+        }
         activate(i);
       },
       onFocus: () => activate(i),
       onClick: () => {
-        /* Tapping the already-open service closes the pin rather than doing
-           nothing — otherwise a touch user has no way back out. */
+        /* PINNING IS FOR TOUCH ONLY.
+
+           It used to happen on every click, and a pinned selection ignores
+           every later hover - so one stray click on a mouse made the whole
+           diagram stop responding to the pointer, which read as broken rather
+           than as locked. On a device with hover there is nothing to preserve
+           between pointer movements, so a click simply selects. On a coarse
+           pointer there is no hover at all, so the tap has to persist, and
+           tapping the open service again releases it. */
+        const coarse =
+          typeof window !== "undefined" &&
+          window.matchMedia?.("(hover: none)").matches;
+        if (!coarse) {
+          activate(i);
+          return;
+        }
         if (pinned && i === active) setPinned(false);
         else {
           activate(i);
@@ -242,8 +264,8 @@ export function useEcosystem(
      it to vanish because their pointer drifted two pixels off the node. */
   const stageProps = {
     onMouseLeave: () => {},
-    onPointerMove: () => {
-      pointerMoved.current = true;
+    onPointerMove: (e: React.PointerEvent) => {
+      lastPointer.current = { x: e.clientX, y: e.clientY };
     },
     "data-pinned": (pinned ? "true" : undefined) as "true" | undefined,
     "data-settling": (settling ? "true" : undefined) as "true" | undefined,

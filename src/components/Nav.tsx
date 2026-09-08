@@ -12,9 +12,10 @@ import {
    and radius (0→rounded-full) animate together over 300ms.
 
    HANDOFF §4: 8 links, desktop pill at `xl:` (1280px); below that the mobile
-   menu. `/careers` was built 2026-09-07 and its flag is gone; `/about` still
-   does not exist and 404s — kept honest with data-placeholder rather than
-   removed, so the placeholder toggle still counts it (§7 P1). */
+   menu. Every link now resolves: `/careers` shipped 2026-09-07 and `/about`
+   2026-09-08, so the `data-placeholder` flags this list used to carry are
+   both gone. If a link is ever added before its route exists, flag it here
+   rather than hiding it — the toggle counting a dead link is the point. */
 const LINKS = [
   { href: "/#home", label: "Home" },
   /* Both sections moved off home to /services 2026-09-08; Stack keeps its
@@ -24,7 +25,7 @@ const LINKS = [
   { href: "/why-choose-us", label: "Commitments" },
   { href: "/#process", label: "Process" },
   { href: "/#work", label: "Work" },
-  { href: "/about", label: "About us", placeholder: "page not built yet" },
+  { href: "/about", label: "About us" },
   { href: "/careers", label: "Careers" },
 ] as const;
 

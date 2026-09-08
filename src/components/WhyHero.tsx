@@ -3,8 +3,8 @@ import { WHY_HERO } from "@/content/site";
 
 /* /why-choose-us hero — prototype2-archive's left-aligned hero, rebuilt on the
    CareersHero skeleton so the two sub-pages read as one site: bg-secondary,
-   masked backdrop texture, orb, badge → H1 → lead → actions, reveal delays at
-   0/100/200/300.
+   masked backdrop texture, orb, badge → H1 → lead → body → kicker → actions,
+   reveal delays at 0/100/200/300/400/500.
 
    The texture is the archive's LINE grid rather than careers' dot grid — the
    page argues "this is a document", and ruled lines are the closest thing a
@@ -68,9 +68,35 @@ export default function WhyHero() {
             {WHY_HERO.lead}
           </p>
 
-          <div
+          <p
             data-reveal
             style={{ "--delay": "300ms" } as React.CSSProperties}
+            className="mt-5 max-w-2xl text-lg leading-[1.5] text-muted-foreground"
+          >
+            {WHY_HERO.body}
+          </p>
+
+          {/* The bold close. It is set apart with an accent rule rather than
+              another paragraph because it is the hero's thesis, and the copy
+              itself is emphasised in the source.
+
+              ⚠ data-placeholder is REQUIRED here, not decorative: "carried
+              into every engagement agreement" is HANDOFF §7's open P1, the
+              same claim the Clauses foot carries — and this copy states it
+              above the fold. Do not remove the flag without the real
+              contract in hand. */}
+          <p
+            data-reveal
+            data-placeholder="P1: verify the engagement agreement actually carries these commitments"
+            style={{ "--delay": "400ms" } as React.CSSProperties}
+            className="mt-8 max-w-2xl border-l-2 border-accent pl-5 font-display text-lg font-bold leading-[1.45] tracking-[-0.015em] text-foreground"
+          >
+            {WHY_HERO.kicker}
+          </p>
+
+          <div
+            data-reveal
+            style={{ "--delay": "500ms" } as React.CSSProperties}
             className="mt-10 flex flex-wrap items-center gap-4"
           >
             <a

@@ -2,8 +2,9 @@
    live site's footer as a P0 ("fabricated navigation"). The Industries and
    Resources columns are deliberately absent rather than stubbed. The four
    links that do not resolve yet carry data-placeholder so the toggle counts
-   them; they are not hidden. `/careers` resolved on 2026-09-07 and lost its
-   flag; `/about` has not. */
+   them; they are not hidden. Every Company link now resolves — `/careers`
+   from 2026-09-07, `/about` from 2026-09-08 — so none of them carries a flag
+   any more. The two legal links still do, and those are P0. */
 import { CAPABILITIES } from "@/content/service";
 
 /* The six services, matching /services and the live site exactly. Derived
@@ -12,7 +13,11 @@ import { CAPABILITIES } from "@/content/service";
    already drifted once. */
 const SERVICE_LINKS = CAPABILITIES.map((c) => c.name);
 
-const COMPANY_LINKS = [
+/* Typed explicitly. With the last `placeholder` gone from this list, TS
+   inferred `{ href, label }` and the conditional spread below stopped
+   compiling — the property has to stay OPTIONAL rather than disappear,
+   because the next link added before its route exists needs it. */
+const COMPANY_LINKS: { href: string; label: string; placeholder?: string }[] = [
   /* "Commitments", matching the nav. Same destination, and it was the
      last visible "Why Interloid" left on that page after the hero kicker
      came off — one link naming the page two ways is how a nav loses trust. */
@@ -20,7 +25,7 @@ const COMPANY_LINKS = [
   { href: "/#process", label: "How we work" },
   { href: "/#work", label: "Selected work" },
   { href: "/#contact", label: "Contact" },
-  { href: "/about", label: "About us", placeholder: "page not built yet" },
+  { href: "/about", label: "About us" },
   { href: "/careers", label: "Careers" },
 ];
 

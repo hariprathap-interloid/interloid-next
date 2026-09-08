@@ -520,6 +520,85 @@ html {
   }
 }
 
+/* ── LEVEL 2 AS A CIRCLE ──────────────────────────────────────────────
+   The user's own sketch: a group is a round node with its name wrapped
+   inside, rather than a lozenge with the name on one line. It reads as the
+   middle member of a family — core, service, group, technology, all discs at
+   four sizes — where a pill reads as a caption that happens to sit there.
+
+   A page-scoped modifier, not a prop: `.eco-circles` on an ancestor restyles
+   every group label in every variant at once, so the two treatments can be
+   compared from one codebase. Remove the class and the pills come back.
+
+   `width` and `height` are fixed and equal, which is what makes it a circle
+   and not an ellipse — the label length varies from "Databases" to
+   "Containers & orchestration" and an intrinsic width would give twenty
+   different shapes. The long ones wrap and, past three lines, clip: the
+   circle is the constraint, and a name that cannot fit it is a signal that
+   the label is too long rather than a reason to distort the node. */
+.eco-circles .eco-group {
+  display: grid;
+  place-items: center;
+  /* 6.75rem. The label was pushed to a 10px floor on request, and 10px needs
+     more room than 8.5px did - the disc has to grow with the type or the
+     longest labels lose a line. */
+  /* 6.25rem. 6.75 fitted the 10px label comfortably but the extra 12px of
+     radius put a group circle into the open service's label in the bloom
+     layout - measured. At 6.25rem with tighter padding the inner disc is
+     still 84px, and the longest word in the data measures ~72px at 10px. */
+  width: 6.25rem;
+  height: 6.25rem;
+  padding: 0.5rem;
+  border-radius: 9999px;
+  white-space: normal;
+  overflow: hidden;
+  text-align: center;
+  /* 10px is the floor the user set. At 0.02em tracking the longest word in
+     the data - DEVELOPMENT, 11 characters - measures just inside the 6.75rem
+     disc. Do not raise the tracking without re-measuring that word. */
+  font-size: 10px;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+
+/* ── THE TRAVELLING DOT ───────────────────────────────────────────────
+   A short dash running along the open branch, from the core outward, so the
+   diagram says which way the relationship points rather than only that one
+   exists. It rides the SAME `pathLength=1` normalisation the draw-on uses, so
+   one rule covers straight connectors, bezier limbs and radial links at every
+   length: a 5% dash in a 95% gap, offset animated one full length.
+
+   It runs ONLY on the open branch (`[data-on="true"]`, or inside an open
+   `.eco-branch`). Sixty-two lines all pulsing at once would be a fairground.
+
+   It deliberately overrides the draw-on dasharray, which has finished by the
+   time a branch is opened - the two never animate the same line at once. */
+@keyframes eco-travel {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.eco-line[data-on="true"],
+.eco-branch[data-open="true"] .eco-line {
+  stroke-dasharray: 0.05 0.95;
+  animation: eco-travel 2.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eco-line[data-on="true"],
+  .eco-branch[data-open="true"] .eco-line {
+    animation: none;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
 /* Placeholder outliner — every prototype ships one (HANDOFF §8). */
 body.show-ph [data-placeholder] {
   outline: 2px dashed #e11d48;

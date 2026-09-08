@@ -174,6 +174,20 @@ for (const spec of [
     what: "step numeral brightens",
   },
   {
+    sel: "#life ul > li article",
+    name: "life",
+    idx: 0,
+    /* the glyph watermark surfaces and the wash deepens */
+    probe: (e) => {
+      const mark = e.querySelector("span[aria-hidden]");
+      const wash = e.querySelector("div[aria-hidden]");
+      return `${mark ? getComputedStyle(mark).opacity : ""}|${
+        wash ? getComputedStyle(wash).opacity : ""
+      }`;
+    },
+    what: "watermark surfaces",
+  },
+  {
     sel: "#fit .grid > div > div",
     name: "fit",
     idx: 0,
@@ -242,6 +256,93 @@ ok(
   `fit: tiles are staggered, not simultaneous (${stagger.join(", ")})`,
 );
 
+/* --- 3c. the life bento has no stock photography ------------------------- */
+/* Added with the section on 2026-09-08. The tiles are built to take real
+   photographs from `public/life/` — one field per tile — and until they do
+   they render a designed panel rather than an empty frame.
+
+   The assertion is on the IMAGE COUNT, not on the copy, because the failure
+   this guards against is somebody dropping in stock photography to "finish"
+   the section. Every image here must be a real photograph of the real office;
+   there is no way for a harness to tell those apart, so the rule it can
+   enforce is that any image at all is a deliberate act that has to come with
+   this line being updated.
+
+   It also checks the bento still FILLS. The four spans (2x2, 2x1, 1x1, 1x1)
+   tile two rows of four exactly; change a count or a span and the grid grows
+   a visible hole with no auto-flow to repair it. Comparing the tallest tile
+   against the shortest catches that — in a broken bento they are equal. */
+const life = await p.evaluate(() => {
+  const tiles = [...document.querySelectorAll("#life ul > li")];
+  const heights = tiles.map((t) => Math.round(t.getBoundingClientRect().height));
+  return {
+    count: tiles.length,
+    imgs: document.querySelectorAll("#life img").length,
+    tall: Math.max(...heights),
+    short: Math.min(...heights),
+  };
+});
+ok(life.count === 4, `bento renders 4 tiles (${life.count})`);
+ok(
+  life.imgs === 0,
+  `no photographs yet — any image here must be the REAL office, never stock (${life.imgs} found)`,
+);
+ok(
+  life.tall > life.short * 1.5,
+  `bento still spans two rows: tallest ${life.tall}px vs shortest ${life.short}px`,
+);
+ok(
+  /rather show you nothing than a stock photo/i.test(all),
+  "the missing-photographs line is on the page",
+);
+
+/* --- 3d. the moments rail ------------------------------------------------ */
+/* The gallery is the one block on this page whose point IS the photographs —
+   the bento's tiles carry an argument and stand alone, these are captions
+   waiting for pictures. Same zero-images rule for the same reason: a harness
+   cannot tell a real office from a stock one, so what it can enforce is that
+   adding any image is a deliberate act which has to come with updating this.
+
+   The rest is the accessibility a hidden-scrollbar rail is usually missing. */
+const rail = await p.evaluate(() => {
+  const el = document.querySelector('#life div[role="region"]');
+  if (!el) return null;
+  const first = el.firstElementChild;
+  return {
+    frames: el.children.length,
+    imgs: el.querySelectorAll("img").length,
+    focusable: el.tabIndex === 0,
+    labelled: !!el.getAttribute("aria-label"),
+    /* It must actually overflow, or the arrows are decoration. */
+    overflows: el.scrollWidth > el.clientWidth + 10,
+    snap: getComputedStyle(el).scrollSnapType,
+    cardSnap: first ? getComputedStyle(first).scrollSnapAlign : "",
+  };
+});
+ok(!!rail, "the moments rail renders");
+ok(rail.frames === 6, `rail holds 6 frames (${rail.frames})`);
+ok(rail.imgs === 0, `no photographs yet — never stock (${rail.imgs} found)`);
+ok(rail.focusable, "rail is keyboard focusable (a scroll container is not by default)");
+ok(rail.labelled, "rail has an accessible name");
+ok(rail.overflows, `rail actually overflows (${rail.snap})`);
+ok(rail.cardSnap !== "none", `cards snap (scroll-snap-align: ${rail.cardSnap})`);
+
+/* Both arrows exist, and the one at the start is DISABLED — a "previous"
+   button that does nothing when pressed is worse than no button. */
+const arrows = await p.evaluate(() => {
+  const btns = [...document.querySelectorAll("#life button")];
+  return btns.map((b) => ({ label: b.getAttribute("aria-label"), disabled: b.disabled }));
+});
+ok(arrows.length === 2, `two arrow controls (${arrows.length})`);
+ok(
+  arrows.every((a) => a.label),
+  "both arrows have accessible names",
+);
+ok(
+  arrows[0] && arrows[0].disabled && arrows[1] && !arrows[1].disabled,
+  `at rest: previous disabled, next enabled (${JSON.stringify(arrows)})`,
+);
+
 /* --- 4. senior content is parked, and said out loud ---------------------- */
 ok(!/L \/ year/.test(body), "no senior salary bands on the page");
 ok(
@@ -267,8 +368,45 @@ ok(heads.filter((h) => h.startsWith("H1")).length === 1, "exactly one H1");
 console.log("\noutline:");
 heads.forEach((h) => console.log("  " + h));
 
-/* --- 6. no horizontal overflow ------------------------------------------- */
-for (const w of [390, 768, 1024, 1440, 1920]) {
+/* --- 6a. the hero scales with the viewport -------------------------------- */
+/* It used to be a FIXED 816px at every size, because nothing in it was
+   viewport-relative — padding plus content, both constant. That fills 91% of a
+   1440x900 laptop and only 57% of a 2560x1440 monitor, where the next section's
+   heading pushes into the first screen. Reported from a 24-inch display.
+
+   Two assertions, and they pull in opposite directions on purpose:
+     · on a TALL screen the hero must fill most of it, or the fix has regressed
+     · on a SHORT screen `min-h` must not force it TALLER than its content,
+       which is the classic way a `min-h-screen` hero breaks a laptop
+   The second is why the rule is `lg:min-h-[88svh]` and not a fixed height. */
+for (const [w, h, floor, label] of [
+  [1440, 900, 0.85, "laptop"],
+  [1920, 1080, 0.8, "1080p"],
+  [2560, 1440, 0.8, "24-inch"],
+]) {
+  await p.setViewportSize({ width: w, height: h });
+  await p.waitForTimeout(300);
+  const hero = await p.evaluate(() => {
+    const el = document.querySelector("#careers-top");
+    const r = el.getBoundingClientRect();
+    const band = el.querySelector("ul").getBoundingClientRect();
+    return { height: Math.round(r.height), contentBottom: Math.round(band.bottom - r.top) };
+  });
+  const fill = hero.height / h;
+  ok(
+    fill >= floor,
+    `hero fills ${(fill * 100).toFixed(0)}% of ${label} ${w}x${h} (floor ${floor * 100}%)`,
+  );
+  ok(
+    hero.height >= hero.contentBottom,
+    `hero at ${label} is not shorter than its content (${hero.height} >= ${hero.contentBottom})`,
+  );
+}
+
+/* --- 6b. no horizontal overflow ------------------------------------------- */
+/* 2560 added with the hero work: the widest case is the one where a section
+   that opts out of `max-w-7xl` would show it. */
+for (const w of [390, 768, 1024, 1440, 1920, 2560]) {
   await p.setViewportSize({ width: w, height: 900 });
   await p.waitForTimeout(250);
   const o = await p.evaluate(() => ({

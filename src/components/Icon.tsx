@@ -196,6 +196,16 @@ export const ICONS = {
     <path d="m12 3 2.09 6.26L20 11.27l-5 3.64L16.18 21 12 17.77 7.82 21 9 14.91l-5-3.64 5.91-2.01L12 3Z" />
   ),
   chevron: <path d="m6 9 6 6 6-6" />,
+  /* Lucide `image`. Added 2026-09-08 for the gallery's waiting state — a
+     quote-mark stood in first and reads as a pull-quote, not as a photograph
+     that has not arrived. */
+  image: (
+    <>
+      <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+      <circle cx="9" cy="9" r="2" />
+      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+    </>
+  ),
   rocket: (
     <>
       <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91 0z" />

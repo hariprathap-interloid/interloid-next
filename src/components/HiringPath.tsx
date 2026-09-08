@@ -4,6 +4,10 @@ import { PATH, PATH_NO } from "@/content/site";
 
 /* "How we hire" — the same numbered-step shape as Process.tsx, on purpose.
 
+   Ground moved from `secondary` to `background` on 2026-09-08 when LifeHere
+   was inserted above it — this section had shared `secondary` with FitCheck,
+   and keeping that would have made three secondary sections in a row.
+
    ── SHORTENED 2026-09-08 ──────────────────────────────────────────────────
    Four steps became THREE. The paid three-hour code exercise is gone: it does
    not make sense for somebody with no professional experience, and "paid" was
@@ -38,7 +42,7 @@ export default function HiringPath() {
   return (
     <section
       id="hiring"
-      className="relative overflow-hidden border-t border-border bg-secondary py-28"
+      className="relative overflow-hidden border-t border-border bg-background py-28"
     >
       <div
         className="pointer-events-none absolute right-0 top-0 size-[520px] translate-x-1/3 -translate-y-1/3 rounded-full bg-accent/10 blur-[120px]"

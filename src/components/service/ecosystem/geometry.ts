@@ -33,7 +33,7 @@ export const STAGE = 1000;
 
 /** Faint concentric rings, in the reference's 150/225/300 ratio plus one
     outer ring that contains the level-3 technology plates. */
-export const RINGS = [150, 225, 300, 424] as const;
+export const RINGS = [150, 225, 300, 456] as const;
 
 /** Six services, 60° apart, starting at the top. */
 export const SERVICE_ANGLES = [-90, -30, 30, 90, 150, 210] as const;
@@ -53,13 +53,23 @@ export const SERVICE_RADII = [178, 240, 178, 240, 178, 240] as const;
    retreated neighbour and the open branch has to be bought at the group ring
    instead: "Mobile App Development" and "Node.js ecosystem" overlapped by one
    pixel of box at 258. */
-export const LEVEL_2_RADII = [270, 306] as const;
+/* 292/326, out from 270/306. The circular group node is 100px across, so its
+   inner edge reaches 50px further in than a pill ever did, and in the bloom
+   layout that put it into the open service label sitting just below its tile.
+   Checked the other way too: 424 - 326 = 98 units of gap to the marks, and a
+   circle half (58 units) plus a mark half (23) is 81. */
+export const LEVEL_2_RADII = [292, 326] as const;
 /* 424, not 392. A group pill is ~140px wide and its own marks sit directly
    outward of it, so the boxes are near-concentric: at an 80px radial gap the
    pill's corner clipped the plate beside its centre mark ("ML frameworks"
    over "PyTorch", measured). The gap is now 118px at the outer pill radius
    and 154px at the inner one, which clears the widest pill. */
-export const LEVEL_3_RADIUS = 424; // the technology plates
+/* 456, out from 424. Pushing the group ring out for the 100px circular node
+   simply moved the collision outward - the disc then met its own first mark.
+   Level 3 has to move with it. 456 + a 23-unit mark half is 479, inside the
+   500-unit half-stage with 21 units to spare, so this is the last move the
+   stage can absorb: a bigger group node than this needs a bigger stage. */
+export const LEVEL_3_RADIUS = 456; // the technology plates
 
 /** Where the OPEN service sits. All six converge on this radius when opened,
     so the branch always starts the same distance from the core and the group

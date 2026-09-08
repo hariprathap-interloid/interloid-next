@@ -25,7 +25,27 @@ export default function CareersHero() {
   return (
     <section
       id="careers-top"
-      className="relative overflow-hidden bg-secondary pb-24 pt-40"
+      /* ── HEIGHT ON A LARGE MONITOR (2026-09-08) ─────────────────────────
+         The hero was a FIXED 816px at every viewport, because nothing in it
+         was viewport-relative — it is padding plus content, and both are
+         constant. Measured: that fills 91% of a 1440×900 laptop, which is
+         right, but only 57% of a 2560×1440 monitor, where the next section's
+         heading pushes into the first screen. The user reported it from a
+         24-inch display and the number matches the complaint exactly.
+
+         `lg:min-h-[88svh]` and nothing below `lg:`. It is a MINIMUM, so it
+         cannot shrink anything: at 900px tall it computes to 792px, under the
+         816px the content already needs, and the laptop case is untouched.
+         Only screens taller than ~928px get more.
+
+         `svh`, not `vh`: `vh` is the LARGEST viewport height on mobile, so a
+         `100vh`-family hero sits partly under the browser's own chrome until
+         the user scrolls. Academic at `lg:` but wrong to write down twice.
+
+         88 rather than 100 on purpose. A hero that exactly fills the screen
+         hides the fact that there is anything below it; leaving the next
+         section's top edge visible is what tells a reader to scroll. */
+      className="relative flex flex-col overflow-hidden bg-secondary pb-24 pt-40 lg:min-h-[88svh]"
     >
       {/* Radially masked so the grid fades before the section edge instead of
           tiling into a hard cut. `var(--border)`, not a literal, so the dots
@@ -43,8 +63,12 @@ export default function CareersHero() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
-        <div className="max-w-3xl">
+      {/* `flex-1` + `justify-center` is what spends the extra height: the
+          content block centres inside the padded box instead of the whole
+          surplus falling below the fact band. At laptop size there is no
+          surplus and this changes nothing. */}
+      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-6">
+        <div className="max-w-3xl 2xl:max-w-4xl">
           <div
             data-reveal
             className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium leading-[1.5] shadow-sm"
@@ -68,7 +92,11 @@ export default function CareersHero() {
           <h1
             data-reveal
             style={{ "--delay": "100ms" } as React.CSSProperties}
-            className="font-display text-4xl font-medium leading-[1.1] tracking-[-0.025em] text-foreground md:text-5xl lg:text-[3.5rem]"
+            /* 2xl bumps to 64px, and the column widens with it (max-w-4xl
+               above) so the headline still breaks over TWO lines. Raising the
+               size alone would have pushed it to three — CLAUDE.md §5 records
+               that exact regression on the home hero. */
+            className="font-display text-4xl font-medium leading-[1.1] tracking-[-0.025em] text-foreground md:text-5xl lg:text-[3.5rem] 2xl:text-[4rem]"
           >
             Learn to build software{" "}
             <span className="bg-gradient-to-r from-brand to-accent bg-clip-text text-transparent">
@@ -79,7 +107,7 @@ export default function CareersHero() {
           <p
             data-reveal
             style={{ "--delay": "200ms" } as React.CSSProperties}
-            className="mt-6 max-w-2xl text-lg leading-[1.5] text-muted-foreground"
+            className="mt-6 max-w-2xl text-lg leading-[1.5] text-muted-foreground 2xl:max-w-3xl 2xl:text-xl"
           >
             Four trainee roles for freshers, on site in {TERMS.location}. Six
             months of training, then real client work — and every term of it is

@@ -5,6 +5,7 @@ import CtaAnchor from "@/components/CtaAnchor";
 import FitCheck from "@/components/FitCheck";
 import Footer from "@/components/Footer";
 import HiringPath from "@/components/HiringPath";
+import LifeHere from "@/components/LifeHere";
 import Nav from "@/components/Nav";
 import Programme from "@/components/Programme";
 import Reveal from "@/components/Reveal";
@@ -31,6 +32,10 @@ export const metadata: Metadata = {
      Programme    the two years in order — replaces the commitment grid, the
                   stack grid AND the first-90-days block
      Roles        four trainee roles, stack shown as ICONS, one Apply each
+     LifeHere     the bento, added on request 2026-09-08. No photographs yet:
+                  every tile has an `img` field, all null, and renders a
+                  designed panel until a real file lands in public/life/. The
+                  copy is checkable rather than three adjectives
      HiringPath   three steps, plus what will never happen to you
      FitCheck     who should not apply, with the terms named plainly
      CareerFaq    the awkward questions, before the first call
@@ -53,12 +58,17 @@ export const metadata: Metadata = {
    from it, and the rewrite has moved this page further from it still.
 
    ── SECTION GROUNDS ALTERNATE ────────────────────────────────────────────
-   secondary → background → background → secondary → secondary → background,
-   then the CTA's light band. Programme and Roles share `background` on
-   purpose: they are one argument (here are the terms, here are the ways in)
-   and a band change between them would read as a subject change. Same for
-   HiringPath and FitCheck on `secondary`. Each section owns its own ground
-   and its own `border-t`, so the rhythm is changed in the component.
+   secondary → background → background → secondary → background → secondary →
+   background, then the CTA's light band. Programme and Roles still share
+   `background` on purpose: they are one argument (here are the terms, here
+   are the ways in) and a band change between them would read as a subject
+   change.
+
+   HiringPath moved to `background` when LifeHere was inserted 2026-09-08.
+   It had shared `secondary` with FitCheck, which was a preference rather than
+   an argument; keeping that pairing would have put three secondary sections
+   in a row. Each section owns its own ground and its own `border-t`, so the
+   rhythm is changed in the component, never by wrapping one here.
 
    ⚠ CLAIM STATUS — READ BEFORE PUBLISHING. Everything about the terms is
    unverified and flagged: the twelve-hour training days, the ₹10,000 monthly
@@ -88,6 +98,7 @@ export default function Careers() {
         <CareersHero />
         <Programme />
         <Roles />
+        <LifeHere />
         <HiringPath />
         <FitCheck />
         <CareerFaq />

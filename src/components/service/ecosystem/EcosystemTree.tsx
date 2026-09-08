@@ -86,8 +86,15 @@ const H = 900; // logical height
     px-6 gutters − max-w-7xl. Every clearance in this file is checked here. */
 const MIN_STAGE = 976;
 const U = MIN_STAGE / W; // 0.8133 px per unit, at the tightest stage
-const PLATE = 36; // TechLogo size="sm" plate, px
+/* 40, not 36: the marks became `md` circles when level 3 stopped being a
+   badge. EVERY clearance in this file is derived from PLATE, so this constant
+   is the one that has to move when the mark does - leaving it at 36 would
+   silently under-reserve space for all 62 leaves. */
+const PLATE = 40; // TechLogo size="md" circle, px
 const DAYLIGHT = 6; // px we insist on between any two boxes
+/* The group label's half-height in UNITS. The label is a two-line pill at
+   ~34px; half of that, converted, is where a twig may start. */
+const GROUP_HALF = 34 / 2 / U;
 /** Minimum centre-to-centre separation on one axis, in units. ~52. */
 const SAFE = (PLATE + DAYLIGHT) / U;
 
@@ -204,7 +211,12 @@ const TREE: Branch[] = CAPABILITIES.map((cap, i) => {
      correct — that is the twig the spine continues into. */
   const twigs = groups.flatMap((g) =>
     g.leaves.map((lf) => {
-      const sy = g.y - 20;
+      /* THE LABEL'S TOP EDGE, not a flat 20 units above its centre. The old
+         constant was neither the edge nor the centre, so the fan converged at
+         a point floating above the node and read as unattached - the user
+         spotted it before this did. GROUP_HALF is derived from the label's
+         own height, so the two cannot drift apart again. */
+      const sy = g.y - GROUP_HALF;
       const mid = sy + (lf.y - sy) * 0.55;
       return `M${g.x},${sy} C${g.x},${mid} ${lf.x},${mid} ${lf.x},${lf.y}`;
     }),
@@ -281,6 +293,12 @@ function TreeLeaf({
       }}
     >
       <span className="block transition-transform duration-300 group-hover/leaf:scale-125">
+        {/* `sm` and rounded - the tree's OLDER mark, restored on request.
+            The circular `md` mark that every other variant uses made this
+            canopy read as heavier and less legible: 62 discs at 40px is a
+            lot of white at this density, where 36px squares sit quieter
+            among the twigs. PLATE below still reserves 40px, so the extra
+            4px is simply daylight. */}
         <TechLogo tech={tech} size="sm" />
       </span>
       <span
@@ -317,7 +335,7 @@ function TreeRung({
   return (
     <span
       data-tree-rung
-      className={`pointer-events-none absolute max-w-[150px] rounded-lg border px-2 py-1 text-center text-[10px] font-bold uppercase leading-[1.3] tracking-[0.1em] shadow-sm ring-1 ${h.soft} ${h.ring} ${h.text}`}
+      className={`eco-group pointer-events-none absolute max-w-[150px] rounded-lg border border-border bg-card px-2 py-1 text-center text-[10px] font-bold uppercase leading-[1.3] tracking-[0.1em] shadow-sm ring-1  `}
       style={{
         left: pctX(x),
         top: pctY(y),
@@ -363,6 +381,13 @@ export default function EcosystemTree({
           fill="none"
           strokeLinecap="round"
         >
+          {/* THE SOLID TRUNK, restored on request.
+
+              It was replaced with a filled, tapered shape at 16% opacity on
+              the theory that a trunk should narrow. The user read the result
+              as too faint to see, which is the more important fact: a trunk
+              that cannot be found is not a trunk. Back to the stroke, and it
+              keeps `.eco-line` so it still draws itself on scroll-in. */}
           <g className="text-muted-foreground" stroke="currentColor" opacity={0.45}>
             <path
               d={`M${TRUNK_X},${CORE_Y} L${TRUNK_X},${TRUNK_TOP}`}
@@ -381,6 +406,10 @@ export default function EcosystemTree({
                 key={c.k}
                 className={HUE[c.hue].text}
                 stroke="currentColor"
+                /* Marks the whole open branch as live. The travelling dash
+                   rule matches DESCENDANTS, so one attribute here covers the
+                   limb, the spine and every twig - parent to last leaf. */
+                data-travel={lit ? "true" : undefined}
                 style={{
                   opacity: lit ? 0.95 : dim ? 0.16 : 0.5,
                   /* stroke-width is an INHERITED SVG property, so setting it
@@ -454,7 +483,12 @@ export default function EcosystemTree({
                     hue={c.hue}
                     x={g.x}
                     y={g.y}
-                    opacity={lit ? 1 : dim ? 0 : 0.5}
+                    /* 0.28 at rest, not 0.5. Twenty group labels at half
+                       opacity read as twenty competing headings and made the
+                       canopy look busier than it is - the user called them
+                       too bright. Still 0 when another branch is open: a
+                       closed branch keeps its marks and loses its words. */
+                    opacity={lit ? 1 : dim ? 0 : 0.28}
                     delay={calm || !lit ? 0 : 30 + gi * 45}
                     calm={calm}
                   />
@@ -465,8 +499,13 @@ export default function EcosystemTree({
                       x={lf.x}
                       y={lf.y}
                       align={align as "start" | "centre" | "end"}
-                      opacity={lit ? 1 : dim ? 0.34 : 0.78}
-                      scale={lit ? 1 : 0.87}
+                      /* The dimmed marks were 0.34 at 0.87 scale, which the
+                         user read as too small and too faint to identify. A
+                         closed branch should be quiet, not illegible: these
+                         are the only thing naming a technology, so they stay
+                         readable and let the LINES carry the emphasis. */
+                      opacity={lit ? 1 : dim ? 0.55 : 0.9}
+                      scale={lit ? 1 : 0.96}
                       delay={calm || !lit ? 0 : 70 + gi * 45 + ti * 22}
                       calm={calm}
                     />

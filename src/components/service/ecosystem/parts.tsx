@@ -263,11 +263,20 @@ export function GroupPill({
   hue,
   style,
   delay,
+  dim = false,
 }: {
   label: string;
   hue: Capability["hue"];
   style: React.CSSProperties;
   delay: number;
+  /** Recede WITHOUT going translucent.
+
+      A dimmed pill used to be given a low inline opacity, which let every
+      connector behind it show straight through the label - the struck-through
+      look the user reported, arriving by a second route after the tint was
+      fixed. Opacity cannot dim a label and keep it opaque at the same time.
+      This drops the hue instead: same solid ground, quieter ink and ring. */
+  dim?: boolean;
 }) {
   const h = HUE[hue];
   return (
@@ -276,7 +285,9 @@ export function GroupPill({
        diagram looked struck through. The hue survives in the ring and the
        text; only the ground is now solid. */
     <span
-      className={`eco-grow absolute whitespace-nowrap rounded-full border border-border bg-card px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] shadow-sm ring-1 ${h.ring} ${h.text}`}
+      className={`eco-grow eco-group absolute whitespace-nowrap rounded-full border border-border bg-card px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] shadow-sm ring-1 transition-colors duration-300 ${
+        dim ? "text-muted-foreground ring-border" : `${h.ring} ${h.text}`
+      }`}
       style={{ ...style, "--d": `${delay}ms` } as React.CSSProperties}
     >
       {label}

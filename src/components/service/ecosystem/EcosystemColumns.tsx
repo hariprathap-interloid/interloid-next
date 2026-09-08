@@ -293,11 +293,16 @@ export default function EcosystemColumns({
                 key={`b${i}`}
                 d={e.d}
                 pathLength={1}
-                className="stroke-accent"
+                /* `eco-line` + `data-travel` so the travelling dash reaches the
+                   branch too, not just the core edge - these are the segments
+                   that carry the eye out to the last technology. The inline
+                   dash is dropped once the branch has drawn, because an inline
+                   style outranks the class and would freeze the animation. */
+                className="eco-line stroke-accent"
+                data-travel={phase ? "true" : undefined}
                 strokeWidth={1.25}
                 style={{
-                  strokeDasharray: 1,
-                  strokeDashoffset: phase ? 0 : 1,
+                  ...(phase ? {} : { strokeDasharray: 1, strokeDashoffset: 1 }),
                   opacity: phase ? 0.45 : 0,
                   transition: `stroke-dashoffset .5s cubic-bezier(.16,1,.3,1) ${
                     reduced ? 0 : e.delay
@@ -363,10 +368,10 @@ export default function EcosystemColumns({
                       <Icon name={c.icon} className="size-5" />
                     </span>
                     <span className="min-w-0">
-                      <span className="block font-display text-[13px] font-bold leading-[1.25] tracking-[-0.01em] text-foreground">
+                      <span className="block font-display text-[15px] font-bold leading-[1.25] tracking-[-0.01em] text-foreground">
                         {c.name}
                       </span>
-                      <span className="mt-0.5 block text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
+                      <span className="mt-0.5 block text-[11px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
                         {c.stack.length} groups · {n} tech
                       </span>
                     </span>
@@ -450,7 +455,7 @@ export default function EcosystemColumns({
                               >
                                 <span className={`size-2 shrink-0 rounded-full ${h.tile}`} />
                                 <span
-                                  className={`text-[10px] font-bold uppercase leading-[1.35] tracking-[0.1em] ${h.text}`}
+                                  className={`text-[11px] font-bold uppercase leading-[1.35] tracking-[0.1em] ${h.text}`}
                                 >
                                   {g.group}
                                 </span>
@@ -497,7 +502,7 @@ export default function EcosystemColumns({
                                       className="flex items-center gap-2 rounded-full border border-border bg-background py-1 pl-1 pr-3 transition-colors duration-300 hover:border-accent"
                                     >
                                       <TechLogo tech={t} size="sm" />
-                                      <span className="min-w-0 text-[12px] font-medium leading-[1.2] text-muted-strong">
+                                      <span className="min-w-0 text-[13.5px] font-medium leading-[1.25] text-muted-strong">
                                         {t.name}
                                       </span>
                                     </span>
@@ -535,7 +540,7 @@ export default function EcosystemColumns({
    inside the panel, so they have to agree with the two outside it. */
 function ColHead({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-9 shrink-0 items-end border-b border-hairline pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+    <div className="flex h-9 shrink-0 items-end border-b border-hairline pb-2 text-[11px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
       {children}
     </div>
   );

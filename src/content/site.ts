@@ -31,6 +31,14 @@ export type Hue = "brand" | "accent" | "light" | "indigo" | "teal";
    same reason as `glow` below — a variant prefix is as invisible to the
    scanner as a `/10` suffix if either is glued on at runtime.
 
+   `solidHover` was added 2026-09-08 for /about's Shape tiles, which fill
+   SOLID on hover rather than deepening. It exists for the same reason as
+   everything else in this map: the first version of that component wrote
+   `h.tile.replace("bg-", "group-hover:bg-")`, which is a class built at
+   runtime and therefore invisible to the scanner — the tile would simply
+   never have filled, with no error. If a variant is needed, add it here as a
+   whole string; never derive one from another.
+
    `glow` exists ONLY because of the build. The prototype composed the blur
    colour at runtime as `${h.tile}/10`, which the Tailwind *browser CDN*
    happily generated on the fly. A compiled build scans source for complete
@@ -43,6 +51,7 @@ export const HUE: Record<
     tile: string;
     soft: string;
     softHover: string;
+    solidHover: string;
     ring: string;
     text: string;
     glow: string;
@@ -52,6 +61,7 @@ export const HUE: Record<
     tile: "bg-brand",
     soft: "bg-brand/10",
     softHover: "group-hover:bg-brand/20",
+    solidHover: "group-hover:bg-brand",
     ring: "ring-brand/15",
     text: "text-brand",
     glow: "bg-brand/10",
@@ -60,6 +70,7 @@ export const HUE: Record<
     tile: "bg-accent",
     soft: "bg-accent/10",
     softHover: "group-hover:bg-accent/20",
+    solidHover: "group-hover:bg-accent",
     ring: "ring-accent/15",
     text: "text-accent-strong",
     glow: "bg-accent/10",
@@ -68,6 +79,7 @@ export const HUE: Record<
     tile: "bg-brand-light",
     soft: "bg-brand-light/10",
     softHover: "group-hover:bg-brand-light/20",
+    solidHover: "group-hover:bg-brand-light",
     ring: "ring-brand-light/15",
     text: "text-brand-light",
     glow: "bg-brand-light/10",
@@ -76,6 +88,7 @@ export const HUE: Record<
     tile: "bg-indigo-600",
     soft: "bg-indigo-600/10",
     softHover: "group-hover:bg-indigo-600/20",
+    solidHover: "group-hover:bg-indigo-600",
     ring: "ring-indigo-600/15",
     text: "text-indigo-600",
     glow: "bg-indigo-600/10",
@@ -84,6 +97,7 @@ export const HUE: Record<
     tile: "bg-teal-600",
     soft: "bg-teal-600/10",
     softHover: "group-hover:bg-teal-600/20",
+    solidHover: "group-hover:bg-teal-600",
     ring: "ring-teal-600/15",
     text: "text-teal-600",
     glow: "bg-teal-600/10",
@@ -377,14 +391,30 @@ export const PULL_QUOTE = {
    somebody reads the actual contract. Do not un-flag it to tidy the page up.
    ========================================================================== */
 
-/* The archive's hero, verbatim. `ctaHref` is /#contact (gotcha 9 — the
-   section only exists on home); `subHref` is a bare fragment on purpose,
-   because #agreement IS on this page. */
+/* The hero. Rewritten 2026-09-08 from user-supplied copy, replacing the
+   archive's "Every vendor sounds identical." `ctaHref` is /#contact (gotcha 9
+   — the section only exists on home); `subHref` is a bare fragment on
+   purpose, because #agreement IS on this page.
+
+   The copy arrived as one block with a bold opening line, two paragraphs and
+   a bold close, so it maps: bold line → head/accent, paragraphs → lead/body,
+   bold close → kicker.
+
+   ⚠ `kicker` RESTATES THE §7 P1 CLAIM the Clauses foot already carries —
+   "commitments carried into every engagement agreement". It is the same
+   unverified assertion, now moved ABOVE THE FOLD, so WhyHero renders it
+   data-placeholder. Do not un-flag either copy without reading the real
+   contract; see the block comment above. Everything else here is on the
+   allowed list: code and infrastructure in your accounts, the engineers you
+   meet, price before work starts, weekly demonstrated progress, 30 days
+   post-launch. */
 export const WHY_HERO = {
   eyebrow: "Why Interloid",
-  head: "Every vendor sounds identical.",
-  accent: "Our contract doesn't.",
-  lead: "The pitch-deck promises are the same everywhere: senior people, transparency, partnership. So we stopped asking clients to take our word for it. Below is what working with Interloid commits us to, in plain language.",
+  head: "Clarity from day one. Progress every week.",
+  accent: "No surprises at the end.",
+  lead: "Most technology partners promise transparency, senior engineers, flexibility, and partnership. We believe those words only matter when they become measurable commitments. That’s why every Interloid engagement is backed by clear terms covering ownership, people, pricing, visibility, and exit — from the first commit through 30 days after launch.",
+  body: "Your code and infrastructure stay in your accounts. The engineers you meet are the engineers working on your project. Pricing is agreed before work begins, progress is demonstrated every week, and you always retain control of the work and the accounts it lives in.",
+  kicker: "These aren’t promises for a sales deck. They’re commitments carried into every engagement agreement.",
   cta: "Book a free 30-min consult",
   ctaHref: "/#contact",
   sub: "Read the agreement",
@@ -958,6 +988,171 @@ export const FIT_NO = [
   { k: "receipt", t: "You want a market salary in year one. It is ₹10,000 a month, fixed, and we would rather you knew now." },
   { k: "user-check", t: "You are looking for a senior role. We are not hiring seniors at the moment." },
 ] as const;
+
+/* ==========================================================================
+   LIFE — the bento. Added 2026-09-08 on request.
+   ==========================================================================
+   The reference careers page (conversedatasolutions.com/careers) has a "Life
+   at Converse" block: four photographs of the office in a bento, captioned
+   "A collaborative, fast-paced, and incredibly rewarding environment."
+
+   This site.ts banner previously listed that section as one of the two things
+   deliberately NOT reproduced. The user asked for it directly, which is
+   CLAUDE.md §8's case: flag once, then build and mark it. This is the build,
+   and the note above has been amended rather than left contradicting it.
+
+   ── `img: null`, THE SAME SWITCH THE /about ROSTER USES ──────────────────
+   Every tile has an `img` field and every one is `null`. Until a real
+   photograph exists the tile renders a DESIGNED fallback — a hue-washed panel
+   with a glyph watermark and the caption — rather than an empty frame, which
+   advertises the absence and looks broken.
+
+   Drop a file into `public/life/` and set `img` to its filename: the tile
+   switches to the photograph with the caption over a scrim, and nothing else
+   changes. That is the whole reason it is shaped this way instead of waiting.
+
+   NOT stock photography, under any circumstances. A stock office with people
+   who do not work here is the same fabrication as an invented colleague, and
+   on a page aimed at people who would be IN that room it is worse — they will
+   see the real one on day one.
+
+   ── THE COPY IS THE OTHER HALF OF THE POINT ──────────────────────────────
+   "Collaborative, fast-paced and incredibly rewarding" is three adjectives
+   nobody can check and every company claims. Each tile here says something
+   specific and falsifiable instead — where people sit, what happens on a
+   Friday, what the hours are — which is the same standard the rest of this
+   page holds itself to.
+
+   ⚠ ALL FOUR ARE UNVERIFIED. They describe an office none of this was written
+   from. The grid carries data-placeholder for the set. Confirm or correct each
+   one before publishing, and delete any that are not true rather than
+   softening them into adjectives.
+   ========================================================================== */
+/* ==========================================================================
+   GALLERY — the moments rail under "Life here" on /careers.
+   ==========================================================================
+   EVERY `img` IS null, AND THAT IS THE POINT. GalleryRail renders a quiet
+   captioned frame when `img` is null and a photograph when it is a filename
+   in `public/gallery/`. There is no `public/gallery/` directory yet, and
+   until there are REAL photographs of THIS office, there must not be one:
+
+     · CLAUDE.md §6 P1 is explicit that we do not launch with invented people.
+     · site.ts's own careers banner records that the reference site's "Life
+       at …" photo bento was deliberately NOT reproduced, because stock faces
+       on a careers page are the exact failure the review calls "asking for
+       trust while showing no proof".
+     · A stock photograph of a generic office is worse here than an empty
+       frame. The frame reads as a company that has not taken the photographs
+       yet; the stock shot reads as one that is pretending.
+
+   So the captions are written first and the pictures arrive later. Each one
+   describes a thing that actually happens in the room, so a photographer has
+   a brief rather than a mood board — and each is checkable, which is what
+   keeps this section honest while it waits.
+
+   TO SHIP A PHOTO: drop the file in `public/gallery/`, put its filename in
+   `img`, and the rail switches that card to the image treatment on its own.
+   Nothing else changes.
+
+   ⚠ These captions describe the training floor as the careers page describes
+   it elsewhere (on site, six months, seniors and trainees in one room). They
+   inherit the same claim status as PROGRAMME and TERMS: if the real
+   arrangement differs, these are wrong too. */
+export const GALLERY = [
+  {
+    tag: "The floor",
+    title: "One room, two benches, no partition",
+    body: "Seniors and trainees on the same floor. The nearest person who knows the answer is usually within earshot.",
+    img: null,
+  },
+  {
+    tag: "Friday",
+    title: "The demo everyone stands for",
+    body: "Whoever built the thing presents it, trainees included. Five minutes, working software, no slides.",
+    img: null,
+  },
+  {
+    tag: "Reviews",
+    title: "Pull requests read out loud",
+    body: "A review is a conversation at a desk before it is a comment thread. It is the fastest way anyone here has learned to write code.",
+    img: null,
+  },
+  {
+    tag: "The board",
+    title: "The week, on a wall",
+    body: "What is in progress, what is blocked, and who is waiting on whom — visible from the door rather than buried in a tool.",
+    img: null,
+  },
+  {
+    tag: "Lunch",
+    title: "The hour nobody schedules over",
+    body: "Everyone eats at the same time. It is the only meeting of the day that has never needed an agenda.",
+    img: null,
+  },
+  {
+    tag: "Gobichettipalayam",
+    title: "A commute measured in minutes",
+    body: "The office is in town, not on a campus an hour out of it. Most of the team walks or rides in.",
+    img: null,
+  },
+] as const satisfies readonly {
+  tag: string;
+  title: string;
+  body: string;
+  /** A filename in `public/gallery/`, or null for the waiting frame. */
+  img: string | null;
+}[];
+
+export const LIFE = [
+  {
+    k: "users",
+    hue: "brand",
+    /* `span` is the bento arrangement, and the four values are load-bearing
+       together — see LifeHere.tsx. Whole class strings, never composed. */
+    span: "lg:col-span-2 lg:row-span-2",
+    tag: "The room",
+    title: "One floor, and everyone is on it",
+    body: "Seniors sit with trainees. There is no separate area for either, which is mostly why the training works — you overhear the answer to a question you had not thought to ask yet.",
+    img: null,
+  },
+  {
+    k: "monitor-play",
+    hue: "accent",
+    span: "lg:col-span-2",
+    tag: "Friday",
+    title: "The demo everyone stops for",
+    body: "Client demos run at the end of the week and the office watches. In your second six months, one of them is yours to present.",
+    img: null,
+  },
+  {
+    k: "layers",
+    hue: "teal",
+    span: "",
+    tag: "The town",
+    title: "Gobichettipalayam",
+    body: "Not a metro, and that is the point — a short commute, and an office people actually come to.",
+    img: null,
+  },
+  {
+    k: "clock",
+    hue: "indigo",
+    span: "",
+    tag: "The hours",
+    title: "Twelve, and we say so",
+    body: "Through training the days are long. Nobody finds that out in month two.",
+    img: null,
+  },
+] as const satisfies readonly {
+  k: string;
+  hue: Hue;
+  span: string;
+  tag: string;
+  title: string;
+  body: string;
+  /** Filename in `public/life/`, or null for the designed fallback. This one
+   *  field is the switch between the honest state and the finished one. */
+  img: string | null;
+}[];
 
 /* Candidate FAQ. Every question here is one that would otherwise be asked on
    a call, and three of them are the awkward ones. */

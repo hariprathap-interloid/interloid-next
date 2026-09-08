@@ -54,7 +54,10 @@ import { useEcosystem } from "./useEcosystem";
    ========================================================================== */
 
 const ANCHOR = 0; // the selected service always swings to due right
-const AWAY_SPREAD = 210; // the arc the other five share, centred opposite
+/* 250, not 210. The five closed services share the far arc, and at 210 two of
+   them collided - measured, Web Development on Staff Augmentation. They have
+   the room; they were simply not being given it. */
+const AWAY_SPREAD = 250; // the arc the other five share, centred opposite
 
 export default function EcosystemShells({
   idPrefix = "shells",

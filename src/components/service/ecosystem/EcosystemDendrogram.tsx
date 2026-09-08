@@ -279,11 +279,27 @@ export default function EcosystemDendrogram({
             reason Backend's arc is wider than Mobile's is that Backend has
             four more technologies, and a reader should be able to see that
             without touching anything. */}
-        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        {/* THE WEDGE IS THE HIT TARGET, not just the service tile.
+
+            Hovering only worked from the small tile at the centre of a wedge,
+            so the group labels and the marks - the parts a reader is actually
+            looking at - did nothing. The wedge already exists and already
+            describes exactly the region that belongs to one service, so it
+            becomes the hover target for it: anywhere inside Backend's arc
+            opens Backend.
+
+            It reuses `nodeProps(i).onMouseEnter`, so it inherits the pinning
+            rule and the moving-layout guard rather than growing a second,
+            slightly-different selection path. The wedges stay `aria-hidden`
+            and are drawn first, so they sit under every node: the buttons
+            remain the only thing in the accessibility tree and the only
+            thing a keyboard reaches. */}
+        <div className="absolute inset-0" aria-hidden="true">
           {LAYOUT.map((s, i) => (
             <div
               key={s.cap.k}
-              className={`absolute inset-0 ${HUE[s.cap.hue].soft}`}
+              onMouseEnter={eco.nodeProps(i).onMouseEnter}
+              className={`absolute inset-0 cursor-pointer ${HUE[s.cap.hue].soft}`}
               style={{
                 clipPath: wedgeClip(s.wedge[0], s.wedge[1]),
                 opacity: !eco.engaged ? 0.5 : lit(i) ? 1 : 0.16,
@@ -332,6 +348,7 @@ export default function EcosystemDendrogram({
                  the draw-on never happens. */
               <g
                 key={s.cap.k}
+                data-travel={eco.engaged && lit(i) ? "true" : undefined}
                 style={{
                   opacity: !eco.engaged ? 0.42 : lit(i) ? 0.85 : 0.12,
                   transition: "opacity .35s ease-out",
@@ -437,11 +454,15 @@ export default function EcosystemDendrogram({
                   label={g.label}
                   hue={s.cap.hue}
                   delay={gi * 40}
+                  dim={eco.engaged && !lit(i)}
                   style={{
                     left: `${polar(R_GROUP, g.angle).x}%`,
                     top: `${polar(R_GROUP, g.angle).y}%`,
                     transform: pillTransform(g.angle),
-                    opacity: eco.engaged ? (lit(i) ? 1 : 0.14) : undefined,
+                    /* dim by COLOUR, not opacity - see GroupPill. A
+                       translucent label lets the links behind it show
+                       through, which is the struck-out look reported. */
+                    opacity: undefined,
                   }}
                 />
                 {g.marks.map((m, ti) => {
@@ -454,7 +475,10 @@ export default function EcosystemDendrogram({
                       style={{
                         left: `${p.x}%`,
                         top: `${p.y}%`,
-                        opacity: eco.engaged ? (lit(i) ? 1 : 0.14) : undefined,
+                        /* dim by COLOUR, not opacity - see GroupPill. A
+                       translucent label lets the links behind it show
+                       through, which is the struck-out look reported. */
+                    opacity: undefined,
                       }}
                     />
                   );
