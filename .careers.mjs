@@ -11,9 +11,9 @@
      2. every term stated on the page agrees with TERMS in site.ts — the
         stipend, the training length, the hours and the agreement appear in
         several sections and must never disagree
-     3. every tech icon a role asks for actually renders, with an accessible
-        name (an icon-only chip that fails to draw is invisible, not obviously
-        broken)
+     3. every tech logo a role asks for actually LOADS, with an accessible
+        name — a bad filename is a 404 that draws nothing inside a plate that
+        still renders, so it looks empty rather than broken
      4. senior content is PARKED, not published
      5. placeholder count, heading outline, overflow, shots in both themes
 
@@ -98,23 +98,31 @@ ok(
   "the remote question is answered no",
 );
 
-/* --- 3. tech marks render, and are named --------------------------------- */
+/* --- 3. tech logos load, and are named ----------------------------------- */
+/* These are now REAL FILES out of public/tech/, rendered by the same
+   service/TechLogo the /services page uses — not the nine SVGs that were
+   hand-drawn here first. That changes the failure mode, and this check with
+   it: a wrong `file` in site.ts is a 404 whose <img> draws NOTHING inside a
+   plate that still renders, so the card looks merely empty rather than broken.
+   naturalWidth is the only thing that can tell the difference. */
 const icons = await p.evaluate(() => {
-  const svgs = [...document.querySelectorAll('#openings svg[role="img"]')];
+  const plates = [...document.querySelectorAll('#openings span[role="img"]')];
+  const imgs = plates.map((s) => s.querySelector("img")).filter(Boolean);
   return {
-    count: svgs.length,
-    unnamed: svgs.filter((s) => !s.getAttribute("aria-label")).length,
-    empty: svgs.filter((s) => !s.children.length).length,
-    names: [...new Set(svgs.map((s) => s.getAttribute("aria-label")))].sort(),
+    plates: plates.length,
+    imgs: imgs.length,
+    unnamed: plates.filter((s) => !s.getAttribute("aria-label")).length,
+    broken: imgs.filter((i) => !i.complete || i.naturalWidth === 0).map((i) => i.getAttribute("src")),
+    names: [...new Set(plates.map((s) => s.getAttribute("aria-label")))].sort(),
   };
 });
-/* Four roles × four marks. A TechIcon key with no entry returns null and the
-   chip draws an empty plate — invisible rather than obviously wrong — so the
-   COUNT is checked, not just that some of them drew. */
-ok(icons.count === 16, `16 tech marks rendered (${icons.count})`);
-ok(icons.unnamed === 0, `every mark has an accessible name (${icons.unnamed} without)`);
-ok(icons.empty === 0, `every mark has geometry (${icons.empty} empty)`);
-console.log(`  marks: ${icons.names.join(", ")}`);
+ok(icons.plates === 16, `16 tech logos rendered (${icons.plates})`);
+/* Zero monograms expected: every technology named on this page has a file in
+   the set. A plate with no <img> means a `file` went missing from site.ts. */
+ok(icons.imgs === 16, `all 16 are real logo files, not monograms (${icons.imgs})`);
+ok(icons.broken.length === 0, `every logo file loaded (${icons.broken.join(", ") || "none broken"})`);
+ok(icons.unnamed === 0, `every logo has an accessible name (${icons.unnamed} without)`);
+console.log(`  logos: ${icons.names.join(", ")}`);
 
 /* --- 4. senior content is parked, and said out loud ---------------------- */
 ok(!/L \/ year/.test(body), "no senior salary bands on the page");

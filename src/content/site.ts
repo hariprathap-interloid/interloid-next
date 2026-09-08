@@ -11,6 +11,18 @@
    Anything NOT on that list stays data-placeholder — see CASES and QUOTES.
    ========================================================================== */
 
+/* The tech-logo shape is DEFINED IN content/service.ts and imported rather
+   than redeclared: /careers and /services both render technology marks through
+   the same TechLogo component, and two structurally-identical types would
+   drift the first time one of them gained a field.
+
+   This and service.ts's `import type { Hue } from "./site"` form a CYCLE, and
+   it is a safe one only because both are `import type`: TypeScript erases them
+   completely, so no `require` of either module ever waits on the other. If
+   either side is ever changed to a value import the cycle becomes real — move
+   the shared types to a third file at that point rather than untangling it. */
+import type { Tech } from "./service";
+
 export type Hue = "brand" | "accent" | "light" | "indigo" | "teal";
 
 /* DS §2.3: one hue per category, reused wherever that category appears.
@@ -647,10 +659,20 @@ export const PROGRAMME_META = [
 /* ==========================================================================
    ROLES — trainee, four of them.
 
-   `tech` holds TechIcon keys, not display strings: the user asked for the
-   technologies to read as icons rather than as another row of word chips.
-   Every key must exist in TechIcon.tsx or the mark silently does not render —
-   the icon list is the contract between these two files.
+   `tech` holds `{ name, file }` — the `Tech` shape from content/service.ts —
+   because the technologies read as ICONS here rather than as another row of
+   word chips (the user's request, 2026-09-08).
+
+   REAL LOGO FILES, NOT DRAWINGS. The first pass hand-authored nine SVG marks
+   in a `TechIcon.tsx`. That file is deleted: `public/tech/` already holds the
+   published logos and `components/service/TechLogo.tsx` already renders them,
+   so the drawings were a second, worse copy of something the project had. Two
+   were not even the right mark (Postgres drawn as a cylinder, Docker as
+   stacked boxes) and two more had to be redrawn after rendering badly at 20px.
+
+   Every `file` must exist in `public/tech/`. An <img> with a 404 src draws
+   nothing and the plate goes blank — invisible rather than obviously broken —
+   so `.careers.mjs` asserts all sixteen actually load.
 
    No `pay` field any more. Compensation is identical across all four roles and
    lives in TERMS, so repeating it per card would be four places to correct
@@ -662,7 +684,12 @@ export const ROLES = [
     title: "React Developer — Trainee",
     hue: "brand",
     track: "Frontend",
-    tech: ["react", "typescript", "tailwind", "git"],
+    tech: [
+      { name: "React.js", file: "reactjs.svg" },
+      { name: "TypeScript", file: "typescript.svg" },
+      { name: "Tailwind CSS", file: "tailwindcss.svg" },
+      { name: "Git", file: "git.svg" },
+    ],
     summary:
       "Build the screens people actually use. You will learn components, state and accessibility on a real client product rather than on a to-do app.",
     look: [
@@ -675,7 +702,12 @@ export const ROLES = [
     title: "Ruby on Rails Developer — Trainee",
     hue: "accent",
     track: "Backend",
-    tech: ["ruby", "postgres", "git", "docker"],
+    tech: [
+      { name: "Ruby on Rails", file: "rails.svg" },
+      { name: "PostgreSQL", file: "postgresql.svg" },
+      { name: "Git", file: "git.svg" },
+      { name: "Docker", file: "docker.svg" },
+    ],
     summary:
       "Learn the framework that made most of the web's conventions. Models, migrations, background jobs, and why the boring answer is usually right.",
     look: [
@@ -688,7 +720,12 @@ export const ROLES = [
     title: "Python Developer — Trainee",
     hue: "teal",
     track: "Backend · Data",
-    tech: ["python", "postgres", "git", "docker"],
+    tech: [
+      { name: "Python", file: "python.svg" },
+      { name: "PostgreSQL", file: "postgresql.svg" },
+      { name: "Git", file: "git.svg" },
+      { name: "Docker", file: "docker.svg" },
+    ],
     summary:
       "APIs, data pipelines and the model-backed features on top of them. The stack where a careful, methodical person gets good fastest.",
     look: [
@@ -701,7 +738,12 @@ export const ROLES = [
     title: "Node.js Developer — Trainee",
     hue: "indigo",
     track: "Backend",
-    tech: ["node", "typescript", "postgres", "git"],
+    tech: [
+      { name: "Node.js", file: "nodejs.svg" },
+      { name: "TypeScript", file: "typescript.svg" },
+      { name: "PostgreSQL", file: "postgresql.svg" },
+      { name: "Git", file: "git.svg" },
+    ],
     summary:
       "The server side of the products the React trainees build. Routes, databases, authentication, and what happens when two requests arrive at once.",
     look: [
@@ -714,7 +756,7 @@ export const ROLES = [
   title: string;
   hue: Hue;
   track: string;
-  tech: readonly string[];
+  tech: readonly Tech[];
   summary: string;
   look: readonly string[];
 }[];
@@ -740,7 +782,12 @@ export const SENIOR_ROLES = [
     hue: "brand",
     disciplines: ["Frontend"],
     seniority: "6+ years",
-    tech: ["react", "typescript", "tailwind", "git"],
+    tech: [
+      { name: "React.js", file: "reactjs.svg" },
+      { name: "TypeScript", file: "typescript.svg" },
+      { name: "Tailwind CSS", file: "tailwindcss.svg" },
+      { name: "Git", file: "git.svg" },
+    ],
     pay: "₹28–42L / year",
     summary:
       "Own the front end of a client product end to end — the component library, the data layer, the accessibility, and the Friday demo that shows it working.",
@@ -751,7 +798,12 @@ export const SENIOR_ROLES = [
     hue: "accent",
     disciplines: ["Backend"],
     seniority: "6+ years",
-    tech: ["ruby", "postgres", "docker", "git"],
+    tech: [
+      { name: "Ruby on Rails", file: "rails.svg" },
+      { name: "PostgreSQL", file: "postgresql.svg" },
+      { name: "Docker", file: "docker.svg" },
+      { name: "Git", file: "git.svg" },
+    ],
     pay: "₹28–42L / year",
     summary:
       "Take Rails applications that grew faster than their design and make them boring again — without a rewrite nobody funded.",
@@ -762,7 +814,12 @@ export const SENIOR_ROLES = [
     hue: "teal",
     disciplines: ["Backend", "Data & AI"],
     seniority: "6+ years",
-    tech: ["python", "postgres", "docker", "git"],
+    tech: [
+      { name: "Python", file: "python.svg" },
+      { name: "PostgreSQL", file: "postgresql.svg" },
+      { name: "Docker", file: "docker.svg" },
+      { name: "Git", file: "git.svg" },
+    ],
     pay: "₹30–45L / year",
     summary:
       "Build the pipelines, and the model-backed features on top of them, with evaluation, cost ceilings and lineage — not a notebook that impressed once.",
@@ -773,7 +830,12 @@ export const SENIOR_ROLES = [
     hue: "indigo",
     disciplines: ["Backend", "Platform"],
     seniority: "6+ years",
-    tech: ["node", "typescript", "postgres", "git"],
+    tech: [
+      { name: "Node.js", file: "nodejs.svg" },
+      { name: "TypeScript", file: "typescript.svg" },
+      { name: "PostgreSQL", file: "postgresql.svg" },
+      { name: "Git", file: "git.svg" },
+    ],
     pay: "₹28–42L / year",
     summary:
       "Design the APIs everything else in the product leans on — and the unglamorous operational work that keeps them up at 3am without you.",

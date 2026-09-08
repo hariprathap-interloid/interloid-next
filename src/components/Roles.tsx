@@ -1,6 +1,6 @@
 import Icon from "./Icon";
 import SectionHeading from "./SectionHeading";
-import TechIcon from "./TechIcon";
+import TechLogo from "./service/TechLogo";
 import { HUE, ROLES, TERMS } from "@/content/site";
 
 /* ==========================================================================
@@ -18,14 +18,18 @@ import { HUE, ROLES, TERMS } from "@/content/site";
    JavaScript, same information.
 
    ── THE STACK IS ICONS, NOT WORDS ────────────────────────────────────────
-   On request. `tech` in site.ts holds TechIcon keys, and each mark carries its
-   own accessible name and a hover tooltip — see TechIcon.tsx, which is also
-   where the note lives about why brand marks are not in Icon.tsx.
+   On request. This renders `service/TechLogo`, which draws the real published
+   marks out of `public/tech/` — the SAME component /services uses, so the two
+   pages cannot drift into showing a technology two different ways.
 
-   The chips are `bg-white` in BOTH themes, deliberately: brand colours are
-   fixed hexes, and several of them (Node's green, Postgres blue) fall below
-   readable contrast on the dark card. A constant light plate is what keeps a
-   mark looking like itself in either theme.
+   It replaced nine SVGs hand-authored here on 2026-09-08, which were deleted
+   the moment the logo set turned out to already exist. Two of them were not
+   the right mark at all (Postgres as a cylinder, Docker as stacked boxes), and
+   the drawings had no chance of staying in step with /services. Reaching for
+   the existing component was the whole fix.
+
+   TechLogo carries the white plate, the accessible name and the tooltip, and
+   its own file explains why the plate stays white in both themes.
 
    NO SALARY ON THE CARD. Every role here has identical terms, so they live in
    TERMS and are stated once, in PROGRAMME. Repeating them per card would be
@@ -109,11 +113,11 @@ export default function Roles() {
                   <div className="relative mt-auto flex items-center justify-between gap-4 border-t border-hairline pt-6">
                     <ul className="flex items-center gap-2">
                       {r.tech.map((t) => (
-                        <li
-                          key={t}
-                          className="grid size-9 place-items-center rounded-xl bg-white ring-1 ring-border"
-                        >
-                          <TechIcon name={t} className="size-5" />
+                        /* TechLogo IS the plate — it renders its own
+                           `size-9 rounded-xl bg-white ring-1` wrapper, so this
+                           <li> must not draw a second one around it. */
+                        <li key={t.name} className="flex">
+                          <TechLogo tech={t} size="sm" />
                         </li>
                       ))}
                     </ul>

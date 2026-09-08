@@ -48,26 +48,41 @@ export default function Preview() {
               Only the layout differs, so the comparison is about layout rather
               than decoration. Try each one with the mouse, then with the
               keyboard (Tab to a service, then arrow keys), then at a narrow
-              window. The one on /services today is A.
+              window. The one on /services today is B.
             </p>
           </div>
         </header>
 
         {[
           {
-            v: "bloom" as const,
-            title: "A · Radial bloom",
-            note: "Closest to the reference. The wheel never moves; the neighbours recede and the open branch borrows their angle. Technology names are on hover only — at this radius there is no room for forty labels.",
+            v: "branch" as const,
+            title: "B · Branch tree  —  SHIPPING ON /services",
+            note: "The wheel picks, a card explains. The only layout that shows every technology NAME without a hover, and the only one whose nodes never move under your cursor. Unanimous pick of the design, frontend and accessibility reviews.",
           },
           {
-            v: "branch" as const,
-            title: "B · Branch tree",
-            note: "The wheel becomes a picker and the subtree unfolds as a readable tree beside it. The only variant that can show every technology NAME without a hover. Less of an “ecosystem”, more of a diagram plus a panel.",
+            v: "constellation" as const,
+            title: "D · Connected constellation",
+            note: "Your first screenshot as the resting state. Opening a service draws real edges core → service → group → technology, so level 3 is joined to its parent instead of floating near it. Bigger marks.",
+          },
+          {
+            v: "bloom" as const,
+            title: "A · Radial bloom",
+            note: "Closest to the reference. The wheel never moves; the neighbours recede and the open branch borrows their angle. Level 3 sits on an outer arc with no edges — the thing the constellation variant fixes.",
+          },
+          {
+            v: "tree" as const,
+            title: "F · Tech tree",
+            note: "Your tree references. Trunk = Interloid, branches = the six services, twigs = the groups, leaves = every technology mark. Nothing is hidden: the whole stack is visible at once.",
+          },
+          {
+            v: "columns" as const,
+            title: "H · Flow columns",
+            note: "The deliberately non-circular answer. Four columns — core, services, groups, technologies — joined by bezier links, with a readable name on every single node.",
           },
           {
             v: "shells" as const,
             title: "C · Orbit shells",
-            note: "The wheel turns so the open service always points right, and the other five compress opposite. Every branch is the same shape, which makes it learnable — at the cost of moving all six nodes on every hover.",
+            note: "The wheel turns so the open service always points right and the other five compress opposite. Every branch is the same shape, at the cost of moving all six nodes on every selection.",
           },
         ].map(({ v, title, note }) => (
           <div key={v}>
