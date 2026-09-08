@@ -40,7 +40,9 @@ ok("home · hero cue → #advantage", (await page.locator('a[href="#advantage"]'
 /* ---- /services structure ---------------------------------------------- */
 await page.goto(BASE + "/services", { waitUntil: "networkidle" });
 await page.waitForTimeout(700);
-for (const id of ["services-top", "problems", "capabilities", "technologies", "approach", "engagement", "terms", "start"])
+/* `terms` was removed 2026-09-08 — it restated `engagement` and
+   /why-choose-us and added nothing. See the page banner. */
+for (const id of ["services-top", "problems", "capabilities", "technologies", "approach", "engagement", "start"])
   ok(`services · #${id}`, (await page.locator(`#${id}`).count()) === 1);
 ok("services · exactly one h1", (await page.locator("h1").count()) === 1);
 /* The live site's outcome bullets carry unverified performance numbers; each
@@ -198,7 +200,6 @@ for (const [id, name] of [
   ["approach", "svc-approach"],
   ["technologies", "svc-ecosystem"],
   ["engagement", "svc-engagement"],
-  ["terms", "svc-terms"],
 ]) {
   await page.evaluate((i) => document.getElementById(i).scrollIntoView({ behavior: "instant", block: "start" }), id);
   await page.waitForTimeout(700);

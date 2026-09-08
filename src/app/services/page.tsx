@@ -9,7 +9,6 @@ import EngagementPanel from "@/components/service/EngagementPanel";
 import { ModeProvider } from "@/components/service/ModeContext";
 import ProblemLedger from "@/components/service/ProblemLedger";
 import ServiceHero from "@/components/service/ServiceHero";
-import ServiceTerms from "@/components/service/ServiceTerms";
 import { SERVICE_START } from "@/content/service";
 
 export const metadata: Metadata = {
@@ -41,8 +40,22 @@ export const metadata: Metadata = {
      ApproachPrinciples   the method — with the last line of each principle
                           written for the mode you picked.
      EngagementPanel      the terms of that mode, before anything is asked.
-     ServiceTerms         the five figures that hold either way.
      CtaAnchor            the consult, on the site's standard dark slab.
+
+   ── WHAT WAS REMOVED, AND WHY ────────────────────────────────────────────
+   `ServiceTerms` — "the same five terms, either way" — was cut 2026-09-08.
+   It said nothing the page had not already said. Counted on the running page:
+   "weekly working demo" appeared in five sections, "48 hours to a written
+   price" in four, "30 days' notice" in four, "your IP / your accounts" in
+   three — and `terms` was one of the sources in every one of those rows. All
+   five of its figures are stated as full sentences in `engagement`
+   immediately above it, two of them a third time in `approach` above that,
+   and the set is a 1:1 restatement of the five clauses that are the whole of
+   /why-choose-us. Even "8–12 yrs per engineer, no juniors" is already the
+   first outcome bullet of the Staff Augmentation capability.
+
+   `ServiceTerms.tsx` and `SERVICE_TERMS` are KEPT and merely uncalled, the
+   same way TechStacks is: restoring the section is an import and a line.
 
    ── ARCHITECTURE ─────────────────────────────────────────────────────────
    `ModeProvider` is the only Client boundary that spans sections; four
@@ -57,8 +70,8 @@ export const metadata: Metadata = {
    component changes.
 
    ── SECTION GROUNDS ──────────────────────────────────────────────────────
-   secondary → background → secondary → background → secondary → card band →
-   the CTA's light band. Each section owns its own ground and `border-t`.
+   secondary → background → secondary → background → secondary → the CTA's
+   light band. Each section owns its own ground and `border-t`.
 
    ── CLAIMS ───────────────────────────────────────────────────────────────
    The content is interloid.com's OWN #services and #technologies sections,
@@ -89,7 +102,6 @@ export default function Services() {
           <CapabilitiesAndStacks />
           <ApproachPrinciples />
           <EngagementPanel />
-          <ServiceTerms />
         </ModeProvider>
 
         {/* `id="start"`, not "contact": the nav and the footer both point at
