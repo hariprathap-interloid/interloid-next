@@ -124,14 +124,19 @@ export default function CapabilityShowcase({
                   }}
                   data-cap-index={i}
                   id={`capability-${c.k}`}
-                  /* 58vh, not 78, and `justify-start` above `lg`. The
-                     height is scroll distance for the sticky panel to swap
-                     on, nothing else — at 78vh with the content centred, a
-                     short capability sat in three-quarters of a screen of
-                     air, split above and below it. What is left now falls
-                     under the text, where it reads as separation rather than
-                     as a hole. */
-                  className="flex scroll-mt-32 flex-col justify-center border-b border-border py-12 last:border-b-0 lg:min-h-[58vh] lg:justify-start lg:border-b-0 lg:py-14"
+                  /* TWO NUMBERS, TWO JOBS. `min-h` is scroll distance for
+                     the sticky panel to swap on; `py` is the separation
+                     between one capability and the next. They were confused
+                     once in each direction: 78vh with the content CENTRED put
+                     240px of nothing between the section heading and the
+                     first block, and dropping to 58vh with `py-14` then left
+                     only 147px between blocks — too little for an item that
+                     is a heading, three paragraphs and a list.
+
+                     `justify-start` keeps the slack below the text instead of
+                     splitting it above and below, and the separation is `py`
+                     now, where it can be read as separation. */
+                  className="flex scroll-mt-32 flex-col justify-center border-b border-border py-12 last:border-b-0 lg:min-h-[58vh] lg:justify-start lg:border-b-0 lg:py-24"
                 >
                   <div
                     data-reveal

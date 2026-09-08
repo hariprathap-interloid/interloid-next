@@ -168,6 +168,24 @@ export const ICONS = {
       <path d="m21 21-4.3-4.3" />
     </>
   ),
+  /* ── SERVICE MARKS ───────────────────────────────────────────────────
+     Added 2026-09-08 for two of the six services whose marks said the wrong
+     thing: `phone` is a telephone receiver ("call us") and `layers` is the
+     Interloid logo itself, worn by the core of the ecosystem wheel. */
+  smartphone: (
+    <>
+      <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
+      <path d="M12 18h.01" />
+    </>
+  ),
+  server: (
+    <>
+      <rect width="20" height="8" x="2" y="2" rx="2" ry="2" />
+      <rect width="20" height="8" x="2" y="14" rx="2" ry="2" />
+      <path d="M6 6h.01" />
+      <path d="M6 18h.01" />
+    </>
+  ),
   layers: (
     <>
       <path d="M12 2 2 7l10 5 10-5-10-5Z" />

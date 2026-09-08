@@ -53,7 +53,11 @@ const subscribeTheme = (onChange: () => void) => {
 const getTheme = () => document.documentElement.classList.contains("dark");
 const getServerTheme = () => false;
 
-const REST = "max-w-7xl px-0 border-transparent";
+/* The two states of DS §6.1's morph, now expressed INSIDE the shell rather
+   than as page widths of their own. `max-w-none` at rest is what makes the
+   bar fill the content column exactly; `max-w-6xl` scrolled is the same
+   1152px pill it has always been, centred by `mx-auto`. */
+const REST = "max-w-none px-0 border-transparent";
 const PILL =
   "max-w-6xl px-6 py-2 bg-card/80 backdrop-blur-lg shadow-lg border-border rounded-full";
 
@@ -100,7 +104,9 @@ export default function Nav() {
     /* Links are "/#id" now so they work from any page; the scrollspy only
        cares about the fragment, and only on a page that actually has it. */
     const targets = LINKS.map((l) =>
-      l.href.includes("#") ? document.querySelector("#" + l.href.split("#")[1]) : null,
+      l.href.includes("#")
+        ? document.querySelector("#" + l.href.split("#")[1])
+        : null,
     ).filter(Boolean) as Element[];
     if (!targets.length) return;
 
@@ -168,150 +174,164 @@ export default function Nav() {
       <nav
         id="nav"
         aria-label="Primary"
-        className={`fixed left-0 right-0 top-0 z-50 flex justify-center px-4 transition-[padding] duration-300 ease-in-out ${
+        /* No `px-4` here any more: the gutter is the shell's, so the logo
+           starts exactly where the page's first line of text starts. Adding
+           one back would offset the header from the page by 16px at every
+           width — which is how this was wrong before. */
+        className={`fixed left-0 right-0 top-0 z-50 transition-[padding] duration-300 ease-in-out ${
           scrolled ? "py-3" : "py-6"
         }`}
       >
-        <div
-          className={`relative flex w-full items-center justify-between gap-6 border transition-all duration-300 ease-in-out ${
-            scrolled ? PILL : REST
-          }`}
-        >
-          <a
-            href="/"
-            className="flex shrink-0 items-center gap-2.5 rounded-full"
-            aria-label="Interloid home"
+        <div className="shell">
+          <div
+            /* A STABLE HOOK. `.verify.mjs` addressed this element as
+               `#nav > div`, which broke the moment the shell wrapper went in
+               between — the morph still worked, the check just pointed at the
+               wrong node. An attribute survives markup changes; a position
+               does not. */
+            data-navbar
+            className={`relative mx-auto flex w-full items-center justify-between gap-6 border transition-all duration-300 ease-in-out ${
+              scrolled ? PILL : REST
+            }`}
           >
-            <span
-              className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-brand to-accent text-white"
-              aria-hidden="true"
+            <a
+              href="/"
+              className="flex shrink-0 items-center gap-2.5 rounded-full"
+              aria-label="Interloid home"
             >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="size-5"
+              <span
+                className="grid size-9 place-items-center rounded-xl bg-gradient-to-br from-brand to-accent text-white"
+                aria-hidden="true"
               >
-                <path d="M12 2 2 7l10 5 10-5-10-5Z" />
-                <path d="m2 17 10 5 10-5" />
-                <path d="m2 12 10 5 10-5" />
-              </svg>
-            </span>
-            <span className="font-display text-lg font-bold tracking-tight text-foreground">
-              Interloid
-            </span>
-          </a>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="size-5"
+                >
+                  <path d="M12 2 2 7l10 5 10-5-10-5Z" />
+                  <path d="m2 17 10 5 10-5" />
+                  <path d="m2 12 10 5 10-5" />
+                </svg>
+              </span>
+              <span className="font-display text-lg font-bold tracking-tight text-foreground">
+                Interloid
+              </span>
+            </a>
 
-          {/* §6.2 a pill inside a pill */}
-          <div className="hidden items-center gap-1 rounded-full border border-white/40 bg-card/80 px-3 py-2 p-1 shadow-sm backdrop-blur-sm xl:flex">
-            {LINKS.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                className={linkClass(l.href)}
-                aria-current={current === l.href ? "true" : undefined}
-                {...("placeholder" in l
-                  ? { "data-placeholder": l.placeholder }
-                  : {})}
-              >
-                {l.label}
-              </a>
-            ))}
-          </div>
+            {/* §6.2 a pill inside a pill */}
+            <div className="hidden items-center gap-1 rounded-full border border-white/40 bg-card/80 px-3 py-2 p-1 shadow-sm backdrop-blur-sm xl:flex">
+              {LINKS.map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  className={linkClass(l.href)}
+                  aria-current={current === l.href ? "true" : undefined}
+                  {...("placeholder" in l
+                    ? { "data-placeholder": l.placeholder }
+                    : {})}
+                >
+                  {l.label}
+                </a>
+              ))}
+            </div>
 
-          <div className="flex items-center gap-2">
-            {/* Two SVGs toggled by class, never innerHTML — HANDOFF §5.3:
+            <div className="flex items-center gap-2">
+              {/* Two SVGs toggled by class, never innerHTML — HANDOFF §5.3:
                 replacing a button's contents detaches the click's original
                 target. React keeps the node stable, but rendering both and
                 hiding one means the bug cannot come back by refactor. */}
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-pressed={dark}
-              aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
-              className="grid size-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
-            >
-              <svg
-                data-icon="moon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={`size-5 ${dark ? "hidden" : ""}`}
-                aria-hidden="true"
+              <button
+                type="button"
+                onClick={toggleTheme}
+                aria-pressed={dark}
+                aria-label={
+                  dark ? "Switch to light theme" : "Switch to dark theme"
+                }
+                className="grid size-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted"
               >
-                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
-              </svg>
-              <svg
-                data-icon="sun"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={`size-5 ${dark ? "" : "hidden"}`}
-                aria-hidden="true"
-              >
-                <circle cx="12" cy="12" r="4" />
-                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-              </svg>
-            </button>
+                <svg
+                  data-icon="moon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={`size-5 ${dark ? "hidden" : ""}`}
+                  aria-hidden="true"
+                >
+                  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+                </svg>
+                <svg
+                  data-icon="sun"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={`size-5 ${dark ? "" : "hidden"}`}
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                </svg>
+              </button>
 
-            {/* "/#contact", not "#contact": a bare fragment is a no-op on any
+              {/* "/#contact", not "#contact": a bare fragment is a no-op on any
                 page without that section, i.e. everything except home. */}
-            <a
-              href="/#contact"
-              className="hidden rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-brand-light hover:shadow-primary/40 active:scale-95 xl:inline-flex"
-            >
-              Let&apos;s talk
-            </a>
+              <a
+                href="/#contact"
+                className="hidden rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-brand-light hover:shadow-primary/40 active:scale-95 xl:inline-flex"
+              >
+                Let&apos;s talk
+              </a>
 
-            <button
-              ref={toggleRef}
-              type="button"
-              aria-label={open ? "Close menu" : "Open menu"}
-              aria-expanded={open}
-              aria-controls="mobileMenu"
-              onClick={(e) => {
-                e.stopPropagation();
-                setOpen((o) => !o);
-              }}
-              className="grid size-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted xl:hidden"
-            >
-              <svg
-                data-icon="menu"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                className={`size-6 ${open ? "hidden" : ""}`}
-                aria-hidden="true"
+              <button
+                ref={toggleRef}
+                type="button"
+                aria-label={open ? "Close menu" : "Open menu"}
+                aria-expanded={open}
+                aria-controls="mobileMenu"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpen((o) => !o);
+                }}
+                className="grid size-11 place-items-center rounded-full text-foreground transition-colors hover:bg-muted xl:hidden"
               >
-                <path d="M4 6h16" />
-                <path d="M4 12h16" />
-                <path d="M4 18h16" />
-              </svg>
-              <svg
-                data-icon="close"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                className={`size-6 ${open ? "" : "hidden"}`}
-                aria-hidden="true"
-              >
-                <path d="M18 6 6 18" />
-                <path d="m6 6 12 12" />
-              </svg>
-            </button>
+                <svg
+                  data-icon="menu"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  className={`size-6 ${open ? "hidden" : ""}`}
+                  aria-hidden="true"
+                >
+                  <path d="M4 6h16" />
+                  <path d="M4 12h16" />
+                  <path d="M4 18h16" />
+                </svg>
+                <svg
+                  data-icon="close"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  className={`size-6 ${open ? "" : "hidden"}`}
+                  aria-hidden="true"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </nav>
@@ -322,7 +342,9 @@ export default function Nav() {
         ref={menuRef}
         id="mobileMenu"
         className={`fixed left-4 right-4 top-24 z-40 origin-top rounded-3xl border border-border bg-card p-6 shadow-2xl transition-all duration-300 ease-in-out xl:hidden ${
-          open ? "visible scale-100 opacity-100" : "invisible scale-95 opacity-0"
+          open
+            ? "visible scale-100 opacity-100"
+            : "invisible scale-95 opacity-0"
         }`}
       >
         <nav aria-label="Mobile" className="flex flex-col">

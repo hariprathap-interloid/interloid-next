@@ -253,7 +253,7 @@ export const CAPABILITIES: readonly Capability[] = [
   },
   {
     k: "mobile",
-    icon: "phone",
+    icon: "smartphone",
     name: "Mobile App Development",
     hue: "indigo",
     figure: "stores",
@@ -300,7 +300,7 @@ export const CAPABILITIES: readonly Capability[] = [
   },
   {
     k: "backend",
-    icon: "layers",
+    icon: "server",
     name: "Backend Development & APIs",
     hue: "teal",
     figure: "api",

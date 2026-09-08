@@ -166,7 +166,7 @@ for (const vp of VIEWPORTS) {
   await page.goto(BASE, { waitUntil: "networkidle" });
   await page.waitForTimeout(1200);
   const rest = await page.evaluate(
-    () => document.querySelector("#nav > div").className,
+    () => document.querySelector("[data-navbar]").className,
   );
   /* The full page is ported now, so it scrolls on its own — the spacer this
      used to need is gone. */
@@ -174,7 +174,7 @@ for (const vp of VIEWPORTS) {
   await page.waitForTimeout(700);
   const scrollY = await page.evaluate(() => window.scrollY);
   const scrolled = await page.evaluate(
-    () => document.querySelector("#nav > div").className,
+    () => document.querySelector("[data-navbar]").className,
   );
   const morphed = rest !== scrolled && scrolled.includes("rounded-full");
   console.log(
