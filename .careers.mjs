@@ -126,67 +126,121 @@ ok(icons.broken.length === 0, `every logo file loaded (${icons.broken.join(", ")
 ok(icons.unnamed === 0, `every logo has an accessible name (${icons.unnamed} without)`);
 console.log(`  logos: ${icons.names.join(", ")}`);
 
-/* --- 3b. hover moves NOTHING ---------------------------------------------- */
-/* The rule this page has now broken once and must not break again. WorkCard.tsx
-   documents the failure in full: a hover-triggered translate on the hovered
-   element moves its own hit box out from under a pointer resting near the edge,
-   `:hover` drops, it moves back, and it oscillates at frame rate.
+/* --- 3b. hover: the invariant, then four different signatures ------------- */
+/* THE INVARIANT, asserted on the RECT rather than on the class list — a class
+   check would happily pass `hover:p-9` or `hover:mt-1`, which re-enter exactly
+   the same loop WorkCard.tsx documents: a hover-triggered size or position
+   change on the hovered element moves its own hit box out from under the
+   pointer, `:hover` drops, it moves back, and it oscillates at frame rate.
 
-   So the assertion is on the BOX, not on the class list — a class check would
-   pass for `hover:p-9`, `hover:mt-1` or any other property that re-enters the
-   same loop. Hover each card, wait past the transition, and require the rect to
-   be identical to the pixel.
+   `translate`/`scale`/`transform` are read separately because Tailwind v4
+   compiles `-translate-y-*` to the STANDALONE `translate` property.
 
-   The second assertion is the belt to that brace: Tailwind v4 compiles
-   `-translate-y-*` and `scale-*` to the STANDALONE `translate`/`scale`
-   properties rather than to `transform`, so all three are read. */
-for (const [sel, name, idx] of [
-  ["#openings article", "role card", 0],
-  ["#programme ol li > div", "programme card", 1],
-  ["#hiring ol li > div", "hiring card", 0],
-  ["#fit .grid > div > div", "fit card", 0],
+   THE SIGNATURES are deliberately different per section (see Roles.tsx's hover
+   banner), so each row below names its own probe: what should change, and
+   where. A shared assertion would only prove the shared chrome, which is the
+   part that was never in question. */
+for (const spec of [
+  {
+    sel: "#openings article",
+    name: "roles",
+    idx: 0,
+    /* the role's hue floods, and the tech marks ring up */
+    probe: (e) => {
+      const flood = e.querySelector("div[aria-hidden]");
+      const plate = e.querySelector("ul li");
+      return `${getComputedStyle(flood).opacity}|${getComputedStyle(plate).boxShadow}`;
+    },
+    what: "hue flood + tech marks ring",
+  },
+  {
+    sel: "#programme ol li > div",
+    name: "programme",
+    idx: 1,
+    /* the numbered node ignites: fill plus a ring halo */
+    probe: (e) => {
+      const node = e.querySelector("span");
+      const cs = getComputedStyle(node);
+      return `${cs.backgroundColor}|${cs.boxShadow}`;
+    },
+    what: "node ignites",
+  },
+  {
+    sel: "#hiring ol li > div",
+    name: "hiring",
+    idx: 0,
+    /* the ghost step numeral brightens 0.09 -> 0.28 */
+    probe: (e) => getComputedStyle(e.querySelector("span")).opacity,
+    what: "step numeral brightens",
+  },
+  {
+    sel: "#fit .grid > div > div",
+    name: "fit",
+    idx: 0,
+    /* the icon tiles fill, staggered down the column */
+    probe: (e) => {
+      const tiles = [...e.querySelectorAll("ul li > span")];
+      return tiles
+        .map((t) => `${getComputedStyle(t).backgroundColor}@${getComputedStyle(t).transitionDelay}`)
+        .join(" ");
+    },
+    what: "tiles fill in sequence",
+  },
 ]) {
-  const el = p.locator(sel).nth(idx);
+  const el = p.locator(spec.sel).nth(spec.idx);
   await el.scrollIntoViewIfNeeded();
   await p.waitForTimeout(250);
   const read = () =>
-    el.evaluate((e) => {
+    el.evaluate((e, probeSrc) => {
       const r = e.getBoundingClientRect();
       const cs = getComputedStyle(e);
-      const bar = [...e.children].find(
-        (c) =>
-          c.tagName === "SPAN" &&
-          getComputedStyle(c).position === "absolute" &&
-          parseFloat(getComputedStyle(c).height) < 5,
-      );
+      // eslint-disable-next-line no-new-func
+      const probe = new Function("e", `return (${probeSrc})(e)`);
       return {
         box: [r.x, r.y, r.width, r.height].map((n) => +n.toFixed(2)).join(","),
         border: cs.borderTopColor,
         shadow: cs.boxShadow,
         geom: `${cs.translate}|${cs.scale}|${cs.transform}`,
-        wipe: bar ? +bar.getBoundingClientRect().width.toFixed(1) : null,
+        sig: probe(e),
       };
-    });
+    }, spec.probe.toString());
 
   const rest = await read();
   await el.hover();
-  await p.waitForTimeout(700);
+  /* 900ms: the fit cascade's last tile starts at +180ms and runs 300ms. */
+  await p.waitForTimeout(900);
   const hot = await read();
 
-  ok(rest.box === hot.box, `${name}: box unchanged on hover (${hot.box})`);
-  ok(hot.geom === "none|none|none", `${name}: no translate/scale/transform (${hot.geom})`);
-  ok(rest.border !== hot.border, `${name}: border warms on hover`);
-  /* Compare the WHOLE shadow string. Tailwind v4 emits four zero-alpha
-     placeholder shadows before the real ones, so any prefix comparison reports
-     shadow-sm and shadow-lg as identical — which is what the first version of
-     this check did, on all four cards. */
-  ok(rest.shadow !== hot.shadow, `${name}: shadow grows on hover`);
-  ok(hot.wipe !== null && hot.wipe > 100, `${name}: top wipe drawn (${hot.wipe}px)`);
+  ok(rest.box === hot.box, `${spec.name}: box unchanged on hover (${hot.box})`);
+  ok(hot.geom === "none|none|none", `${spec.name}: no translate/scale/transform (${hot.geom})`);
+  ok(rest.border !== hot.border, `${spec.name}: border warms`);
+  /* The WHOLE shadow string. Tailwind v4 emits four zero-alpha placeholder
+     shadows before the real ones, so a prefix comparison reports shadow-sm and
+     shadow-lg as identical — which the first version of this check did, on all
+     four cards. */
+  ok(rest.shadow !== hot.shadow, `${spec.name}: shadow grows`);
+  ok(rest.sig !== hot.sig, `${spec.name}: SIGNATURE fires — ${spec.what}`);
 
   await p.mouse.move(4, 4);
-  await p.waitForTimeout(700);
-  ok((await read()).wipe === 0, `${name}: wipe retracts at rest`);
+  await p.waitForTimeout(900);
+  ok((await read()).sig === rest.sig, `${spec.name}: signature returns to rest`);
 }
+
+/* The four signatures must be DIFFERENT from one another, which is the whole
+   point of the change and the one thing a per-card check cannot see. Compared
+   as the set of probes that fire, not as prose. */
+/* `> span:first-child` — the li holds TWO spans, the icon tile and the text.
+   Without :first-child this read "0s, 0s, 0.06s, 0s, 0.12s", which still
+   proved the point but only by accident. */
+const stagger = await p.evaluate(() =>
+  [...document.querySelectorAll("#fit .grid > div > div ul li > span:first-child")]
+    .slice(0, 5)
+    .map((t) => getComputedStyle(t).transitionDelay),
+);
+ok(
+  new Set(stagger).size > 1,
+  `fit: tiles are staggered, not simultaneous (${stagger.join(", ")})`,
+);
 
 /* --- 4. senior content is parked, and said out loud ---------------------- */
 ok(!/L \/ year/.test(body), "no senior salary bands on the page");

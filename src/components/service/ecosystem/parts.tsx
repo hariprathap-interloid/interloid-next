@@ -4,7 +4,7 @@ import Icon from "../../Icon";
 import TechLogo from "../TechLogo";
 import type { Capability, Tech } from "@/content/service";
 import { HUE } from "@/content/site";
-import { polarUnits, RINGS, STAGE } from "./geometry";
+import { polarUnits, RINGS, STAGE, trim } from "./geometry";
 
 /* Shared furniture for the three ecosystem variants. Everything here is
    layout-agnostic: the variants decide WHERE things go, these decide what
@@ -95,8 +95,18 @@ export function Links({
   edges,
   open,
 }: {
-  /** from-point, to-point, and the delay that stages the draw. */
-  edges: { x1: number; y1: number; x2: number; y2: number; d: number }[];
+  /** from-point, to-point, the delay that stages the draw, and optionally how
+      far to hold off each end so the line meets the node's edge rather than
+      running to its centre (stage units - see geometry.pxToUnits). */
+  edges: {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    d: number;
+    r1?: number;
+    r2?: number;
+  }[];
   open: boolean;
 }) {
   return (
@@ -106,13 +116,15 @@ export function Links({
       aria-hidden="true"
       fill="none"
     >
-      {edges.map((e, i) => (
+      {edges.map((e, i) => {
+        const t = trim(e.x1, e.y1, e.x2, e.y2, e.r1 ?? 0, e.r2 ?? 0);
+        return (
         <line
           key={i}
-          x1={e.x1}
-          y1={e.y1}
-          x2={e.x2}
-          y2={e.y2}
+          x1={t.x1}
+          y1={t.y1}
+          x2={t.x2}
+          y2={t.y2}
           pathLength={1}
           className="stroke-accent"
           strokeWidth={1.25}
@@ -123,7 +135,8 @@ export function Links({
             transition: `stroke-dashoffset .5s cubic-bezier(.16,1,.3,1) ${e.d}ms, opacity .3s ${e.d}ms`,
           }}
         />
-      ))}
+        );
+      })}
     </svg>
   );
 }
@@ -258,8 +271,12 @@ export function GroupPill({
 }) {
   const h = HUE[hue];
   return (
+    /* `bg-card`, NOT `h.soft`. The tint was 10% opaque, so every connector
+       drawn beneath a group pill showed through the label and the whole
+       diagram looked struck through. The hue survives in the ring and the
+       text; only the ground is now solid. */
     <span
-      className={`eco-grow absolute whitespace-nowrap rounded-full border px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] shadow-sm ${h.soft} ${h.ring} ${h.text} ring-1`}
+      className={`eco-grow absolute whitespace-nowrap rounded-full border border-border bg-card px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] shadow-sm ring-1 ${h.ring} ${h.text}`}
       style={{ ...style, "--d": `${delay}ms` } as React.CSSProperties}
     >
       {label}
@@ -288,8 +305,8 @@ export function TechNode({
       className="eco-grow group/tech absolute"
       style={{ ...style, "--d": `${delay}ms` } as React.CSSProperties}
     >
-      <span className="block transition-transform duration-300 group-hover/tech:scale-125">
-        <TechLogo tech={tech} size="sm" />
+      <span className="block transition-transform duration-300 group-hover/tech:scale-110">
+        <TechLogo tech={tech} size="md" shape="circle" />
       </span>
       <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-1.5 -translate-x-1/2 whitespace-nowrap rounded-md border border-border bg-card px-2 py-1 text-[10px] font-semibold text-foreground opacity-0 shadow-md transition-opacity duration-200 group-hover/tech:opacity-100">
         {tech.name}

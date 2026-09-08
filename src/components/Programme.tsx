@@ -106,11 +106,6 @@ export default function Programme() {
                     }`}
                     {...(p.ph ? { "data-placeholder": p.ph } : {})}
                   >
-                    <span
-                    className="pointer-events-none absolute left-0 top-0 h-[3px] w-0 bg-gradient-to-r from-brand to-accent transition-[width] duration-500 ease-out group-hover:w-full"
-                    aria-hidden="true"
-                  />
-
                     {/* The node and the phase chip share a row, so the rail
                         passes through the node and the label sits beside it
                         rather than under it — which is what makes the row read
@@ -120,7 +115,18 @@ export default function Programme() {
                         the node; the same trick Process uses on its 80px one. */}
                     <div className="mb-5 flex items-center gap-4">
                       <span
-                        className={`grid size-14 shrink-0 place-items-center rounded-full border-4 border-card font-display text-[15px] font-bold shadow-[0_0_0_1px_var(--border)] transition-colors duration-300 ${
+                        /* SIGNATURE — the node ignites. This section is a
+                           timeline, so the node is the thing that should
+                           answer the cursor: it fills, and a ring blooms
+                           around it. `ring-0 → ring-8` is a box-shadow, so it
+                           paints OVER the rail and the neighbouring card
+                           without displacing either.
+
+                           `transition-[background-color,color,box-shadow]`,
+                           not `transition-colors`: the ring is a shadow, and
+                           `colors` does not cover it — it would snap on while
+                           the fill eased. */
+                        className={`grid size-14 shrink-0 place-items-center rounded-full border-4 border-card font-display text-[15px] font-bold ring-0 ring-accent/15 transition-[background-color,color,box-shadow] duration-300 ease-out group-hover:ring-8 ${
                           lead
                             ? "bg-accent text-white"
                             : "bg-accent/10 text-accent-strong group-hover:bg-accent group-hover:text-white"
@@ -135,10 +141,10 @@ export default function Programme() {
                       </span>
                       <span className="flex flex-col gap-1.5">
                         <span
-                          className={`w-fit rounded-full px-2.5 py-[3px] text-[11px] font-bold uppercase tracking-[0.08em] ring-1 ${
+                          className={`w-fit rounded-full px-2.5 py-[3px] text-[11px] font-bold uppercase tracking-[0.08em] ring-1 transition-[background-color,color,box-shadow] duration-300 ${
                             lead
                               ? "bg-accent/10 text-accent-strong ring-accent/25"
-                              : "bg-background text-muted-foreground ring-border"
+                              : "bg-background text-muted-foreground ring-border group-hover:bg-accent/10 group-hover:text-accent-strong group-hover:ring-accent/25"
                           }`}
                         >
                           {p.tag}

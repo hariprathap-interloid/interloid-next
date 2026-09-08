@@ -66,10 +66,6 @@ export default function HiringPath() {
               className="h-full"
             >
               <div className="group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-border bg-card p-7 shadow-sm transition-[border-color,box-shadow] duration-300 ease-out hover:border-accent/40 hover:shadow-lg">
-                <span
-                    className="pointer-events-none absolute left-0 top-0 h-[3px] w-0 bg-gradient-to-r from-brand to-accent transition-[width] duration-500 ease-out group-hover:w-full"
-                    aria-hidden="true"
-                  />
                 {/* The numeral is Process's device — oversized, low-opacity,
                     behind the content. Decorative here (the <ol> already
                     numbers these for a screen reader), hence aria-hidden.
@@ -82,8 +78,14 @@ export default function HiringPath() {
                     because its numeral hangs off an unclipped node, not a
                     clipped card. Positive insets keep the whole glyph inside
                     the padding, which is the only version that reads. */}
+                {/* SIGNATURE — the step number is what lights up. It sits at
+                    9% at rest, which is a watermark; on hover it comes up to
+                    28%, which is legible, so the card reads as "this is the
+                    step you are on". Opacity only: nothing about the glyph's
+                    box changes, and `pointer-events-none` means it cannot
+                    steal the hover from the card underneath it. */}
                 <span
-                  className="pointer-events-none absolute right-5 top-3 select-none font-display text-[64px] font-bold leading-none text-brand opacity-[0.09] transition-opacity duration-500 group-hover:opacity-20"
+                  className="pointer-events-none absolute right-5 top-3 select-none font-display text-[64px] font-bold leading-none text-brand opacity-[0.09] transition-opacity duration-500 ease-out group-hover:opacity-[0.28]"
                   aria-hidden="true"
                 >
                   {s.n}
@@ -93,7 +95,7 @@ export default function HiringPath() {
                   <Icon name={s.k} className="size-6" />
                 </span>
 
-                <span className="relative mb-3 w-fit rounded-full bg-background px-2.5 py-[3px] text-[11px] font-bold uppercase tracking-[0.08em] text-accent-strong ring-1 ring-border">
+                <span className="relative mb-3 w-fit rounded-full bg-background px-2.5 py-[3px] text-[11px] font-bold uppercase tracking-[0.08em] text-accent-strong ring-1 ring-border transition-[box-shadow] duration-300 group-hover:ring-accent/30">
                   {s.when}
                 </span>
 

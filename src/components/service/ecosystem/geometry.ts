@@ -159,7 +159,50 @@ export function techAngles(
 ): number[] {
   const slice = SECTOR / groupCount;
   const centre = serviceAngle - SECTOR / 2 + slice * (groupIndex + 0.5);
-  return fan(centre, itemCount, slice * 0.84);
+  /* 0.78, not 0.84. The marks grew from a 36px square to a 40px circle when
+     level 3 stopped being a badge, and the extra 4px was spent exactly at the
+     group boundaries: the last mark of one group met the first of the next.
+     Measured - Google Cloud on Docker, CircleCI on Prometheus, Rails on
+     Python. The items now fill 78% of their slice, which puts 53px of arc in
+     the gutter against a 40px mark, and still leaves 62px between marks
+     inside a group. Re-run the overlap assertion if the mark size changes
+     again; this number is a function of it. */
+  return fan(centre, itemCount, slice * 0.78);
+}
+
+/** Shorten a segment so it stops `r1` short of its start and `r2` short of
+    its end, both in STAGE UNITS. Returns the segment unchanged if the two
+    radii would consume it, which is the degenerate case worth failing safe on
+    rather than drawing a line that points backwards.
+
+    Node sizes are CSS px and the stage is a percentage box, so a caller has to
+    convert: `pxToUnits(px, stagePx)` below. Passing raw pixels here silently
+    over-trims on a small stage and under-trims on a large one. */
+export function trim(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  r1 = 0,
+  r2 = 0,
+): { x1: number; y1: number; x2: number; y2: number } {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const len = Math.hypot(dx, dy);
+  if (len === 0 || r1 + r2 >= len) return { x1, y1, x2, y2 };
+  const ux = dx / len;
+  const uy = dy / len;
+  return {
+    x1: x1 + ux * r1,
+    y1: y1 + uy * r1,
+    x2: x2 - ux * r2,
+    y2: y2 - uy * r2,
+  };
+}
+
+/** A CSS pixel measurement expressed in stage units. */
+export function pxToUnits(px: number, stagePx: number): number {
+  return (px / stagePx) * STAGE;
 }
 
 /** True when a node sits on the left half of the stage, so its label can be

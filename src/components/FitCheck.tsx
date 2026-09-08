@@ -66,9 +66,8 @@ const COLUMNS = [
     items: FIT_YES,
     note: FIT_NOTES.yes,
     tile: "bg-teal-600/10 text-teal-600 ring-teal-600/15",
-    tileHover: "group-hover:bg-teal-600/15",
+    tileOn: "group-hover:bg-teal-600 group-hover:text-white group-hover:ring-teal-600/30",
     glow: "bg-teal-600/10",
-    wipe: "bg-gradient-to-r from-teal-600 to-teal-400",
     head: "bg-teal-600/10 text-teal-600 ring-teal-600/15",
   },
   {
@@ -80,9 +79,8 @@ const COLUMNS = [
     items: FIT_NO,
     note: FIT_NOTES.no,
     tile: "bg-amber-500/10 text-amber-600 ring-amber-500/15",
-    tileHover: "group-hover:bg-amber-500/15",
+    tileOn: "group-hover:bg-amber-500 group-hover:text-white group-hover:ring-amber-500/30",
     glow: "bg-amber-500/10",
-    wipe: "bg-gradient-to-r from-amber-500 to-amber-300",
     head: "bg-amber-500/10 text-amber-600 ring-amber-500/15",
   },
 ] as const;
@@ -128,14 +126,6 @@ export default function FitCheck() {
               className="h-full"
             >
               <div className="group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-border bg-card p-8 shadow-sm transition-[border-color,box-shadow] duration-300 ease-out hover:border-accent/40 hover:shadow-lg sm:p-10">
-                {/* The wipe takes the COLUMN's hue rather than the page
-                    gradient: this is the one section where the two cards are
-                    opposed categories, and a shared brand bar would flatten
-                    the distinction the colour is doing. */}
-                <span
-                  className={`pointer-events-none absolute left-0 top-0 h-[3px] w-0 transition-[width] duration-500 ease-out group-hover:w-full ${c.wipe}`}
-                  aria-hidden="true"
-                />
                 <div
                   className={`pointer-events-none absolute -right-20 -top-20 size-48 rounded-full opacity-0 blur-[70px] transition-opacity duration-500 group-hover:opacity-100 ${c.glow}`}
                   aria-hidden="true"
@@ -161,14 +151,27 @@ export default function FitCheck() {
                       }
                     : {})}
                 >
-                  {c.items.map((f) => (
+                  {c.items.map((f, i) => (
                     <li key={f.t} className="flex items-start gap-3.5">
                       {/* The tile is `mt-px`, not `mt-0`: a 36px square next
                           to a 15px/1.7 line optically sits high without it,
                           because the glyph's mass is centred and the text's
                           is on its baseline. */}
+                      {/* SIGNATURE — the tiles FILL IN SEQUENCE. A 60ms step
+                          per row makes the column read itself top to bottom
+                          rather than flashing as one block, which is exactly
+                          what this section wants a reader to do: go down the
+                          list.
+
+                          The delay is an inline style because it is per-index,
+                          and a Tailwind class cannot be built from `i` — a
+                          concatenated `delay-${i * 60}` is invisible to the
+                          compiled build's scanner and would be silently
+                          dropped (CLAUDE.md gotcha 1). It applies on the way
+                          out too, so the column empties in the same order. */}
                       <span
-                        className={`mt-px grid size-9 shrink-0 place-items-center rounded-xl ring-1 transition-colors duration-300 ${c.tile} ${c.tileHover}`}
+                        style={{ transitionDelay: `${i * 60}ms` }}
+                        className={`mt-px grid size-9 shrink-0 place-items-center rounded-xl ring-1 transition-[background-color,color,box-shadow] duration-300 ease-out ${c.tile} ${c.tileOn}`}
                         aria-hidden="true"
                       >
                         <Icon name={f.k} className="size-[18px]" />

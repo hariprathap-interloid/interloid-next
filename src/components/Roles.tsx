@@ -3,33 +3,36 @@ import SectionHeading from "./SectionHeading";
 import TechLogo from "./service/TechLogo";
 import { HUE, ROLES, TERMS } from "@/content/site";
 
-/* ── HOVER: COLOUR, ELEVATION AND A WIPE — NEVER GEOMETRY ─────────────────
-   Every card on this page had `hover:-translate-y-1`, and that was a
-   regression against a rule this codebase had already paid for. WorkCard.tsx
-   documents it: a translate on the hovered element moves its own hit box out
-   from under a pointer resting near the edge, so `:hover` drops, so it moves
-   back, so the pointer is inside again — it oscillates at frame rate for as
-   long as the cursor sits in the band the movement crosses. Any translate or
-   scale on the hovered element re-enters that loop at whatever its new edge
-   is; so do padding, margin and size.
+/* ── HOVER: ONE RULE, FOUR SIGNATURES ─────────────────────────────────────
+   THE RULE, everywhere on this page: hover changes COLOUR, ELEVATION and the
+   state of CHILDREN. It never moves or resizes the hovered element. WorkCard.tsx
+   documents why — a translate on the hovered element moves its own hit box out
+   from under a pointer resting near the edge, `:hover` drops, it moves back, and
+   it oscillates at frame rate. Padding, margin and size are the same trap.
+   `box-shadow` and `ring` are safe because a shadow is not hit-tested, and so is
+   anything on an absolutely-positioned child, whose size cannot alter its
+   parent's bounds.
 
-   There is a second, quieter reason it looked wrong. Tailwind v4 compiles
-   `-translate-y-*` to the standalone `translate` property, NOT to `transform`
-   — so `transition-[border-color,box-shadow,transform]` was transitioning a
-   property that never changed, and the movement SNAPPED while the colour and
-   the shadow eased behind it.
+   (Tailwind v4 compiles `-translate-y-*`/`scale-*` to the standalone
+   `translate`/`scale` properties, NOT to `transform` — so a
+   `transition-[...,transform]` eases a property that never changes and the
+   motion snaps. `.careers.mjs` reads all three.)
 
-   The replacement vocabulary, used identically by every card on /careers:
+   THE SIGNATURE, different in each section, because four sections that all
+   wipe a bar across the top is one effect repeated rather than a page with a
+   rhythm. Each one lights up whatever that section is actually about:
 
-     · border   border-border → border-accent/40
-     · shadow   shadow-sm → shadow-lg          (a shadow is not hit-tested)
-     · aura     the corner glow fades 0 → 100
-     · wipe     a 3px brand→accent bar grows across the top edge
+     Roles       the card floods with the ROLE'S OWN hue and the tech marks
+                 ring up — the thing a candidate is scanning the card for
+     Programme   the numbered node IGNITES with a halo — the section is a
+                 timeline, so the node is the thing that should respond
+     HiringPath  the ghost STEP NUMBER brightens and its icon tile inverts —
+                 "this step is the one you are reading"
+     FitCheck    the icon tiles FILL IN SEQUENCE, staggered down the column,
+                 so the list reads itself top to bottom
 
-   The wipe is the new signature and it is the only animated GEOMETRY here —
-   deliberately on an absolutely-positioned child, whose width cannot alter the
-   card's own bounds, so it cannot re-enter the flicker loop. It needs
-   `overflow-hidden` on the card, or it squares off the top corners. */
+   All four keep the shared chrome (border warms, shadow-sm → shadow-lg) so the
+   page still feels like one page. */
 
 /* ==========================================================================
    OPEN ROLES — four trainee positions.
@@ -100,18 +103,16 @@ export default function Roles() {
                 className="h-full"
               >
                 <article className="group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-border bg-card p-8 shadow-sm transition-[border-color,box-shadow] duration-300 ease-out hover:border-accent/40 hover:shadow-lg">
-                  <span
-                    className="pointer-events-none absolute left-0 top-0 h-[3px] w-0 bg-gradient-to-r from-brand to-accent transition-[width] duration-500 ease-out group-hover:w-full"
-                    aria-hidden="true"
-                  />
-                  {/* Whole class string out of HUE — never `bg-${hue}/10`
-                      (CLAUDE.md gotcha 1: a concatenated class is dropped
-                      silently by the compiled build). */}
+                  {/* SIGNATURE — the role's own hue floods the card. Bigger
+                      and softer than a corner accent so it reads as the card
+                      warming up rather than as a light in the corner, and it is
+                      `h.glow`, so each of the four cards lights a different
+                      colour. Absolutely positioned: its size cannot touch the
+                      card's bounds. */}
                   <div
-                    className={`pointer-events-none absolute -right-16 -top-16 size-40 rounded-full opacity-0 blur-[60px] transition-opacity duration-500 group-hover:opacity-100 ${h.glow}`}
+                    className={`pointer-events-none absolute -right-24 -top-24 size-64 rounded-full opacity-0 blur-[80px] transition-opacity duration-500 ease-out group-hover:opacity-100 ${h.glow}`}
                     aria-hidden="true"
                   />
-
                   <span
                     className={`relative mb-4 w-fit rounded-full px-2.5 py-[3px] text-[11px] font-bold uppercase tracking-[0.08em] ring-1 ${h.soft} ${h.ring} ${h.text}`}
                   >
@@ -148,7 +149,16 @@ export default function Roles() {
                         /* TechLogo IS the plate — it renders its own
                            `size-9 rounded-xl bg-white ring-1` wrapper, so this
                            <li> must not draw a second one around it. */
-                        <li key={t.name} className="flex">
+                        /* SIGNATURE, part two: the marks ring up in the
+                           role's hue. `ring-0` at rest with the colour already
+                           set, so only the WIDTH animates — and a ring is a
+                           box-shadow, so nothing here is hit-tested or moves.
+                           TechLogo draws its own plate; this ring sits outside
+                           it, which is why the li is `rounded-xl` too. */
+                        <li
+                          key={t.name}
+                          className={`flex rounded-xl ring-0 transition-[box-shadow] duration-300 ease-out group-hover:ring-2 ${h.ring}`}
+                        >
                           <TechLogo tech={t} size="sm" />
                         </li>
                       ))}

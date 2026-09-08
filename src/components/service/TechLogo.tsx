@@ -51,8 +51,14 @@ function monogram(name: string) {
 export default function TechLogo({
   tech,
   size = "md",
+  shape = "rounded",
 }: {
   tech: Tech;
+  /** `circle` matches the core and the service tiles, so a technology reads
+      as the smallest node in the same family rather than as a chip stuck onto
+      the diagram. The list compositions keep `rounded`, where a chip beside a
+      name is exactly right. */
+  shape?: "rounded" | "circle";
   /** Bumped a step across the board on 2026-09-08: at 32px plate / 16px mark
       the logos were not readable on the diagram, which is the one place they
       have to do the whole job of naming a technology. `lg` exists for the
@@ -64,9 +70,15 @@ export default function TechLogo({
   const img =
     size === "sm" ? "size-5" : size === "lg" ? "size-7" : "size-6";
 
+  /* bg-white in BOTH themes, and a ring rather than a border, for the reason
+     in the banner: these are fixed brand hexes and several go unreadable on
+     the dark card. The shadow is what lifts the node off a connector passing
+     beneath it. */
   return (
     <span
-      className={`grid ${box} shrink-0 place-items-center rounded-xl bg-white ring-1 ring-border`}
+      className={`grid ${box} shrink-0 place-items-center bg-white shadow-sm ring-1 ring-border ${
+        shape === "circle" ? "rounded-full" : "rounded-xl"
+      }`}
       /* The name is on the wrapper, so a monogram and a logo announce the
          same way and the decorative <img> stays out of the a11y tree. */
       role="img"
