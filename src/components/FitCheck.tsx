@@ -100,7 +100,7 @@ export default function FitCheck() {
         className="pointer-events-none absolute bottom-0 right-0 size-[420px] translate-x-1/3 translate-y-1/4 rounded-full bg-amber-500/10 blur-[120px]"
         aria-hidden="true"
       />
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <SectionHeading
           eyebrow="Before you apply"
           /* Was `split`, the same glyph as the right-hand card's tile — two

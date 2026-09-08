@@ -32,7 +32,7 @@ const COMPANY_LINKS: { href: string; label: string; placeholder?: string }[] = [
 export default function Footer() {
   return (
     <footer className="border-t border-white/5 bg-ink-deep py-20 text-ink-foreground">
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="shell">
         <div className="mb-16 grid grid-cols-1 gap-12 md:grid-cols-4">
           <div>
             <div className="mb-5 flex items-center gap-2.5">

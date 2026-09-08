@@ -57,7 +57,7 @@ export default function PullQuote({
 } = {}) {
   return (
     <section className="relative overflow-hidden border-y border-border bg-card py-24">
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <figure
           data-reveal
           data-placeholder="P0 TRUST: replace with a real, permissioned quote"

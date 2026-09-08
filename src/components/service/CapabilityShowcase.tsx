@@ -51,10 +51,11 @@ import { HUE } from "@/content/site";
 export default function CapabilityShowcase({
   onStackLink,
 }: {
-  /** Selects the matching tab in <TechStacks> when a "whole stack" link is
-      followed, so the anchor lands on the stack the reader was reading about
-      rather than on whichever tab happened to be open. */
-  onStackLink: (i: number) => void;
+  /** Selected the matching tab in <TechStacks> when a "whole stack" link was
+      followed. TechStacks has been uncalled since the ecosystem map replaced
+      it, so this has had no reader for two passes — optional now, and the
+      callback is kept only so restoring TechStacks stays a one-line change. */
+  onStackLink?: (i: number) => void;
 }) {
   const [active, setActive] = useState(0);
   const blocks = useRef<(HTMLElement | null)[]>([]);
@@ -99,7 +100,7 @@ export default function CapabilityShowcase({
         <div className="absolute left-0 top-1/4 size-[560px] -translate-x-1/3 rounded-full bg-accent/10 blur-[120px]" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <SectionHeading
           eyebrow="What we do"
           icon="layers"
@@ -123,7 +124,14 @@ export default function CapabilityShowcase({
                   }}
                   data-cap-index={i}
                   id={`capability-${c.k}`}
-                  className="flex scroll-mt-32 flex-col justify-center border-b border-border py-12 last:border-b-0 lg:min-h-[78vh] lg:border-b-0 lg:py-16"
+                  /* 58vh, not 78, and `justify-start` above `lg`. The
+                     height is scroll distance for the sticky panel to swap
+                     on, nothing else — at 78vh with the content centred, a
+                     short capability sat in three-quarters of a screen of
+                     air, split above and below it. What is left now falls
+                     under the text, where it reads as separation rather than
+                     as a hole. */
+                  className="flex scroll-mt-32 flex-col justify-center border-b border-border py-12 last:border-b-0 lg:min-h-[58vh] lg:justify-start lg:border-b-0 lg:py-14"
                 >
                   <div
                     data-reveal
@@ -250,7 +258,7 @@ export default function CapabilityShowcase({
                     </ul>
                     <a
                       href="#technologies"
-                      onClick={() => onStackLink(i)}
+                      onClick={() => onStackLink?.(i)}
                       className="group/link inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary transition-colors hover:text-accent-strong"
                     >
                       the whole stack

@@ -63,7 +63,7 @@ export default function Team() {
         className="pointer-events-none absolute bottom-0 left-0 size-[420px] -translate-x-1/3 translate-y-1/4 rounded-full bg-accent/10 blur-[120px]"
         aria-hidden="true"
       />
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <SectionHeading
           eyebrow={TEAM_HEADING.eyebrow}
           icon="users"

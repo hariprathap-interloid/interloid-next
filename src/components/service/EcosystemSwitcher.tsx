@@ -161,7 +161,7 @@ export default function EcosystemSwitcher({
        (TAILWIND-MAP §4c). */
     <div>
       <div className="sticky top-24 z-30 border-y border-border bg-card/95 py-4 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-6">
+        <div className="shell flex flex-col gap-3">
           <Choice
             name="layout"
             label="Design"
@@ -169,30 +169,36 @@ export default function EcosystemSwitcher({
             onChange={setLayout}
             options={designs.map((d) => ({ v: d.layout, name: d.name }))}
           />
-          <Choice
-            name="shape"
-            label="Level 2"
-            value={shape}
-            onChange={setShape}
-            options={[
-              { v: "circle" as const, name: "Circle" },
-              { v: "pill" as const, name: "Pill" },
-            ]}
-          />
-          <Choice
-            name="dots"
-            label="Flow"
-            value={dots}
-            onChange={setDots}
-            options={[
-              { v: "with" as const, name: "With dots" },
-              { v: "without" as const, name: "Without dots" },
-            ]}
-          />
+          {/* The two small controls share a row. The bar is sticky over the
+              diagram it drives, so every row it costs is a strip of stage a
+              reader cannot hover — measured as an intercepted pointer event
+              on the top service node. */}
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
+            <Choice
+              name="shape"
+              label="Level 2"
+              value={shape}
+              onChange={setShape}
+              options={[
+                { v: "circle" as const, name: "Circle" },
+                { v: "pill" as const, name: "Pill" },
+              ]}
+            />
+            <Choice
+              name="dots"
+              label="Flow"
+              value={dots}
+              onChange={setDots}
+              options={[
+                { v: "with" as const, name: "With dots" },
+                { v: "without" as const, name: "Without dots" },
+              ]}
+            />
+          </div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 pt-12">
+      <div className="shell pt-12">
         <div className="flex flex-col gap-2 border-l-2 border-accent/40 pl-5">
           <h2 className="font-display text-2xl font-bold tracking-[-0.02em] text-foreground">
             {design.name}

@@ -67,7 +67,7 @@ export default function CareersHero() {
           content block centres inside the padded box instead of the whole
           surplus falling below the fact band. At laptop size there is no
           surplus and this changes nothing. */}
-      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-6">
+      <div className="relative z-10 shell flex flex-1 flex-col justify-center">
         <div className="max-w-3xl 2xl:max-w-4xl">
           <div
             data-reveal

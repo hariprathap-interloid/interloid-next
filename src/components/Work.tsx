@@ -25,7 +25,7 @@ export default function Work() {
       id="work"
       className="relative overflow-hidden border-t border-border bg-background pb-8 pt-32"
     >
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <SectionHeading
           eyebrow="Selected work"
           accent="handed over."

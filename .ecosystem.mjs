@@ -13,7 +13,10 @@ const fails = [];
 const ok = (n, c) => { console.log((c ? "PASS  " : "FAIL  ") + n); if (!c) fails.push(n); };
 
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1600, height: 1100 } });
+/* 1400, not 1100: the stage is a 960px square and /service-variants now
+   carries a sticky control above it, so a shorter window guarantees part
+   of the diagram is under the bar and cannot be hovered. */
+const page = await browser.newPage({ viewport: { width: 1600, height: 1400 } });
 /* /preview is gone — /service-variants shows every layout through one
    control now, and the ids it renders are the same `#preview-{variant}`. */
 await page.goto(BASE + "/service-variants", { waitUntil: "networkidle" });
@@ -224,7 +227,7 @@ ok("mobile · no horizontal overflow", !overflow);
 await page.screenshot({ path: join(HERE, "eco-mobile.png") });
 
 /* reduced motion: the cycle must be off */
-const rm = await browser.newContext({ viewport: { width: 1600, height: 1100 }, reducedMotion: "reduce" });
+const rm = await browser.newContext({ viewport: { width: 1600, height: 1400 }, reducedMotion: "reduce" });
 const rp = await rm.newPage();
 await rp.goto(BASE + "/service-variants", { waitUntil: "networkidle" });
 await rp.waitForTimeout(700);

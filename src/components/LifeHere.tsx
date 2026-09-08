@@ -67,7 +67,7 @@ export default function LifeHere() {
         className="pointer-events-none absolute right-0 top-0 size-[520px] translate-x-1/3 -translate-y-1/4 rounded-full bg-brand/10 blur-[120px]"
         aria-hidden="true"
       />
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <SectionHeading
           eyebrow="Life here"
           icon="users"

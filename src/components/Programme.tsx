@@ -72,7 +72,7 @@ export default function Programme() {
         className="pointer-events-none absolute bottom-0 left-1/4 size-[460px] translate-y-1/3 rounded-full bg-brand/10 blur-[120px]"
         aria-hidden="true"
       />
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <SectionHeading
           eyebrow="The programme"
           icon="rocket"

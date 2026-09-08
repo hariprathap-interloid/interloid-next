@@ -79,7 +79,7 @@ export default function TechStacks({
         <div className="absolute right-0 top-1/4 size-[560px] translate-x-1/3 rounded-full bg-brand/10 blur-[120px]" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <SectionHeading
           eyebrow={STACK_HEADING.eyebrow}
           icon="layers"

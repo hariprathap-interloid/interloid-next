@@ -25,7 +25,7 @@ export default function Testimonials() {
       id="feedback"
       className="relative overflow-hidden border-t border-border bg-background py-32"
     >
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <SectionHeading
           eyebrow="Client feedback"
           icon="quote"

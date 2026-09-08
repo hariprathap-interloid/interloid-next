@@ -113,79 +113,105 @@ function Label({
 }
 
 /* ── 01 · PRODUCT ENGINEERING ──────────────────────────────────────────────
-   Four horizontal layers; one narrow vertical column crossing all four is the
-   first milestone. The ghost columns to its right are the slices that follow.
-   This is the argument of the section drawn: integration risk is paid in
-   week two, not in the final month. */
+   A four-by-four grid: four product layers down the side, four slices across.
+   Slice 01 is built and live; 02-04 are the same shape, waiting. The argument
+   is that integration risk is paid in week two rather than in the final
+   month, and it only reads if the queue is visible — see the note above the
+   rewrite for why the first version did not. */
 function Slice() {
   const lanes = ["INTERFACE", "SERVICE", "DATA", "DEPLOY"];
-  return (
-    <Frame label="Four product layers — interface, service, data and deploy — with one narrow vertical slice crossing all four and reaching production, and later slices drawn faintly beside it.">
-      {lanes.map((l, i) => {
-        const y = 58 + i * 76;
-        return (
-          <g key={l}>
-            <rect
-              x={104}
-              y={y}
-              width={420}
-              height={54}
-              rx={14}
-              className="fill-muted stroke-border"
-              strokeWidth={1}
-            />
-            <Micro x={92} y={y + 32} anchor="end">
-              {l}
-            </Micro>
-          </g>
-        );
-      })}
+  /* Four columns on one pitch, so the built slice and the queued ones are
+     unmistakably the same object at different stages. */
+  const COL_X = [138, 238, 338, 438];
+  const COL_W = 84;
+  const ROW_H = 58;
+  const ROW_GAP = 14;
+  const TOP = 62;
+  const rowY = (i: number) => TOP + i * (ROW_H + ROW_GAP);
+  const gridBottom = rowY(3) + ROW_H;
 
-      {/* the shipped slice */}
+  return (
+    <Frame label="A grid of four product layers — interface, service, data and deploy — by four delivery slices. The first slice is filled and in production, crossing all four layers; slices two, three and four are drawn empty behind it, waiting.">
+      {/* lane names, and a hairline per layer so the rows read as layers */}
+      {lanes.map((l, i) => (
+        <g key={l}>
+          <Micro x={122} y={rowY(i) + ROW_H / 2 + 4} anchor="end">
+            {l}
+          </Micro>
+          <line
+            x1={132}
+            y1={rowY(i) + ROW_H / 2}
+            x2={COL_X[3] + COL_W + 10}
+            y2={rowY(i) + ROW_H / 2}
+            className="stroke-border"
+            strokeWidth={1}
+            strokeDasharray="2 6"
+          />
+        </g>
+      ))}
+
+      {/* THE QUEUE — drawn first, so the built slice paints over it. Real
+          cells, not dashed outlines: the point is that they are the same
+          shape as the one that shipped, only empty. */}
+      {COL_X.slice(1).map((x, c) =>
+        lanes.map((l, i) => (
+          <rect
+            key={`${l}${x}`}
+            x={x}
+            y={rowY(i)}
+            width={COL_W}
+            height={ROW_H}
+            rx={12}
+            className="fill-muted stroke-border"
+            strokeWidth={1}
+            opacity={0.9 - c * 0.22}
+          />
+        )),
+      )}
+      {COL_X.slice(1).map((x, c) => (
+        <g key={`n${x}`} opacity={0.9 - c * 0.22}>
+          <Micro x={x + COL_W / 2} y={44} anchor="middle">
+            {`0${c + 2}`}
+          </Micro>
+        </g>
+      ))}
+
+      {/* THE SLICE THAT SHIPPED — filled cells, and a ring around the whole
+          column so the four of them read as one delivery rather than four
+          unrelated blocks. */}
       <rect
-        x={132}
-        y={48}
-        width={78}
-        height={302}
-        rx={16}
-        className="fill-brand/10 stroke-brand"
+        x={COL_X[0] - 10}
+        y={TOP - 12}
+        width={COL_W + 20}
+        height={gridBottom - TOP + 24}
+        rx={18}
+        className="fill-brand/5 stroke-brand"
         strokeWidth={1.5}
       />
       {lanes.map((l, i) => (
         <rect
-          key={l}
-          x={142}
-          y={64 + i * 76}
-          width={58}
-          height={42}
-          rx={10}
+          key={`f${l}`}
+          x={COL_X[0]}
+          y={rowY(i)}
+          width={COL_W}
+          height={ROW_H}
+          rx={12}
           className="fill-brand"
         />
       ))}
-      <Micro x={171} y={36} anchor="middle">
+      <Micro x={COL_X[0] + COL_W / 2} y={44} anchor="middle">
         SLICE 01
       </Micro>
 
-      {/* the ones after it */}
-      {[240, 330, 420].map((x, i) => (
-        <rect
-          key={x}
-          x={x}
-          y={48}
-          width={78}
-          height={302}
-          rx={16}
-          className="fill-transparent stroke-border"
-          strokeWidth={1}
-          strokeDasharray="4 6"
-          opacity={0.9 - i * 0.22}
-        />
-      ))}
-
-      {/* live marker under the slice */}
-      <circle cx={171} cy={372} r={5} className="fill-accent" />
-      <Label x={186} y={376}>
+      {/* live marker under the built column */}
+      <circle cx={COL_X[0] + COL_W / 2} cy={gridBottom + 32} r={5} className="fill-accent" />
+      <Label x={COL_X[0] + COL_W / 2 + 15} y={gridBottom + 36}>
         in production
+      </Label>
+
+      {/* and the direction of travel, so the queue reads as a queue */}
+      <Label x={COL_X[3] + COL_W} y={gridBottom + 36} anchor="end">
+        next, and the next
       </Label>
     </Frame>
   );

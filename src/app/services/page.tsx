@@ -4,7 +4,8 @@ import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
 import Reveal from "@/components/Reveal";
 import ApproachPrinciples from "@/components/service/ApproachPrinciples";
-import CapabilitiesAndStacks from "@/components/service/CapabilitiesAndStacks";
+import CapabilityShowcase from "@/components/service/CapabilityShowcase";
+import EcosystemSection from "@/components/service/EcosystemSection";
 import EngagementPanel from "@/components/service/EngagementPanel";
 import { ModeProvider } from "@/components/service/ModeContext";
 import ProblemLedger from "@/components/service/ProblemLedger";
@@ -32,14 +33,13 @@ export const metadata: Metadata = {
                           the rest of the page.
      ProblemLedger        five sentences a client actually says, each opening
                           onto a concrete answer.
-     CapabilitiesAndStacks
-       CapabilityShowcase the six live services, each drawn as a working
+     CapabilityShowcase   the six live services, each drawn as a working
                           mechanism in a sticky panel that follows the read.
-       TechStacks         interloid.com's #technologies tabs, rebuilt with
-                          real brand marks instead of emoji.
      ApproachPrinciples   the method — with the last line of each principle
                           written for the mode you picked.
      EngagementPanel      the terms of that mode, before anything is asked.
+     EcosystemSection     the stack, as a three-level map. LAST, and outside
+                          the provider: it is proof, not part of the offer.
      CtaAnchor            the consult, on the site's standard dark slab.
 
    ── WHAT WAS REMOVED, AND WHY ────────────────────────────────────────────
@@ -99,10 +99,22 @@ export default function Services() {
         <ModeProvider>
           <ServiceHero />
           <ProblemLedger />
-          <CapabilitiesAndStacks />
+          <CapabilityShowcase />
           <ApproachPrinciples />
           <EngagementPanel />
         </ModeProvider>
+
+        {/* THE STACK, LAST. Moved out from between the services and the
+            method on 2026-09-08: it is a proof section, not part of the
+            offer, and the ecosystem map is the most striking thing on the
+            page — it closes better than it interrupts. Outside ModeProvider
+            because it reads no mode.
+
+            CHOSEN: "Connected constellation", circle group nodes. Every level
+            is a node joined to its parent by a drawn edge, and it is the only
+            layout with real edges at all three depths. Compare them all on
+            /service-variants. */}
+        <EcosystemSection variant="constellation-circle" />
 
         {/* `id="start"`, not "contact": the nav and the footer both point at
             `/#contact` on HOME, and a duplicate id here would make those

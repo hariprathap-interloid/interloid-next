@@ -66,7 +66,7 @@ export default function Faq() {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(var(--border)_1.5px,transparent_1.5px)] bg-[size:24px_24px] [-webkit-mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_20%,transparent_100%)] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_20%,transparent_100%)]"
         aria-hidden="true"
       />
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         {/* max-w-3xl, not 2xl: at 2xl the H2 orphaned "week." onto its own
             line. The intro keeps its own narrower measure below. */}
         <div className="mx-auto mb-16 max-w-3xl text-center">

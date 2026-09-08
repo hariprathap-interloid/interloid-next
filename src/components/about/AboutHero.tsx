@@ -44,7 +44,7 @@ export default function AboutHero() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <div className="max-w-3xl 2xl:max-w-4xl">
           <div
             data-reveal

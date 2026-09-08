@@ -96,7 +96,7 @@ export default function ServiceVariants() {
       <Reveal />
       <Nav />
       <main id="main" className="pt-32">
-        <header className="mx-auto max-w-7xl px-6 pb-12">
+        <header className="shell pb-12">
           <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-accent-strong">
             Internal — not linked, not indexed
           </p>

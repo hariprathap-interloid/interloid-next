@@ -94,9 +94,9 @@ const panelActive = () =>
   page.evaluate(() => {
     const stage = document.querySelector("#capabilities .sticky");
     const shown = [...stage.querySelectorAll("[aria-hidden]")].filter((e) => e.getAttribute("aria-hidden") === "false");
-    return shown.map((e) => e.querySelector("svg")?.getAttribute("aria-label")?.slice(0, 40));
+    return shown.map((e) => e.querySelector("svg")?.getAttribute("aria-label") ?? "");
   });
-ok("capabilities · panel shows the web diagram", (await panelActive())[0]?.startsWith("Four product layers"));
+ok("capabilities · panel shows the web diagram", /four product layers/i.test((await panelActive())[0] ?? ""));
 await page.evaluate(() => document.getElementById("capability-ai").scrollIntoView({ behavior: "instant", block: "center" }));
 await page.waitForTimeout(800);
 ok("capabilities · panel follows the scroll to AI", (await panelActive())[0]?.startsWith("A workflow step"));
@@ -184,7 +184,7 @@ await page.goto(BASE + "/services", { waitUntil: "networkidle" });
 await page.waitForTimeout(500);
 await page.evaluate(() => document.getElementById("capabilities").scrollIntoView({ behavior: "instant", block: "start" }));
 await page.waitForTimeout(500);
-ok("capabilities · fresh scroll-in shows capability 01", (await panelActive())[0]?.startsWith("Four product layers"));
+ok("capabilities · fresh scroll-in shows capability 01", /four product layers/i.test((await panelActive())[0] ?? ""));
 await page.evaluate(() => document.getElementById("capability-cloud").scrollIntoView({ behavior: "instant", block: "center" }));
 await page.waitForTimeout(400);
 const pinned = await page.evaluate(() => Math.round(document.querySelector("#capabilities .sticky").getBoundingClientRect().top));

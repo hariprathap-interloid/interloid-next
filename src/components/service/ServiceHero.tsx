@@ -46,7 +46,7 @@ export default function ServiceHero() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <div className="grid items-start gap-14 lg:grid-cols-12 lg:gap-16">
           {/* ---- the answer -------------------------------------------- */}
           <div

@@ -103,7 +103,7 @@ export default function EcosystemSection({
         <div className="absolute bottom-0 left-0 size-[420px] -translate-x-1/3 rounded-full bg-accent/10 blur-[120px]" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         {heading && (
           <SectionHeading
             eyebrow={STACK_HEADING.eyebrow}

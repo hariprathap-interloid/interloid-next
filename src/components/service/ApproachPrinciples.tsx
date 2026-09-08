@@ -42,7 +42,7 @@ export default function ApproachPrinciples() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <SectionHeading
           eyebrow="How we work"
           icon="repeat"

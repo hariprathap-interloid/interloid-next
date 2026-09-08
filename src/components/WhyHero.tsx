@@ -34,7 +34,7 @@ export default function WhyHero() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <div className="max-w-3xl">
           <div
             data-reveal

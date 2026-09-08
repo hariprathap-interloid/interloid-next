@@ -16,7 +16,7 @@ export default function StackMarquee() {
       id="stack"
       className="overflow-hidden border-y border-border bg-card py-20"
     >
-      <div className="mx-auto mb-10 max-w-7xl px-6 text-center">
+      <div className="shell mb-10 text-center">
         <h3 className="font-display text-xl font-bold uppercase tracking-widest text-muted-foreground">
           Technologies we work in
         </h3>

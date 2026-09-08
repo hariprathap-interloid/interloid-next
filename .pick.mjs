@@ -23,6 +23,22 @@ export async function pick(page, variant, { fresh = false } = {}) {
      wait for the diagram to finish arriving — so anything that reads them
      has to be past that. See `.eco-train` in globals.css. */
   await page.waitForSelector(`#preview-${variant} .eco-stage`);
+  /* PUT THE STAGE BELOW THE BAR, not merely on screen. The control is sticky
+     OVER the diagram it drives, so a node under it cannot be hovered —
+     Playwright reports "radiogroup intercepts pointer events" and a reader
+     hits the same wall. `block: "center"` is not enough on its own: it aligns
+     to the viewport, which knows nothing about the bar. Measure the bar and
+     clear it. */
+  await page.evaluate((v) => {
+    const st = document.querySelector(`#preview-${v} .eco-stage`);
+    if (!st) return;
+    const bar = document.querySelector(".sticky");
+    const clear = bar ? bar.getBoundingClientRect().bottom : 0;
+    window.scrollBy({
+      top: st.getBoundingClientRect().top - clear - 24,
+      behavior: "instant",
+    });
+  }, variant);
   await page.waitForTimeout(1800);
 }
 

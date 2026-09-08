@@ -30,7 +30,7 @@ export default function Process() {
       id="process"
       className="relative overflow-hidden border-t border-border bg-background py-32"
     >
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         {/* Badge is prototype 1's form (icon + sentence case).
 
             THE ACCENT IS "production." AGAIN. An earlier pass changed it to

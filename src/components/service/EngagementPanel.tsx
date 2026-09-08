@@ -41,7 +41,7 @@ export default function EngagementPanel() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <SectionHeading
           eyebrow="The engagement"
           icon="handshake"

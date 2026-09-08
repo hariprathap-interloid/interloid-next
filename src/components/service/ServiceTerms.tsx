@@ -25,7 +25,7 @@ export default function ServiceTerms() {
       aria-labelledby="terms-heading"
       className="border-y border-border bg-card py-20"
     >
-      <div className="mx-auto max-w-7xl px-6">
+      <div className="shell">
         <h2
           id="terms-heading"
           data-reveal

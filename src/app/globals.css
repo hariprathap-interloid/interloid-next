@@ -682,6 +682,34 @@ html {
   }
 }
 
+/* ── THE PAGE SHELL ────────────────────────────────────────────────────
+   Every section's content column. Replaces `mx-auto max-w-7xl px-6`, which
+   was written out by hand in thirty-eight places — so "how wide is the page"
+   had thirty-eight answers and no way to change any of them at once.
+
+   FLUID, CAPPED AT 1600. `max-w-7xl` is 1280px, which on a 1920 monitor left
+   a third of the screen empty and on a 2560 left half. The cap is 1600
+   because past that a full-width row stops reading as a row and starts
+   reading as scattered items.
+
+   THE INSET IS THE SHELL'S OWN PADDING, clamped, not a `px-6` outside it. A
+   bare percentage width would have taken 31px off a 390px phone — a
+   regression paid by the readers with the least room to spare. Clamped, the
+   gutter is 24px on a phone (exactly what it was), grows with the viewport,
+   and stops at 64px:
+
+     390 → 342 content (unchanged)   1440 → 1325 (+93)
+    1280 → 1178                      1920 → 1472 (+240, +19%)
+
+   Not the Nav: its `max-w-7xl` is the DS §6.1 morphing pill, a component
+   dimension that animates to 6xl on scroll, not a page container. */
+.shell {
+  width: 100%;
+  max-width: 1600px;
+  margin-inline: auto;
+  padding-inline: clamp(1.5rem, 4vw, 4rem);
+}
+
 /* Placeholder outliner — every prototype ships one (HANDOFF §8). */
 body.show-ph [data-placeholder] {
   outline: 2px dashed #e11d48;

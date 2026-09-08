@@ -47,7 +47,7 @@ export default function Place() {
         className="pointer-events-none absolute left-1/4 top-0 size-[520px] -translate-y-1/3 rounded-full bg-brand/10 blur-[120px]"
         aria-hidden="true"
       />
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <SectionHeading
           eyebrow={PLACE.eyebrow}
           icon="shield"

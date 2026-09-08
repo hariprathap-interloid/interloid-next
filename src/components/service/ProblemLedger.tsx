@@ -49,7 +49,7 @@ export default function ProblemLedger() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
+      <div className="relative z-10 shell">
         <SectionHeading
           eyebrow="The problem"
           icon="quote"

@@ -80,7 +80,10 @@ export default function CtaAnchor({
          grew — that was the ask, and it is the one knob that does it. */
       className="relative bg-background px-4 pb-40 pt-24 sm:px-6"
     >
-      <div className="mx-auto max-w-7xl">
+      {/* Not `.shell`: the section already owns the gutter (`px-4 sm:px-6`
+          above), so the shell's clamped padding would double it. Only the cap
+          moves, to match the new page width. */}
+      <div className="mx-auto w-full max-w-[1600px]">
         <div /* `.cta`: 4rem/1.5rem, then 5rem/4rem at sm. Radius is a flat 3rem,
               not the token scale's rounded-4xl (2.55rem). */
           data-cta-slab

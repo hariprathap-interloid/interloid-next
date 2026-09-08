@@ -14,7 +14,7 @@ const fails = [];
 const ok = (n, c) => { console.log((c ? "PASS  " : "FAIL  ") + n); if (!c) fails.push(n); };
 
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 1600, height: 1150 } });
+const page = await browser.newPage({ viewport: { width: 1600, height: 1400 } });
 /* /circle-preview is gone — the circle treatment is the "Level 2" control on
    /service-variants, which is the same `.eco-circles` wrapper class. */
 await page.goto(BASE + "/service-variants", { waitUntil: "networkidle" });
