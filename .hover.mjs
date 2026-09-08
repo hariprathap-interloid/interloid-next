@@ -2,6 +2,7 @@
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
+import { pick, reveal } from "./.pick.mjs";
 const BASE = process.env.BASE || "http://localhost:3000";
 
 const fails = [];
@@ -13,16 +14,10 @@ const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1600, height: 1150 } });
 await page.goto(BASE + "/service-variants", { waitUntil: "networkidle" });
 await page.waitForTimeout(800);
-await page.evaluate(async () => {
-  for (let y = 0; y < document.body.scrollHeight; y += 500) {
-    window.scrollTo({ top: y, behavior: "instant" });
-    await new Promise((r) => setTimeout(r, 80));
-  }
-  window.scrollTo({ top: 0, behavior: "instant" });
-});
-await page.waitForTimeout(800);
+await reveal(page);
 
 for (const v of ["dendrogram", "columns", "constellation-circle", "tree"]) {
+  await pick(page, v);
   const stage = `#preview-${v} .eco-stage`;
   if (!(await page.locator(stage).count())) { ok(`${v} · present`, false); continue; }
   await page.locator(stage).hover({ position: { x: 4, y: 4 } });

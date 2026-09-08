@@ -18,10 +18,10 @@ const SERVICE_LINKS = CAPABILITIES.map((c) => c.name);
    compiling — the property has to stay OPTIONAL rather than disappear,
    because the next link added before its route exists needs it. */
 const COMPANY_LINKS: { href: string; label: string; placeholder?: string }[] = [
-  /* "Commitments", matching the nav. Same destination, and it was the
-     last visible "Why Interloid" left on that page after the hero kicker
-     came off — one link naming the page two ways is how a nav loses trust. */
-  { href: "/why-choose-us", label: "Commitments" },
+  /* "Why us", matching the nav — renamed from "Commitments" with it on
+     2026-09-08. Same destination, and one link naming the page two ways is
+     how a nav loses trust, so these two lists move together. */
+  { href: "/why-choose-us", label: "Why us" },
   { href: "/#process", label: "How we work" },
   { href: "/#work", label: "Selected work" },
   { href: "/#contact", label: "Contact" },

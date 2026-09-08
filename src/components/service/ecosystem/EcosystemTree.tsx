@@ -5,6 +5,7 @@ import TechLogo from "../TechLogo";
 import { CAPABILITIES, type Tech } from "@/content/service";
 import { HUE } from "@/content/site";
 import { Core, EcosystemList, ServiceNode } from "./parts";
+import { DotEdge } from "./parts";
 import { useEcosystem } from "./useEcosystem";
 
 /* ==========================================================================
@@ -437,6 +438,20 @@ export default function EcosystemTree({
                   className="eco-line"
                   style={{ "--d": `${360 + i * 70}ms` } as React.CSSProperties}
                 />
+                {/* The dots, on the open branch only: limb, spine and every
+                    twig, so one runs from the trunk out to each last leaf. */}
+                {/* The limb flows whether or not this service is lit —
+                    six streams leaving the trunk are the resting state of the
+                    tree. The spine and the twigs only exist when it opens. */}
+                <DotEdge d={b.limb} />
+                {lit && (
+                  <>
+                    <DotEdge d={b.spine} />
+                    {b.twigs.map((d, ti) => (
+                      <DotEdge key={`dot${ti}`} d={d} />
+                    ))}
+                  </>
+                )}
                 {b.twigs.map((d, ti) => (
                   <path
                     key={ti}

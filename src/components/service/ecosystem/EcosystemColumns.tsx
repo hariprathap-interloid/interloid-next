@@ -5,7 +5,7 @@ import Icon from "../../Icon";
 import TechLogo from "../TechLogo";
 import { CAPABILITIES } from "@/content/service";
 import { HUE } from "@/content/site";
-import { Core, EcosystemList } from "./parts";
+import { Core, DotEdge, EcosystemList } from "./parts";
 import { useEcosystem } from "./useEcosystem";
 
 /* ==========================================================================
@@ -310,6 +310,19 @@ export default function EcosystemColumns({
                 }}
               />
             ))}
+
+            {/* The dots. Second pass, above every edge - the core link and
+                then each branch segment out to the last technology. */}
+            {/* ALL SIX, not just the active one: the core column feeds
+                every service at rest, and gating this on the selection left
+                five of the six links dead until the pointer arrived. */}
+            {geo.core.map((e, i) => (
+              <DotEdge key={`cdot${i}`} d={e.d} />
+            ))}
+            {phase &&
+              geo.branch.map((e, i) => (
+                <DotEdge key={`bdot${i}`} d={e.d} />
+              ))}
           </svg>
         )}
 

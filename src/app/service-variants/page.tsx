@@ -1,79 +1,93 @@
 import type { Metadata } from "next";
-import EcosystemSection, {
-  type EcosystemVariant,
-} from "@/components/service/EcosystemSection";
+import EcosystemSwitcher, {
+  type EcosystemDesign,
+} from "@/components/service/EcosystemSwitcher";
 import Footer from "@/components/Footer";
-import Icon from "@/components/Icon";
 import Nav from "@/components/Nav";
 import Reveal from "@/components/Reveal";
 
 export const metadata: Metadata = {
-  title: "Ecosystem variants — how each would ship | Interloid",
+  title: "Ecosystem designs — pick one | Interloid",
   robots: { index: false, follow: false },
 };
 
 /* ==========================================================================
-   /service-variants — the shortlist, named, as each would appear on /services.
+   /service-variants — ONE place, every ecosystem design, switched in place.
    ==========================================================================
-   The earlier pages were a laboratory: eight layouts in a row, to find out
-   which ones were worth keeping. This one is the shortlist the user named,
-   presented the way the decision actually has to be made — each option with
-   the name it would be referred to by, what it costs, and what it is good at,
-   rendered in the section chrome it would really ship in.
+   This page has had three shapes. It was eight diagrams stacked down a page
+   (a laboratory), then five named finalists with their trade-offs (a
+   shortlist). It is now a switcher, because stacking is the wrong tool for a
+   comparison: eight tall diagrams meant eight live observers and eight
+   animating SVGs at once, and two layouts could only be compared by scrolling
+   between them from memory. Swapped in place they land in the same position,
+   so the difference between them is the only thing that moves.
 
-   Every one of these is one string away from production: `variant` on the
+   /preview, /final-preview and /circle-preview are now redundant — this page
+   covers every layout either of them showed, plus the three they did not.
+   They are left in the tree because `.ecosystem.mjs` and `.circles.mjs` still
+   address them; delete all three with the losing designs.
+
+   EVERY ENTRY BELOW IS ONE STRING FROM PRODUCTION: `variant` on the
    EcosystemSection in CapabilitiesAndStacks.tsx. Nothing else changes.
 
-   ── WHAT CHANGED FOR THIS PAGE ───────────────────────────────────────────
-   · `-circle` became a variant SUFFIX, so "Connected constellation - circle"
-     is one name rather than a layout plus a flag someone has to remember.
-   · Hover drives everything. Clicking used to pin, and a pinned selection
-     ignores later hovers, so one stray click made Great circle and Flow
-     columns feel dead. Pinning is now touch-only, where there is no hover to
-     lose.
-   · The Tech tree is back to its older look — solid trunk, square marks — on
-     request. Its twig alignment stays fixed; that was a defect, not a taste.
-
-   Not linked, noindex. Delete it once the choice is made.
+   Not linked, noindex.
    ========================================================================== */
 
-type Sample = {
-  v: EcosystemVariant;
-  name: string;
-  best: string;
-  cost: string;
-};
-
-const SAMPLES: Sample[] = [
+/* Ordered by how seriously each is in the running, not alphabetically — the
+   first entry is what the page opens on. */
+const DESIGNS: EcosystemDesign[] = [
   {
-    v: "constellation-circle",
-    name: "Connected constellation — circle",
-    best: "Every level is a disc, and every disc is joined to its parent by a drawn edge. The hierarchy is legible without reading a word — which is the whole job of this section.",
+    layout: "constellation",
+    name: "Connected constellation",
+    best: "Every level is a node and every node is joined to its parent by a drawn edge, so the hierarchy is legible without reading a word — which is the whole job of this section. It is also the only layout that carries the travelling flow at all three depths.",
     cost: "One service at a time. A visitor who wants to compare two stacks has to open each in turn.",
   },
   {
-    v: "constellation",
-    name: "Connected constellation — pill",
-    best: "The same layout with lozenge group labels. Longer names sit on one line, so nothing wraps to three.",
-    cost: "The group reads as a caption rather than as a node, which weakens the family resemblance the circle version has.",
+    layout: "branch",
+    name: "Branch tree",
+    best: "Ships on /services today. The only layout that shows every technology's NAME without a hover, and the only one whose nodes do not move when a selection is made — so nothing can slide under a resting pointer.",
+    cost: "Half diagram, half panel. The wheel stops being the whole story and becomes a picker, which gives up the ecosystem feeling the reference has.",
+    flow: false,
+    caveat:
+      "It has no level-2 or level-3 edges — its subtree is a list — so there is nothing for the beads to travel along. It ships with flow={false} for that reason, and this preview is still for the same reason.",
   },
   {
-    v: "tree",
+    layout: "tree",
     name: "Tech tree",
-    best: "Nothing is hidden: all six branches and all 62 marks are on screen at once, and the open service lights its own branch. The best answer to “what do you actually work with”.",
+    best: "Nothing is hidden: all six branches and every technology are on screen at once, and the open service lights its own branch. The best answer to “what do you actually work with”.",
     cost: "It is tall, and at rest it is busy. The marks are small enough that they read as texture until you look closely.",
   },
   {
-    v: "dendrogram",
+    layout: "dendrogram",
     name: "Great circle",
-    best: "The whole hierarchy at once, with each wedge sized by how many technologies that service really has — so the picture is honest about where the depth is. Opens on hover.",
+    best: "The whole hierarchy at once, with each wedge sized by how many technologies that service really has — so the picture is honest about where the depth is.",
     cost: "The densest of them all. It needs its full height, and on a small laptop it is the first to feel cramped.",
   },
   {
-    v: "columns",
+    layout: "columns",
     name: "Flow columns",
-    best: "The only layout where every node at every level carries a readable name, and the one that survives a long label without wrapping. Opens on hover.",
-    cost: "It is a diagram plus a panel rather than one object; it gives up the ecosystem feeling the wheel has.",
+    best: "The only layout where every node at every level carries a readable name, and the one that survives a long label without wrapping.",
+    cost: "A diagram plus a panel rather than one object; it gives up the ecosystem feeling the wheel has.",
+  },
+  {
+    layout: "bloom",
+    name: "Radial bloom",
+    best: "The closest of all eight to the reference image. The six services hold their ring at all times and the selected subtree blooms outward inside its own angular sector while the other five recede.",
+    cost: "A branch at the top of the wheel and a branch at the bottom-left are different shapes pointing in different directions, so the reader re-learns the layout six times instead of once.",
+  },
+  {
+    layout: "magnify",
+    name: "Magnify",
+    best: "The selected service inflates into a disc larger than the Interloid core itself and the three levels hang off it. No selection is ever in doubt.",
+    cost: "The inflating disc dominates the frame; at that scale the wheel stops reading as a wheel and the core stops being the centre of anything.",
+  },
+  {
+    layout: "shells",
+    name: "Orbit shells",
+    best: "Every branch opens into the SAME sector, pointing right, so the reader learns one shape and re-uses it six times. The wheel turning is also the clearest possible signal that a selection happened — nothing else on the page moves that much.",
+    cost: "Every selection moves all six services, which is a great deal of travel for one hover.",
+    caveat:
+      "Measured, repeatedly: because the wheel re-balances, a node genuinely slides under a resting pointer and fires a hover the guard cannot tell from a real one — the pointer has not moved, so no position test can separate the two. Two of six services fail on any harness run and which two changes between runs. It is excluded from the default harness set for this reason.",
   },
 ];
 
@@ -82,74 +96,25 @@ export default function ServiceVariants() {
     <>
       <Reveal />
       <Nav />
-      <main id="main">
-        <header className="border-b border-border bg-secondary pb-16 pt-40">
-          <div className="mx-auto max-w-7xl px-6">
-            <p className="mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-accent-strong">
-              Variants · not linked, not indexed
-            </p>
-            <h1 className="max-w-3xl font-display text-4xl font-medium leading-[1.1] tracking-[-0.025em] text-foreground md:text-5xl">
-              Five ways to ship it,{" "}
-              <span className="bg-gradient-to-r from-brand to-accent bg-clip-text text-transparent">
-                each one line away.
-              </span>
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-[1.5] text-muted-foreground">
-              Each option below is rendered in the section chrome it would
-              really ship in, with its name, what it is good at, and what it
-              costs. Everything opens on hover; a tap is only needed on touch.
-            </p>
-
-            <ul className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {SAMPLES.map((s) => (
-                <li key={s.v}>
-                  <a
-                    href={`#preview-${s.v}`}
-                    className="group flex items-center justify-between gap-3 rounded-full border border-border bg-card px-5 py-3 text-sm font-semibold text-foreground shadow-sm transition-colors hover:border-accent/40"
-                  >
-                    {s.name}
-                    <span className="text-accent-strong transition-transform group-hover:translate-x-1">
-                      <Icon name="arrow" className="size-4" />
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+      <main id="main" className="pt-32">
+        <header className="mx-auto max-w-7xl px-6 pb-12">
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-accent-strong">
+            Internal — not linked, not indexed
+          </p>
+          <h1 className="mt-3 max-w-4xl font-display text-[clamp(2.2rem,4vw,3.2rem)] font-bold leading-[1.08] tracking-[-0.03em] text-foreground">
+            Eight designs for the ecosystem map. Pick one.
+          </h1>
+          <p className="mt-5 max-w-3xl text-[17px] leading-[1.7] text-muted-strong">
+            Each is rendered in the section chrome it would really ship in, one
+            at a time and always in the same place, so the only thing that
+            changes between two of them is the design. Everything opens on
+            hover; a tap is only needed on touch. What each is good at, what it
+            costs, and anything known to be wrong with it is stated above the
+            diagram.
+          </p>
         </header>
 
-        {SAMPLES.map((s) => (
-          <div key={s.v}>
-            <div className="mx-auto max-w-7xl px-6 pt-24">
-              <div className="flex flex-col gap-2 border-l-2 border-accent/40 pl-5">
-                <h2 className="font-display text-2xl font-bold tracking-[-0.02em] text-foreground">
-                  {s.name}
-                </h2>
-                <p className="max-w-3xl text-[15px] leading-[1.7] text-muted-strong">
-                  <span className="font-semibold text-foreground">Good at — </span>
-                  {s.best}
-                </p>
-                <p className="max-w-3xl text-[15px] leading-[1.7] text-muted-foreground">
-                  <span className="font-semibold text-foreground">Costs — </span>
-                  {s.cost}
-                </p>
-                {/* The literal one-line change, so the choice is concrete. */}
-                <p className="mt-1 font-mono text-[12px] text-muted-foreground">
-                  &lt;EcosystemSection variant=&quot;{s.v}&quot; /&gt;
-                </p>
-              </div>
-            </div>
-            {/* `idPrefix` per variant: they all mount at once and would
-                otherwise share element ids, which is invalid and breaks every
-                aria-controls on the page. */}
-            <EcosystemSection
-              variant={s.v}
-              idPrefix={s.v}
-              heading={false}
-              id={`preview-${s.v}`}
-            />
-          </div>
-        ))}
+        <EcosystemSwitcher designs={DESIGNS} />
       </main>
       <Footer />
     </>

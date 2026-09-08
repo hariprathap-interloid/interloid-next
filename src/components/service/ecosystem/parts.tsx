@@ -74,6 +74,19 @@ export function Backdrop({
           style={{ "--d": `${120 + i * 90}ms` } as React.CSSProperties}
         />
       ))}
+
+      {/* THE IDLE FLOW, and the reason it is not conditional. Every service
+          spoke carries beads whether or not anything is hovered, so the map
+          is alive the moment it scrolls in — a diagram that only moves under
+          a pointer looks broken to a reader who has not touched it yet, and
+          is invisible on the pages that show six variants at once.
+
+          A second pass, after the lines, so a bead is never painted under the
+          edge it rides. Every Backdrop variant gets this for free, including
+          `branch`, which ships on /services and has no other edges. */}
+      {nodes.map((n, i) => (
+        <DotEdge key={`bead${i}`} x1={c} y1={c} x2={n.x} y2={n.y} />
+      ))}
     </svg>
   );
 }
@@ -106,6 +119,8 @@ export function Links({
     d: number;
     r1?: number;
     r2?: number;
+    /** Which hop this edge is: 0 core→service, 1 →group, 2 →technology. */
+    depth?: number;
   }[];
   open: boolean;
 }) {
@@ -137,7 +152,108 @@ export function Links({
         />
         );
       })}
+
+      {/* A SECOND PASS, so every bead paints above every edge. Emitted inside
+          the first map they would be overdrawn by any edge that came later.
+
+          DEPTH 0 IS SKIPPED. The core→service leg is drawn and beaded by
+          Backdrop already, always — dotting it here as well would run a
+          second identical stream exactly on top of the first, in phase, for
+          no visible gain. Levels 2 and 3 only exist while a branch is open,
+          so those are the ones this pass is for. */}
+      {open &&
+        edges
+          .filter((e) => (e.depth ?? 1) !== 0)
+          .map((e, i) => {
+            const t = trim(e.x1, e.y1, e.x2, e.y2, e.r1 ?? 0, e.r2 ?? 0);
+            return (
+              <DotEdge
+                key={`dot${i}`}
+                x1={t.x1}
+                y1={t.y1}
+                x2={t.x2}
+                y2={t.y2}
+              />
+            );
+          })}
     </svg>
+  );
+}
+
+/* ── THE TRAVELLING BEAD ──────────────────────────────────────────────────
+   Three dots ride every edge, continuously, from the moment the diagram
+   reveals - see `.eco-dot` in globals.css, which owns the flow. This owns
+   what one of them LOOKS like, and it is a RING, not a solid dot:
+
+     glow   17px of accent at 28%, blurred - the light around the bead
+     ring    9px of brand               - the ink value, unblurred
+     hole  3.5px of the page background - punches the middle back out
+
+   Painted widest first, each layer over the middle of the one before it, so
+   three strokes on one geometry make a donut. That is the reference's own
+   construction and it is why the bead reads at 8px: a solid dot of any colour
+   is a blob at that size, while a ring has an inside and an outside and the
+   eye resolves it as an object. The hole is the BACKGROUND token, not white -
+   the section is `bg-background`, and white would be a bright pip in dark
+   mode instead of a hole.
+
+   The glow and the ring cannot be the same layer: filtering the ring fogs the
+   very edge it exists to draw, and an unblurred glow is just a fatter dot.
+
+   NO DELAY, and no `depth`. Every bead in the diagram shares one phase, which
+   is what makes a dot arrive at a node in the same instant one leaves it. See
+   the handoff note on `@keyframes eco-travel`.
+
+   `d` for paths, or the four coordinates for a straight line - the variants
+   draw both kinds and neither should have to know how the bead is built. */
+const DOT_LAYERS = [
+  { w: 17, cls: "stroke-accent eco-dot-glow", op: 0.28 },
+  { w: 9, cls: "stroke-brand", op: 1 },
+  { w: 3.5, cls: "stroke-background", op: 1 },
+];
+
+export function DotEdge({
+  d,
+  x1,
+  y1,
+  x2,
+  y2,
+}: {
+  d?: string;
+  x1?: number;
+  y1?: number;
+  x2?: number;
+  y2?: number;
+}) {
+  return (
+    /* The <g> is the reveal gate. Each layer carries its own opacity, so the
+       fade-in cannot live on `.eco-dot` without flattening the glow to 1. */
+    <g className="eco-train">
+      {DOT_LAYERS.map((l) =>
+        d ? (
+          <path
+            key={l.w}
+            d={d}
+            pathLength={1}
+            className={`eco-dot ${l.cls}`}
+            strokeWidth={l.w}
+            opacity={l.op}
+          />
+        ) : (
+          <line
+            key={l.w}
+            x1={x1}
+            y1={y1}
+            x2={x2}
+            y2={y2}
+            pathLength={1}
+            className={`eco-dot ${l.cls}`}
+            strokeWidth={l.w}
+            opacity={l.op}
+          />
+        ),
+      )}
+    </g>
   );
 }
 

@@ -575,27 +575,92 @@ html {
 
    It deliberately overrides the draw-on dasharray, which has finished by the
    time a branch is opened - the two never animate the same line at once. */
+/* A CONVEYOR, NOT A PULSE.
+
+   The pattern below is one THIRD of the path, so it tiles the edge exactly
+   three times: three dots, evenly spaced, always there. One cycle slides the
+   pattern by exactly one period, which makes the loop seamless - a dot
+   leaving the far end is replaced by the next arriving at the near end, and
+   an edge is never empty. A dot therefore crosses a whole edge in 3 x 0.8s.
+
+   THE HANDOFF. Every edge in the diagram shares this one period and this one
+   phase, and `pathLength=1` normalises a 110-unit link and a 592-unit one to
+   the same 1 - so at every multiple of 0.8s a dot sits at the far end of a
+   parent edge at the same instant another sits at the near end of its child.
+   The pulse appears to pass THROUGH a node instead of stopping at it, which
+   is the ordering the staged relay was reaching for, without the dead time
+   that made the diagram look switched off between hops.
+
+   `linear` IS MANDATORY. The pattern restarts three times per traversal, and
+   an eased curve would show that seam as a stutter three times an edge - the
+   one place where the easing that suits a single travelling dot is exactly
+   wrong. */
 @keyframes eco-travel {
   from {
-    stroke-dashoffset: 1;
+    stroke-dashoffset: 0.33333;
   }
   to {
     stroke-dashoffset: 0;
   }
 }
 
-.eco-line[data-on="true"],
-.eco-branch[data-open="true"] .eco-line {
-  stroke-dasharray: 0.05 0.95;
-  animation: eco-travel 2.6s linear infinite;
+.eco-dot {
+  /* 0.008 dash + 0.32533 gap = 0.33333, one third of the path. Both halves
+     have to move together: the sum IS the period, and a sum that is not
+     exactly 1/n leaves a short pattern at the end of the edge that stutters
+     once per cycle. The dash stays small because a round cap already adds a
+     stroke-width of length - at 0.008 the widest layer is round on a short
+     link and only slightly oblong on the longest one in the set. */
+  stroke-dasharray: 0.008 0.32533;
+  stroke-linecap: round;
+  animation: eco-travel 0.8s linear infinite;
+}
+
+/* Held back until the section scrolls in, exactly like `.eco-line`: the
+   connectors draw themselves outward on reveal, and dots riding a line that
+   has not been drawn yet is the wrong order. The delay clears the 1.1s
+   draw-on. Opacity lives on this wrapper and not on `.eco-dot`, because each
+   layer of the bead already carries its own. */
+.eco-train {
+  opacity: 0;
+  transition: opacity 0.45s ease-out;
+}
+[data-reveal].is-in .eco-train {
+  opacity: 1;
+  transition-delay: 0.9s;
+}
+
+/* THE GLOW. A blur on the widest layer only. The ring underneath it has to
+   stay a hard edge and the hole has to stay clean, so neither gets a filter -
+   a bloom on all three just fogs the bead.
+
+   `--accent` and not `--brand`: a glow has to read as light, and brand is the
+   ink value in this palette - blurring it on a pale ground makes a smudge,
+   which is exactly what the first attempt did. Both tokens flip with the
+   theme, so this needs no dark-mode branch. */
+.eco-dot-glow {
+  filter: drop-shadow(0 0 8px var(--accent));
+}
+
+/* STILL. `flow={false}` on an EcosystemSection puts this on the same wrapper
+   that carries `eco-circles`, and it stops the beads everywhere inside at
+   once - the same trick, and for the same reason: eight layouts build their
+   edges eight different ways, and a prop threaded through all of them to
+   reach one <g> would be eight places to forget.
+
+   /services ships still. Its `branch` diagram has no level-2 or level-3
+   edges at all - only the six short core spokes - so the beads had nowhere
+   to travel and read as decoration sitting on the lines rather than as flow.
+   The variants with a real depth of edges keep it. */
+.eco-still .eco-train {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .eco-line[data-on="true"],
-  .eco-branch[data-open="true"] .eco-line {
-    animation: none;
-    stroke-dasharray: 1;
-    stroke-dashoffset: 0;
+  /* Removed outright, not parked: a stopped dot sitting somewhere along an
+     edge reads as a stray mark nobody can account for. */
+  .eco-dot {
+    display: none;
   }
 }
 

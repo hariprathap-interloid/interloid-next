@@ -55,7 +55,17 @@ const all = await p.evaluate(() =>
 const imgs = await p.evaluate(() =>
   [...document.querySelectorAll("main img")].map((i) => i.getAttribute("src")),
 );
-ok(imgs.length === 0, `no photographs (${imgs.length} <img> in main)`);
+/* Since 2026-09-08 the seven seats carry committed PLACEHOLDER portraits —
+   abstract silhouettes, unmistakably not people. The rule the harness can
+   actually enforce is therefore: every image is either placeholder art
+   (`/team/ph-*.svg`) or was added DELIBERATELY, with this check updated in
+   the same change. A real-looking photo arriving any other way is the
+   stock-photo failure, and it fails here. */
+ok(imgs.length === 7, `seven portrait slots filled (${imgs.length} <img> in main)`);
+ok(
+  imgs.every((src) => /^\/team\/ph-\d\.svg$/.test(src)),
+  `every portrait is placeholder art, not a photo of a person (${imgs.join(", ")})`,
+);
 for (const [label, re] of [
   ["a founding year", /\b(founded|established|since)\b[^.]{0,20}\b(19|20)\d{2}/i],
   ["a headcount", /\b\d+\+?\s*(engineers|employees|people|team members|specialists)\b/i],
@@ -98,6 +108,25 @@ ok(
   named === seats,
   `every seat is nameless and says why (${named} chips for ${seats} seats)`,
 );
+/* Every LinkedIn chip must be a real outbound link. A chip rendered without an
+   href — or with a placeholder one — invites a click that goes nowhere, which
+   is worse on a colleague's card than anywhere else on the site. */
+const links = await p.evaluate(() =>
+  [...document.querySelectorAll("#team a")]
+    .map((a) => a.getAttribute("href"))
+    .filter((h) => h && h !== "/careers"),
+);
+ok(
+  links.every((h) => /^https:\/\/(www\.)?linkedin\.com\//.test(h)),
+  `every extra team link is a real LinkedIn URL (${links.length} found: ${links.join(", ") || "none yet"})`,
+);
+/* The line written for the team rather than for the market. It is the only
+   copy on the site with that audience and the easiest thing to tidy away. */
+ok(
+  /it is because the work has your name on it/i.test(all),
+  "the note addressed to the team is on the page",
+);
+
 /* The open seat is the eighth card and must point at /careers — it is the
    only route from /about to the hiring page. */
 ok(

@@ -203,15 +203,21 @@ function branchLayout(cap: Capability, serviceAngle: number): BranchGroup[] {
     stages the draw. Core → service → group → technology, in that order, so
     the `d` values are monotonic and the branch grows outward. */
 function branchEdges(groups: BranchGroup[], serviceAngle: number) {
-  const edges: { x1: number; y1: number; x2: number; y2: number; d: number }[] =
-    [];
+  const edges: {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    d: number;
+    depth: number;
+  }[] = [];
 
   /* 1 — the spine. Starts at 64, just outside the 116px core (58px = 60.4
      units at a 960px stage), and stops 30 units short of the node centre so
      it meets the tile's edge rather than crossing it. */
   const a = polarUnits(64, serviceAngle);
   const b = polarUnits(OPEN_R - 30, serviceAngle);
-  edges.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y, d: 0 });
+  edges.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y, d: 0, depth: 0 });
 
   /* 2 — service → group. All four leave the node's own centre, so they are
      hidden under the 56px tile and appear to emanate from it (the Links SVG
@@ -219,7 +225,14 @@ function branchEdges(groups: BranchGroup[], serviceAngle: number) {
   const hub = polarUnits(OPEN_R, serviceAngle);
   groups.forEach((g, gi) => {
     const gin = polarUnits(g.radius - 18, g.angle);
-    edges.push({ x1: hub.x, y1: hub.y, x2: gin.x, y2: gin.y, d: 200 + gi * 70 });
+    edges.push({
+      x1: hub.x,
+      y1: hub.y,
+      x2: gin.x,
+      y2: gin.y,
+      d: 200 + gi * 70,
+      depth: 1,
+    });
 
     /* 3 — group → technology. Every edge of a cluster leaves the SAME point
        just outside its pill, which is what makes four scattered plates read
@@ -233,6 +246,7 @@ function branchEdges(groups: BranchGroup[], serviceAngle: number) {
         x2: mp.x,
         y2: mp.y,
         d: 360 + gi * 70 + ti * 40,
+        depth: 2,
       });
     });
   });

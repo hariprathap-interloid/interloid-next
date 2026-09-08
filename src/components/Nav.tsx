@@ -10,20 +10,23 @@ import {
 
 /* DS §6.1 morphing pill: width (max-w-7xl→6xl), surface (transparent→glass)
    and radius (0→rounded-full) animate together over 300ms.
+   HANDOFF §4 said 8 links; it is 6 since 2026-09-08. Stack and Process were
+   removed on request and Commitments became "Why us" — the two removed
+   SECTIONS still exist (StackMarquee on /services, Process on home) and are
+   reachable by scrolling; only their nav shortcuts are gone.
 
-   HANDOFF §4: 8 links, desktop pill at `xl:` (1280px); below that the mobile
-   menu. Every link now resolves: `/careers` shipped 2026-09-07 and `/about`
-   2026-09-08, so the `data-placeholder` flags this list used to carry are
-   both gone. If a link is ever added before its route exists, flag it here
-   rather than hiding it — the toggle counting a dead link is the point. */
+   Desktop pill at `xl:` (1280px); below that the mobile menu. Every link
+   resolves: `/careers` shipped 2026-09-07 and `/about` 2026-09-08, so the
+   `data-placeholder` flags this list used to carry are both gone. If a link
+   is ever added before its route exists, flag it here rather than hiding it —
+   the toggle counting a dead link is the point. */
 const LINKS = [
   { href: "/#home", label: "Home" },
-  /* Both sections moved off home to /services 2026-09-08; Stack keeps its
-     fragment because StackMarquee kept `id="stack"` on the new page. */
   { href: "/services", label: "Services" },
-  { href: "/services#stack", label: "Stack" },
-  { href: "/why-choose-us", label: "Commitments" },
-  { href: "/#process", label: "Process" },
+  /* "Why us", renamed from "Commitments" 2026-09-08. The footer's matching
+     entry was renamed with it — the two lists are kept in step deliberately,
+     see COMPANY_LINKS there. */
+  { href: "/why-choose-us", label: "Why us" },
   { href: "/#work", label: "Work" },
   { href: "/about", label: "About us" },
   { href: "/careers", label: "Careers" },

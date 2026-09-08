@@ -4,7 +4,14 @@ import type { Capability, Tech } from "@/content/service";
 import { CAPABILITIES } from "@/content/service";
 import { HUE } from "@/content/site";
 import Icon from "../../Icon";
-import { Core, EcosystemList, GroupPill, ServiceNode, TechNode } from "./parts";
+import {
+  Core,
+  DotEdge,
+  EcosystemList,
+  GroupPill,
+  ServiceNode,
+  TechNode,
+} from "./parts";
 import { STAGE, polar, polarUnits } from "./geometry";
 import { useEcosystem } from "./useEcosystem";
 
@@ -395,6 +402,28 @@ export default function EcosystemDendrogram({
                     ))}
                   </g>
                 ))}
+
+                {/* THE DOTS, on the open wedge only. A second pass over the
+                    same geometry so each one paints above every edge: core to
+                    service, service to group, group to each mark - the whole
+                    chain out to the last child. */}
+                {/* The spoke flows always; the wedge only when it opens. */}
+                <DotEdge x1={STAGE / 2} y1={STAGE / 2} x2={sp.x} y2={sp.y} />
+                {eco.engaged &&
+                  lit(i) &&
+                  s.groups.map((g) => (
+                    <g key={`dot-${g.label}`}>
+                      <DotEdge
+                        d={radialLink(R_SERVICE, s.angle, R_GROUP, g.angle)}
+                      />
+                      {g.marks.map((m) => (
+                        <DotEdge
+                          key={`dot-${m.tech.name}`}
+                          d={radialLink(R_GROUP, g.angle, m.radius, m.angle)}
+                        />
+                      ))}
+                    </g>
+                  ))}
               </g>
             );
           })}

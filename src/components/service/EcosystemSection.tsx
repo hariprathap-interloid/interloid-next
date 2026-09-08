@@ -67,6 +67,7 @@ export default function EcosystemSection({
   idPrefix,
   heading = true,
   id = "technologies",
+  flow = true,
 }: {
   /** A layout key, optionally suffixed `-circle` for circular group nodes. */
   variant?: EcosystemVariant;
@@ -74,8 +75,16 @@ export default function EcosystemSection({
   /** /preview renders its own headings per variant. */
   heading?: boolean;
   id?: string;
+  /** Travelling beads on the edges. Off where a layout has too few edges to
+      make the flow mean anything — see `.eco-still` in globals.css. */
+  flow?: boolean;
 }) {
   const { Map, circles } = readVariant(variant);
+  /* Whole strings, joined — never a built class name (HANDOFF §5.1). Both
+     hooks restyle every layout at once from one wrapper. */
+  const hooks = [circles ? "eco-circles" : "", flow ? "" : "eco-still"]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <section
@@ -126,12 +135,24 @@ export default function EcosystemSection({
           </span>
         </p>
 
-        <div
-          data-reveal
-          style={{ "--delay": "80ms" } as React.CSSProperties}
-          className={circles ? "eco-circles" : undefined}
-        >
-          <Map idPrefix={idPrefix ?? variant} />
+        {/* TWO DIVS, AND THEY MUST STAY TWO.
+
+            Reveal.tsx adds `is-in` to the [data-reveal] element imperatively,
+            from outside React. React updates a className by writing the WHOLE
+            attribute, so any re-render that changes `hooks` — which is exactly
+            what /service-variants does every time the design is switched —
+            wipes `is-in` along with it, the connectors snap back to
+            `stroke-dashoffset: 1`, and the diagram goes blank with nothing in
+            the console. Measured: switching to `branch` (which adds
+            `eco-still`) and back left every layout undrawn.
+
+            So the element React owns the className of is NOT the element the
+            observer writes to. Both selectors are descendant selectors, so
+            nesting costs nothing. */}
+        <div data-reveal style={{ "--delay": "80ms" } as React.CSSProperties}>
+          <div className={hooks || undefined}>
+            <Map idPrefix={idPrefix ?? variant} />
+          </div>
         </div>
 
         <p

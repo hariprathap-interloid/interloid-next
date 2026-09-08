@@ -248,10 +248,21 @@ export const PEOPLE = {
    about what happens next: flag once, then build, and mark it. This is the
    build.
 
-   ── THE `name: null` DESIGN, AND WHY IT IS NOT A COP-OUT ─────────────────
-   Every seat below has a `name` field and every one of them is `null` today.
-   The card renders "Named in your proposal" in that slot instead, which is a
-   true statement and already the promise made three sections up.
+   ── EXTENDED 2026-09-08: PHOTOGRAPHS, POSITIONS AND LINKEDIN ─────────────
+   The user asked for the full people card — a photograph, the position, and a
+   LinkedIn link — and for a section that an EMPLOYEE feels good arriving at,
+   not only a buyer. That is what TEAM_HEADING's `note` is for; it is the one
+   piece of copy on this site written for the team rather than for a client.
+
+   Three nullable fields now, and they are INDEPENDENT on purpose: `name`,
+   `img`, `linkedin`. A name usually lands before a photograph and a
+   photograph before somebody agrees to be linked, so the card is built to
+   render correctly at every combination rather than only at "all or nothing".
+
+   ── THE `null` DESIGN, AND WHY IT IS NOT A COP-OUT ───────────────────────
+   Every seat below is null on all three today. The card renders "Named in
+   your proposal" in the name slot, which is a true statement and already the
+   promise made three sections up.
 
    The alternative was to invent seven people. That is the one thing the
    review names as disqualifying, and it is worse here than the placeholder
@@ -260,11 +271,15 @@ export const PEOPLE = {
    job title reads as a real colleague to every visitor who is not looking for
    the trick. There is no honest way to write that string.
 
-   So the component is built to work in BOTH states and switch on one field.
-   The day the user supplies real names, they are typed in here — one line per
-   person, no component change, no layout change — and the "Named in your
-   proposal" chip disappears on its own. That is the whole reason it is shaped
-   this way rather than left unbuilt.
+   So the component is built to work in every state and switch on the fields.
+   The day real details exist they are typed in here — one line per person, no
+   component change, no layout change — and each placeholder disappears on its
+   own as its field is filled.
+
+   ⚠ PHOTOGRAPHS MUST BE OF THESE PEOPLE, WITH THEIR PERMISSION. Not stock, and
+   not scraped from anywhere. Same rule as the careers gallery, and it matters
+   more here: a stock portrait under a real colleague's job title is worse than
+   no photograph, and the colleague will be the first to notice.
 
    ── ROLES ARE INTERLOID'S, NOT THE REFERENCE'S ───────────────────────────
    Their roster is Data/BI/Power Platform because that is their business.
@@ -278,6 +293,78 @@ export const PEOPLE = {
    us" whether or not the page uses the number. Confirm the real seats before
    this is public, and delete the ones that do not exist rather than leaving
    them nameless. */
+export const TEAM_HEADING = {
+  eyebrow: "The team",
+  head: "Passion, hard work and",
+  accent: "a lot of collaboration.",
+  lead: "The people who write the code, take the calls and stay late on a launch night. Their names are on the work, not just in the proposal.",
+  /* The closing line is aimed at THE TEAM, not at a buyer — the user asked
+     for a section that an employee feels good arriving at. It is the only
+     copy on the site with that audience, so it is the only place the voice is
+     allowed to be warm rather than falsifiable. */
+  note: "If your face is on this page, it is because the work has your name on it. Thank you for the last release, and the one before that.",
+} as const;
+
+/* ==========================================================================
+   HEADING VARIANTS — for the /team lab, added 2026-09-08.
+   ==========================================================================
+   The user asked for the team heading to be refactored alongside the lab's
+   design variants, so the candidates live here rather than inline in the lab
+   (CLAUDE.md §2: copy never lives in a component — labs included, because the
+   winning line gets promoted into TEAM_HEADING and a string that already
+   lives in this file cannot be forgotten in that move).
+
+   Option "a" is the current production heading, so the lab can show the
+   incumbent against the challengers. When one wins: copy its fields over
+   TEAM_HEADING, delete this array, and the lab route with it. */
+export const TEAM_HEADING_VARIANTS = [
+  {
+    key: "a",
+    label: "Incumbent",
+    head: "Passion, hard work and",
+    accent: "a lot of collaboration.",
+    lead: "The people who write the code, take the calls and stay late on a launch night. Their names are on the work, not just in the proposal.",
+  },
+  {
+    key: "b",
+    label: "Credits",
+    head: "The credits,",
+    accent: "not the org chart.",
+    lead: "Software ships with names on it here. These are the people a release belongs to — the ones on your calls, in your repo, and still around after the launch.",
+  },
+  {
+    key: "c",
+    label: "Standard",
+    head: "A small team with",
+    accent: "one standard of work.",
+    lead: "Passion and hard work are claims; a Friday demo in front of the client every single week is a habit. These are the people who keep it.",
+  },
+  {
+    key: "d",
+    label: "Friday",
+    head: "The people behind",
+    accent: "every Friday demo.",
+    lead: "Collaboration here is not a value on a poster — it is seniors and trainees on one floor, one repo, and a demo the whole office stops for.",
+  },
+] as const;
+
+export type TeamMember = {
+  k: string;
+  hue: Hue;
+  role: string;
+  owns: string;
+  /** null until a real, permissioned name exists. */
+  name: string | null;
+  /** Filename in `public/team/`. Every seat currently carries committed
+   *  PLACEHOLDER art (`ph-1.svg` … `ph-7.svg`) — abstract silhouettes,
+   *  unmistakably not people — so the section reads photo-first today.
+   *  Swapping in the real photograph is still a one-field edit, and
+   *  `.about.mjs` asserts only `ph-*.svg` appears until then. */
+  img: string | null;
+  /** Full profile URL, or null — the chip simply does not render. */
+  linkedin: string | null;
+};
+
 export const TEAM = [
   {
     k: "key-round",
@@ -285,6 +372,8 @@ export const TEAM = [
     role: "Founder & Principal Engineer",
     owns: "Sets the architecture, and is on your first call — the same person, not a handover.",
     name: null,
+    img: "ph-1.svg",
+    linkedin: null,
   },
   {
     k: "monitor-play",
@@ -292,6 +381,8 @@ export const TEAM = [
     role: "Engineering Lead",
     owns: "Owns the sprint, the Friday demo and the estimate you were given.",
     name: null,
+    img: "ph-2.svg",
+    linkedin: null,
   },
   {
     k: "code",
@@ -299,6 +390,8 @@ export const TEAM = [
     role: "Senior Full-stack Engineer",
     owns: "React and Next.js at the front, Node or Python behind it, typed end to end.",
     name: null,
+    img: "ph-3.svg",
+    linkedin: null,
   },
   {
     k: "layers",
@@ -306,6 +399,8 @@ export const TEAM = [
     role: "Backend & API Engineer",
     owns: "The contracts everything else leans on, and the migrations that run both ways.",
     name: null,
+    img: "ph-4.svg",
+    linkedin: null,
   },
   {
     k: "cloud",
@@ -313,6 +408,8 @@ export const TEAM = [
     role: "Cloud & Platform Engineer",
     owns: "Terraform in your accounts, CI on every push, and a runbook your team can follow.",
     name: null,
+    img: "ph-5.svg",
+    linkedin: null,
   },
   {
     k: "phone",
@@ -320,6 +417,8 @@ export const TEAM = [
     role: "Mobile Engineer",
     owns: "React Native, both stores, and the release train that survives a rejection.",
     name: null,
+    img: "ph-6.svg",
+    linkedin: null,
   },
   {
     k: "sparkle",
@@ -327,16 +426,16 @@ export const TEAM = [
     role: "Data & AI Engineer",
     owns: "Pipelines with lineage, and model-backed features with evaluation and a cost ceiling.",
     name: null,
+    img: "ph-7.svg",
+    linkedin: null,
   },
-] as const satisfies readonly {
-  k: string;
-  hue: Hue;
-  role: string;
-  owns: string;
-  /** `null` until real, permissioned names exist. See the banner — this field
-   *  is the entire switch between the honest state and the finished one. */
-  name: string | null;
-}[];
+] satisfies readonly TeamMember[] as readonly TeamMember[];
+
+/* Widened on purpose (2026-09-08): with every `img` now a literal filename,
+   `as const` narrowed the fields so far that the null branches in Team.tsx
+   became `never` and stopped compiling — the type was encoding "placeholders
+   forever". The annotation keeps the SHAPE strict and the VALUES swappable,
+   which is the whole point of the three-field switch. */
 
 /* The eighth card. A roster that ends in an open seat says something a roster
    of seven cannot: that the company is still forming, and that the reader

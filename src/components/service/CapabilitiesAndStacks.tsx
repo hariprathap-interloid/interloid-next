@@ -34,7 +34,12 @@ export default function CapabilitiesAndStacks() {
           accessibility review panels - it is the only one that can show every
           technology NAME without a hover, and the only one whose nodes do not
           move when a selection is made. */}
-      <EcosystemSection variant="branch" />
+      {/* `flow={false}`: branch has no level-2 or level-3 EDGES — its subtree
+          is a list, not a diagram — so the only lines are the six short core
+          spokes and beads on them read as decoration rather than as flow.
+          Every layout with real depth keeps them; compare on
+          /service-variants. */}
+      <EcosystemSection variant="branch" flow={false} />
       {/* <TechStacks active={stackTab} onChange={setStackTab} /> */}
     </>
   );
